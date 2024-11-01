@@ -1,4 +1,3 @@
-<!-- SupplierList.vue -->
 <template>
   <div>
     <h2 class="text-primary mb-4">Supplier Management</h2>
@@ -21,6 +20,7 @@
     >
       <thead>
         <tr>
+          <th>ID</th> <!-- Nouvelle colonne pour afficher l'ID -->
           <th>Email</th>
           <th>Phone</th>
           <th>Address</th>
@@ -29,6 +29,7 @@
       </thead>
       <tbody>
         <tr v-for="supplier in filteredSuppliers" :key="supplier.id">
+          <td>{{ supplier.id }}</td> <!-- Affichage de l'ID du fournisseur -->
           <td>{{ supplier.email }}</td>
           <td>{{ supplier.phone }}</td>
           <td>{{ supplier.address }}</td>

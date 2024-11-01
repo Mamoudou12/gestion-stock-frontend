@@ -52,11 +52,9 @@ const handleLogin = async () => {
 
       // Redirection vers le tableau de bord
       await router.replace("/dashboard");
-    } else {
-      error.value = "Invalid credentials. Please try again.";
     }
   } catch (err) {
-    error.value = err.message;
+    error.value = err.message; // Affiche le message d'erreur de l'API
   } finally {
     loading.value = false;
   }

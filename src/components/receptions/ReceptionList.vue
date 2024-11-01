@@ -23,7 +23,7 @@
         <tr>
           <!-- <th>Supplier</th> -->
           <th>Date</th>
-          <th>Product</th>
+          <!-- <th>Product</th> -->
           <th>Quantity</th>
           <th>price</th>
           <th>Actions</th>
@@ -33,7 +33,7 @@
         <tr v-for="reception in filteredReceptions" :key="reception.id">
           <!-- <td>{{ reception.supplier }}</td> -->
           <td>{{ reception.receptionDate }}</td>
-          <td>{{ reception.product }}</td>
+          <!-- <td>{{ reception.product }}</td> -->
           <td>{{ reception.quantity }}</td>
           <td>{{ reception.price }}</td>
           <td>
@@ -184,5 +184,12 @@ const closeModal = () => {
 <style>
 .search-input {
   max-width: 250px;
+}
+
+.table {
+  padding: 20px;
+  background-color: #f8f9fa; 
+  border-radius: 5px; 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
 }
 </style>

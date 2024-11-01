@@ -6,64 +6,79 @@
           <h5 class="modal-title">{{ editMode ? "Edit" : "Add" }} Product</h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
+
         <div class="modal-body">
-          <div class="mb-3">
-            <label>Name:</label>
-            <input v-model="product.name" required class="form-control" />
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Name:</label>
+              <input v-model="product.name" :disabled="previewMode" required class="form-control" />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Stock:</label>
+              <input
+                type="number"
+                v-model="product.stock"
+                :disabled="previewMode"
+                required
+                class="form-control"
+              />
+            </div>
           </div>
-          <div class="mb-3">
-            <label>Stock:</label>
-            <input
-              type="number"
-              v-model="product.stock"
-              required
-              class="form-control"
-            />
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Purshase Price:</label>
+              <input
+                type="number"
+                v-model="product.purshase_price"
+                :disabled="previewMode"
+                required
+                class="form-control"
+                step="0.01"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Sale Price:</label>
+              <input
+                type="number"
+                v-model="product.sale_price"
+                :disabled="previewMode"
+                required
+                class="form-control"
+                step="0.01"
+              />
+            </div>
           </div>
-          <div class="mb-3">
-            <label>Purchase Price:</label>
-            <input
-              type="number"
-              v-model="product.purchase_price"
-              required
-              class="form-control"
-              step="0.01"
-            />
-          </div>
-          <div class="mb-3">
-            <label>Sale Price:</label>
-            <input
-              type="number"
-              v-model="product.sale_price"
-              required
-              class="form-control"
-              step="0.01"
-            />
-          </div>
-          <div class="mb-3">
-            <label>Safety Stock:</label>
-            <input
-              type="number"
-              v-model="product.safetyStock"
-              required
-              class="form-control"
-            />
-          </div>
-          <div class="mb-3">
-            <label>Barcode:</label>
-            <input
-              type="text"
-              v-model="product.barcode"
-              required
-              class="form-control"
-            />
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Safety Stock:</label>
+              <input
+                type="number"
+                v-model="product.safetyStock"
+                :disabled="previewMode"
+                required
+                class="form-control"
+              />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Barcode:</label>
+              <input
+                type="text"
+                v-model="product.barcode"
+                :disabled="previewMode"
+                required
+                class="form-control"
+              />
+            </div>
           </div>
         </div>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="close">
             Close
           </button>
-          <button type="button" class="btn btn-primary" @click="submitProduct">
+          <button type="button" class="btn btn-primary" @click="submitProduct" :disabled="previewMode">
             {{ editMode ? "Update" : "Add" }}
           </button>
         </div>
@@ -73,26 +88,36 @@
 </template>
 
 <script setup>
-import { ref, watch, toRefs } from "vue";
+import { ref, toRefs } from "vue";
 import Swal from "sweetalert2";
 import { useProductStore } from "../../stores/productStore";
 
+// Définir les props
 const props = defineProps({
   editMode: Boolean,
   product: Object,
+  previewMode: Boolean, // Nouvelle prop pour le mode aperçu
 });
 
+// Définir l'emit pour émettre des événements vers le parent
+const emit = defineEmits(["close", "refresh"]);
+
+// Extraire le produit depuis les props avec "toRefs"
 const { product: currentProduct } = toRefs(props);
+
+// Accéder au store des produits
 const productStore = useProductStore();
 
+// Fonction pour soumettre le formulaire (ajout ou mise à jour)
 const submitProduct = async () => {
-  const { name, stock, purchase_price, sale_price, safetyStock, barcode } =
+  const { name, stock, purshase_price, sale_price, safetyStock, barcode } =
     currentProduct.value;
 
+  // Validation simple des champs
   if (
     !name ||
     stock <= 0 ||
-    purchase_price <= 0 ||
+    purshase_price <= 0 ||
     sale_price <= 0 ||
     safetyStock <= 0 ||
     !barcode
@@ -106,15 +131,16 @@ const submitProduct = async () => {
 
   try {
     if (props.editMode) {
-      await productStore.updateProduct(
-        currentProduct.value.id,
-        currentProduct.value
-      );
+      // Mise à jour d'un produit existant
+      await productStore.updateProduct(currentProduct.value.id, currentProduct.value);
       Swal.fire("Success", "Product updated successfully", "success");
     } else {
+      // Ajout d'un nouveau produit
       await productStore.createProduct(currentProduct.value);
       Swal.fire("Success", "Product added successfully", "success");
     }
+
+    // Fermer la modal et rafraîchir la liste des produits
     close();
     emit("refresh");
   } catch (error) {
@@ -123,11 +149,14 @@ const submitProduct = async () => {
   }
 };
 
+// Fonction pour fermer la modal
 const close = () => {
   emit("close");
 };
 </script>
 
 <style scoped>
-/* Add any specific styles for the modal here */
+.modal {
+  background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+}
 </style>
