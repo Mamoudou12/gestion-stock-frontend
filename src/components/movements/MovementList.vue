@@ -1,11 +1,12 @@
+<!-- MovementList.vue -->
 <template>
-  <div class="movement-list">
+  <div class="text-primary mb-4 movement-list">
     <h2 class="text-center mb-4">Liste des Mouvements de Stock</h2>
 
-    <!-- Affichage d'un message si la liste est vide -->
-    <p v-if="movements.length === 0" class="text-center text-muted">Aucun mouvement de stock trouvé.</p>
+    <p v-if="movements.length === 0" class="text-center text-muted">
+      Aucun mouvement de stock trouvé.
+    </p>
 
-    <!-- Tableau des mouvements de stock -->
     <table v-else class="table table-striped table-hover table-bordered">
       <thead class="table-light">
         <tr>
@@ -16,65 +17,91 @@
           <th>Quantité</th>
           <th>Entité</th>
           <th>Date</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="movement in movements" :key="movement.id">
           <td>{{ movement.id }}</td>
-          <td>{{ movement.productId }}</td>
-          <td>{{ movement.userId }}</td>
-          <td :class="{'text-success': movement.type === 'in', 'text-danger': movement.type === 'out'}">
+          <td>{{ getProductName(movement.productId) }}</td>
+          <!-- Afficher le nom du produit -->
+          <td>{{ getUserName(movement.userId) }}</td>
+          <!-- Afficher le nom de l'utilisateur -->
+          <td
+            :class="{
+              'text-success': movement.type === 'in',
+              'text-danger': movement.type === 'out',
+            }"
+          >
             {{ movement.type }}
           </td>
           <td>{{ movement.quantity }}</td>
           <td>{{ movement.entity }}</td>
           <td>{{ new Date(movement.movementDate).toLocaleDateString() }}</td>
+          <td class="text-center">
+            <button
+              @click="openMovementModal(movement)"
+              class="btn btn-outline-primary"
+              title="Voir"
+            >
+              <i class="fas fa-eye"></i>
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
+
+    <GenericModal
+      v-if="selectedMovement"
+      :movement="selectedMovement"
+      modalTitle="Détails du Mouvement"
+      @close="closeMovementModal"
+    />
   </div>
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useMovementStore } from "../../stores/movementStore";
+import { useProductStore } from "../../stores/productStore"; // Importer le store des produits
+import { useUserStore } from "../../stores/userStore"; // Importer le store des utilisateurs
+import GenericModal from "./MovementModal.vue";
 
 const movementStore = useMovementStore();
+const productStore = useProductStore(); // Utiliser le store des produits
+const userStore = useUserStore(); // Utiliser le store des utilisateurs
 const movements = movementStore.movements;
+const selectedMovement = ref(null);
 
-// Charger les mouvements de stock au montage du composant
 onMounted(async () => {
   await movementStore.fetchMovements();
+  await productStore.fetchProducts(); // Assurez-vous que les produits sont chargés
+  await userStore.fetchUsers(); // Assurez-vous que les utilisateurs sont chargés
 });
 
+// Ouvrir le modal pour le mouvement sélectionné
+const openMovementModal = (movement) => {
+  selectedMovement.value = movement;
+};
+
+// Fermer le modal
+const closeMovementModal = () => {
+  selectedMovement.value = null;
+};
+
+// Fonction pour obtenir le nom du produit par son ID
+const getProductName = (productId) => {
+  const product = productStore.products.find((p) => p.id === productId);
+  return product ? product.name : "Produit inconnu"; // Retourner 'Produit inconnu' si le produit n'est pas trouvé
+};
+
+// Fonction pour obtenir le nom de l'utilisateur par son ID
+const getUserName = (userId) => {
+  const user = userStore.users.find((u) => u.id === userId);
+  return user ? user.name : "Utilisateur inconnu"; // Retourner 'Utilisateur inconnu' si l'utilisateur n'est pas trouvé
+};
 </script>
 
 <style scoped>
-.movement-list {
-  padding: 20px;
-  background-color: #f8f9fa; /* Couleur de fond légère */
-  border-radius: 5px; /* Coins arrondis */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Ombre légère */
-}
-
-.table {
-  margin-top: 20px;
-}
-
-/* Ajout de styles personnalisés pour les cellules */
-.table td {
-  vertical-align: middle; /* Centrer verticalement le contenu des cellules */
-}
-
-.table .text-success {
-  font-weight: bold; /* Mettre en gras les mouvements d'entrée */
-}
-
-.table .text-danger {
-  font-weight: bold; /* Mettre en gras les mouvements de sortie */
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: #f2f2f2; /* Couleur de fond pour les lignes impaires */
-}
+/* Ajoutez vos styles ici si nécessaire */
 </style>

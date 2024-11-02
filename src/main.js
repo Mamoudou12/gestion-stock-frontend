@@ -6,6 +6,9 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import router from './router';
 import { createPinia } from 'pinia';
 import { useAuthStore } from './stores/AuthStore';
+import 'bootstrap/dist/css/bootstrap.css'; // Importer le CSS de Bootstrap
+import 'bootstrap'; // Importer le JS de Bootstrap
+
 
 
 const app = createApp(App);

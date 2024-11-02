@@ -19,6 +19,7 @@
         <tr>
           <th>ID</th>
           <th>Customer Name</th>
+          <th>Address</th>
           <th>Total Amount</th>
           <th>Date</th>
           <th>Actions</th>
@@ -28,7 +29,8 @@
         <tr v-for="sale in filteredSales" :key="sale.id">
           <td>{{ sale.id }}</td>
           <td>{{ sale.firstName }} {{ sale.lastName }}</td>
-          <td>{{ parseFloat(sale.totalAmount).toFixed(2) }} MRU</td>
+          <td>{{ sale.address }}</td>
+          <td>{{ calculateTotalAmount(sale.saleDetails).toFixed(2) }} MRU</td>
           <td>{{ new Date(sale.saleDate).toLocaleDateString() }}</td>
           <td>
             <button
@@ -61,7 +63,7 @@
       No sales found.
     </div>
 
-    <sale-form
+    <SaleForm
       v-if="showModal"
       :sale="currentSale"
       :edit-mode="editMode"
@@ -71,22 +73,27 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
 import SaleForm from "./SaleForm.vue";
 import Swal from "sweetalert2";
 
-// Instances des stores et des références pour la gestion d'état
+// Stores et références pour gérer les états
 const saleStore = useSaleStore();
 const searchQuery = ref("");
 const loading = ref(true);
 const showModal = ref(false);
 const editMode = ref(false);
-const currentSale = ref({ firstName: "", lastName: "", totalAmount: 0 });
+const currentSale = ref({
+  firstName: "",
+  lastName: "",
+  address: "",
+  saleDetails: [],
+  saleDate: "",
+});
 
-// Méthode pour récupérer les ventes
+// Méthode pour charger les ventes
 const fetchSales = async () => {
   loading.value = true;
   try {
@@ -98,10 +105,10 @@ const fetchSales = async () => {
   }
 };
 
-// Initialisation du composant
+// Initialisation au chargement du composant
 onMounted(fetchSales);
 
-// Filtrage des ventes par recherche
+// Filtrer les ventes par recherche
 const filteredSales = computed(() =>
   saleStore.sales.filter((sale) =>
     (sale.firstName + " " + sale.lastName)
@@ -110,9 +117,20 @@ const filteredSales = computed(() =>
   )
 );
 
-// Ouvrir le modal d'ajout
+// Calculer le montant total pour chaque vente
+const calculateTotalAmount = (saleDetails) => {
+  return saleDetails.reduce((total, product) => total + product.quantity * product.price, 0);
+};
+
+// Ouvrir le modal pour ajouter une vente
 const openAddSaleModal = () => {
-  currentSale.value = { firstName: "", lastName: "", totalAmount: 0 };
+  currentSale.value = {
+    saleDate: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    saleDetails: [],
+  };
   editMode.value = false;
   showModal.value = true;
 };
@@ -123,7 +141,7 @@ const viewSale = (sale) => {
   showModal.value = true;
 };
 
-// Modifier une vente
+// Modifier une vente existante
 const editSale = (sale) => {
   currentSale.value = { ...sale };
   editMode.value = true;

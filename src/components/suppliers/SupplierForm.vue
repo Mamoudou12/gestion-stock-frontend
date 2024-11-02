@@ -1,4 +1,3 @@
-<!-- SupplierForm.vue -->
 <template>
   <div class="modal" style="display: block">
     <div class="modal-dialog">
@@ -10,22 +9,43 @@
         <div class="modal-body">
           <div class="mb-3">
             <label>Email:</label>
-            <input v-model="supplier.email" required class="form-control" />
+            <input 
+              v-model="supplier.email" 
+              required 
+              class="form-control" 
+              :readonly="displayMode === 'view'" 
+            />
           </div>
           <div class="mb-3">
             <label>Phone:</label>
-            <input v-model="supplier.phone" required class="form-control" />
+            <input 
+              v-model="supplier.phone" 
+              required 
+              class="form-control" 
+              :readonly="displayMode === 'view'" 
+            />
           </div>
           <div class="mb-3">
             <label>Address:</label>
-            <input v-model="supplier.address" required class="form-control" />
+            <input 
+              v-model="supplier.address" 
+              required 
+              class="form-control" 
+              :readonly="displayMode === 'view'" 
+            />
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="close">
             Close
           </button>
-          <button type="button" class="btn btn-primary" @click="submitSupplier">
+          <!-- Afficher le bouton seulement si displayMode n'est pas 'view' -->
+          <button 
+            v-if="displayMode !== 'view'" 
+            type="button" 
+            class="btn btn-primary" 
+            @click="submitSupplier"
+          >
             {{ editMode ? "Update" : "Add" }}
           </button>
         </div>
@@ -42,6 +62,7 @@ import Swal from "sweetalert2";
 const props = defineProps({
   supplier: Object,
   editMode: Boolean,
+  displayMode: String,
 });
 
 const emit = defineEmits(["close", "refresh"]);
@@ -88,7 +109,6 @@ watch(
   () => props.supplier,
   (newValue) => {
     if (!props.editMode) {
-      // Reset the form when not in edit mode
       Object.assign(props.supplier, { email: "", phone: "", address: "" });
     }
   }

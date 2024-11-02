@@ -8,9 +8,24 @@
         </div>
 
         <div class="modal-body">
-          <!-- Afficher les messages d'erreur -->
+          <!-- Display error messages -->
           <div v-if="errorMessage" class="alert alert-danger">
             {{ errorMessage }}
+          </div>
+
+          <div class="mb-3 row">
+            <label for="saleDate" class="col-sm-3 col-form-label"
+              >Sale Date:</label
+            >
+            <div class="col-sm-9">
+              <DatePicker
+                v-model="sale.saleDate"
+                :format="'YYYY-MM-DD'"
+                :clearable="true"
+                :editable="true"
+                class="form-control"
+              />
+            </div>
           </div>
 
           <div class="mb-3 row">
@@ -58,6 +73,7 @@
             </div>
           </div>
 
+          <!-- Product Details -->
           <div
             v-for="(product, index) in sale.saleDetails"
             :key="index"
@@ -146,12 +162,14 @@
 import { ref, watch, defineProps, defineEmits } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
 import Swal from "sweetalert2";
+import DatePicker from "vue3-datepicker";
 
 const props = defineProps({
   sale: {
     type: Object,
     required: true,
     default: () => ({
+      saleDate: "",
       firstName: "",
       lastName: "",
       address: "",
@@ -164,18 +182,17 @@ const props = defineProps({
 const emit = defineEmits(["close", "refresh"]);
 const saleStore = useSaleStore();
 
-// Initialisation des champs
 const sale = ref({
+  saleDate: props.sale.saleDate || "",
   firstName: props.sale.firstName || "",
   lastName: props.sale.lastName || "",
   address: props.sale.address || "",
   saleDetails: props.sale.saleDetails || [],
 });
 
-// Ajout d'une propriété pour le message d'erreur
 const errorMessage = ref("");
 
-// Ajouter un produit à la liste
+// Add a product
 const addProduct = () => {
   sale.value.saleDetails.push({
     productId: "",
@@ -184,49 +201,24 @@ const addProduct = () => {
   });
 };
 
-// Supprimer un produit spécifique
+// Remove a product
 const removeProduct = (index) => {
   sale.value.saleDetails.splice(index, 1);
 };
 
-// Valider et soumettre le formulaire
+// Submit sale form
 const submitSale = async () => {
-  const { firstName, lastName, address, saleDetails } = sale.value;
-
-  // Réinitialiser le message d'erreur avant la soumission
+  const { saleDate, firstName, lastName, address, saleDetails } = sale.value;
   errorMessage.value = "";
 
-  // Vérification des champs requis
-//   if (!firstName) {
-//     errorMessage.value = "First Name is required.";
-//     return;
-//   }
-//   if (!lastName) {
-//     errorMessage.value = "Last Name is required.";
-//     return;
-//   }
-  if (!address) {
-    errorMessage.value = "Address is required.";
-    return;
-  }
   if (saleDetails.length === 0) {
     errorMessage.value = "At least one product is required.";
     return;
   }
 
-  // Vérification des détails des produits
   for (const product of saleDetails) {
-    if (!product.productId) {
-      errorMessage.value = "Product ID is required for all products.";
-      return;
-    }
-    if (product.quantity <= 0) {
-      errorMessage.value =
-        "Quantity must be greater than zero for all products.";
-      return;
-    }
-    if (product.price <= 0) {
-      errorMessage.value = "Price must be greater than zero for all products.";
+    if (!product.productId || product.quantity <= 0 || product.price <= 0) {
+      errorMessage.value = "Product details are required and must be valid.";
       return;
     }
   }
@@ -238,33 +230,32 @@ const submitSale = async () => {
     } else {
       await saleStore.createSale(sale.value);
       Swal.fire("Success", "Sale added successfully", "success");
-      // Réinitialiser les valeurs si en mode ajout
-      sale.value.firstName = "";
-      sale.value.lastName = "";
-      sale.value.address = "";
-      sale.value.saleDetails = [];
+      sale.value = {
+        saleDate: "",
+        firstName: "",
+        lastName: "",
+        address: "",
+        saleDetails: [],
+      };
     }
     emit("refresh");
   } catch (error) {
-    console.error("Error during sale add/update:", error);
-    // Message d'erreur générique
     errorMessage.value = "An error occurred while processing your request.";
   } finally {
     close();
   }
 };
 
-// Fermer le modal
 const close = () => {
   emit("close");
 };
 
-// Surveiller les changements de vente
 watch(
   () => props.sale,
   (newValue) => {
     sale.value = { ...newValue };
     if (!props.editMode) {
+      sale.value.saleDate = "";
       sale.value.firstName = "";
       sale.value.lastName = "";
       sale.value.address = "";

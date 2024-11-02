@@ -15,14 +15,15 @@
 
     <div v-if="loading" class="alert alert-info">Loading products...</div>
 
-    <!-- Grid pour les cartes de produits -->
-    <div v-if="!loading && filteredProducts.length" class="row row-cols-1 row-cols-md-3 g-4">
+    <div
+      v-if="!loading && filteredProducts.length"
+      class="row row-cols-1 row-cols-md-3 g-4"
+    >
       <div class="col" v-for="product in filteredProducts" :key="product.id">
-        <div class="card h-100 shadow-sm" style="width: 100%; max-width: 400px;">
+        <div class="card h-100 shadow-sm" style="width: 100%; max-width: 400px">
           <div class="card-body">
-            <h5 class="card-title">{{ product.name ?? 'Unnamed Product' }}</h5>
+            <h5 class="card-title">{{ product.name ?? "Unnamed Product" }}</h5>
             <ul class="list-group list-group-flush">
-              <!-- Affichage de l'ID du produit -->
               <li class="list-group-item">
                 <strong>ID:</strong> {{ product.id }}
               </li>
@@ -30,16 +31,21 @@
                 <strong>Stock:</strong> {{ product.stock ?? 0 }}
               </li>
               <li class="list-group-item">
-                <strong>Purshase Price:</strong> {{ parseFloat(product.purshase_price).toFixed(2) }} MRU
+                <strong>Purchase Price:</strong>
+                {{ parseFloat(product.purshase_price).toFixed(2) }} MRU
               </li>
               <li class="list-group-item">
-                <strong>Sale Price:</strong> {{ parseFloat(product.sale_price).toFixed(2) }} MRU
+                <strong>Sale Price:</strong>
+                {{ parseFloat(product.sale_price).toFixed(2) }} MRU
               </li>
               <li class="list-group-item text-danger">
                 <strong>Safety Stock:</strong> {{ product.safetyStock ?? 0 }}
-              </li> 
+              </li>
               <li class="list-group-item">
-                <strong>Barcode:</strong> <span class="barcode-color">{{ product.barcode ?? 'N/A' }}</span>
+                <strong>Barcode:</strong>
+                <span class="barcode-color">{{
+                  product.barcode ?? "N/A"
+                }}</span>
               </li>
             </ul>
           </div>
@@ -70,17 +76,27 @@
       </div>
     </div>
 
-    <div v-if="!loading && !filteredProducts.length" class="alert alert-warning">
+    <div
+      v-if="!loading && !filteredProducts.length"
+      class="alert alert-warning"
+    >
       No products found.
     </div>
 
-    <!-- Formulaire de produit (affiché sous forme modale) -->
+    <!-- Modal pour l'ajout ou l'édition d'un produit -->
     <ProductForm
-      v-if="showModal"
+      v-if="showModal && !viewMode"
       :edit-mode="editMode"
       :product="currentProduct"
       @close="closeModal"
       @refresh="refreshProducts"
+    />
+
+    <!-- Modal pour l'aperçu d'un produit -->
+    <ProductView
+      v-if="showModal && viewMode"
+      :product="currentProduct"
+      @close="closeModal"
     />
   </div>
 </template>
@@ -89,16 +105,17 @@
 import { ref, computed, onMounted } from "vue";
 import { useProductStore } from "../../stores/productStore";
 import Swal from "sweetalert2";
-import ProductForm from "./ProductForm.vue"; // Importer le composant ProductForm
+import ProductForm from "./ProductForm.vue";
+import ProductView from "./ProductView.vue"; // Import du composant de prévisualisation
 
 const productStore = useProductStore();
 const searchQuery = ref("");
 const loading = ref(true);
 const showModal = ref(false);
 const editMode = ref(false);
+const viewMode = ref(false); // Nouveau mode pour l'aperçu
 const currentProduct = ref({});
 
-// Nettoyer et ajouter des valeurs par défaut aux produits
 const cleanProduct = (product) => ({
   id: product.id ?? null,
   name: product.name ?? "Unnamed Product",
@@ -133,18 +150,20 @@ const openAddProductModal = () => {
     barcode: "",
   };
   editMode.value = false;
+  viewMode.value = false;
   showModal.value = true;
 };
 
 const viewProduct = (product) => {
   currentProduct.value = { ...product };
   showModal.value = true;
-  editMode.value = false;
+  viewMode.value = true;
 };
 
 const editProduct = (product) => {
   currentProduct.value = { ...product };
   editMode.value = true;
+  viewMode.value = false;
   showModal.value = true;
 };
 
@@ -172,40 +191,10 @@ const deleteProduct = async (id) => {
 
 const closeModal = () => {
   showModal.value = false;
+  viewMode.value = false; // Réinitialiser le mode aperçu
 };
 
 const refreshProducts = async () => {
   await productStore.fetchProducts();
 };
 </script>
-
-<style>
-.search-input {
-  max-width: 250px;
-}
-
-.card-footer button {
-  width: 30%; /* Ajuster la largeur pour un bon alignement */
-}
-
-.card {
-  transition: transform 0.2s;
-}
-
-.card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.card-title {
-  font-weight: bold;
-}
-
-.card-footer {
-  background-color: #f8f9fa;
-}
-
-.barcode-color {
-  color: #007bff; /* Couleur pour le code-barres */
-}
-</style>

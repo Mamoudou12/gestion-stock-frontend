@@ -20,7 +20,7 @@
     >
       <thead>
         <tr>
-          <th>ID</th> <!-- Nouvelle colonne pour afficher l'ID -->
+          <th>ID</th>
           <th>Email</th>
           <th>Phone</th>
           <th>Address</th>
@@ -29,20 +29,20 @@
       </thead>
       <tbody>
         <tr v-for="supplier in filteredSuppliers" :key="supplier.id">
-          <td>{{ supplier.id }}</td> <!-- Affichage de l'ID du fournisseur -->
+          <td>{{ supplier.id }}</td>
           <td>{{ supplier.email }}</td>
           <td>{{ supplier.phone }}</td>
           <td>{{ supplier.address }}</td>
           <td>
             <button
-              @click="viewSupplier(supplier)"
+              @click="openViewSupplierModal(supplier)"
               class="btn btn-outline-info me-2"
               title="View"
             >
               <i class="fas fa-eye"></i>
             </button>
             <button
-              @click="editSupplier(supplier)"
+              @click="openEditSupplierModal(supplier)"
               class="btn btn-outline-warning me-2"
               title="Edit"
             >
@@ -67,12 +67,20 @@
       No suppliers found.
     </div>
 
+    <!-- Formulaire d'ajout/édition de fournisseur -->
     <supplier-form
-      v-if="showModal"
+      v-if="showFormModal"
       :supplier="currentSupplier"
       :edit-mode="editMode"
       @close="closeModal"
       @refresh="fetchSuppliers"
+    />
+
+    <!-- Vue d'aperçu pour le fournisseur sélectionné -->
+    <supplier-view
+      v-if="showViewModal"
+      :supplier="currentSupplier"
+      @close="closeViewModal"
     />
   </div>
 </template>
@@ -81,12 +89,14 @@
 import { ref, computed, onMounted } from "vue";
 import { useSupplierStore } from "../../stores/supplierStore";
 import SupplierForm from "./SupplierForm.vue";
+import SupplierView from "./SupplierView.vue";
 import Swal from "sweetalert2";
 
 const supplierStore = useSupplierStore();
 const searchQuery = ref("");
 const loading = ref(true);
-const showModal = ref(false);
+const showFormModal = ref(false);
+const showViewModal = ref(false);
 const editMode = ref(false);
 const currentSupplier = ref({ email: "", phone: "", address: "" });
 
@@ -109,18 +119,18 @@ const filteredSuppliers = computed(() =>
 const openAddSupplierModal = () => {
   currentSupplier.value = { email: "", phone: "", address: "" };
   editMode.value = false;
-  showModal.value = true;
+  showFormModal.value = true;
 };
 
-const viewSupplier = (supplier) => {
+const openViewSupplierModal = (supplier) => {
   currentSupplier.value = { ...supplier };
-  showModal.value = true;
+  showViewModal.value = true;
 };
 
-const editSupplier = (supplier) => {
+const openEditSupplierModal = (supplier) => {
   currentSupplier.value = { ...supplier };
   editMode.value = true;
-  showModal.value = true;
+  showFormModal.value = true;
 };
 
 const deleteSupplier = async (id) => {
@@ -147,8 +157,12 @@ const deleteSupplier = async (id) => {
 };
 
 const closeModal = () => {
-  showModal.value = false;
+  showFormModal.value = false;
   editMode.value = false;
+};
+
+const closeViewModal = () => {
+  showViewModal.value = false;
 };
 </script>
 

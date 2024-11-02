@@ -7,12 +7,12 @@ import { useAuthStore } from "./AuthStore"; // Importer le store d'authentificat
 export const useReceptionStore = defineStore("reception", {
   state: () => ({
     receptions: [], // Stocke la liste des réceptions
+    suppliers: [], // Stocke la liste des fournisseurs
   }),
 
   actions: {
     async fetchReceptions() {
       const authStore = useAuthStore();
-      console.log("Fetching receptions...");
       try {
         const response = await axios.get(
           "http://localhost:3000/api/receptions",
@@ -22,17 +22,40 @@ export const useReceptionStore = defineStore("reception", {
             },
           }
         );
-        console.log("API response:", response.data); // Inspecte ici la réponse
-        this.receptions = response.data.receptions || []; // Assure-toi d'avoir un fallback au cas où data est undefined
+        this.receptions = response.data.receptions || [];
       } catch (error) {
         console.error("Error fetching receptions:", error);
         throw error;
       }
     },
 
+    async fetchSuppliers() {
+      console.log("fetchSuppliers a été appelé");
+      const authStore = useAuthStore();
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/suppliers",
+          {
+            headers: {
+              Authorization: `Bearer ${authStore.token}`,
+            },
+          }
+        );
+    
+        console.log("Réponse de l'API fournisseurs :", response.data); // Vérifiez la structure de la réponse
+    
+        // Assurez-vous que la structure correspond à celle de votre réponse de l'API
+        this.suppliers = response.data.data || []; // Mettez à jour cette ligne selon la structure réelle
+        console.log("Fournisseurs récupérés :", this.suppliers); // Vérifiez ce qui est récupéré
+      } catch (error) {
+        console.error("Erreur lors de la récupération des fournisseurs :", error);
+        throw error;
+      }
+    },
+    
+
     async createReception(newReception) {
       const authStore = useAuthStore();
-      console.log("Creating reception:", newReception);
       try {
         const response = await axios.post(
           "http://localhost:3000/api/receptions",
@@ -43,8 +66,7 @@ export const useReceptionStore = defineStore("reception", {
             },
           }
         );
-        console.log("Reception created:", response.data);
-        this.receptions.push(response.data.reception); // Ajouter la réception à la liste
+        this.receptions.push(response.data.reception);
       } catch (error) {
         console.error("Error creating reception:", error);
         throw error;
@@ -53,7 +75,6 @@ export const useReceptionStore = defineStore("reception", {
 
     async updateReception(id, updatedReception) {
       const authStore = useAuthStore();
-      console.log(`Updating reception with ID ${id}:`, updatedReception);
       try {
         const response = await axios.put(
           `http://localhost:3000/api/receptions/${id}`,
@@ -64,17 +85,11 @@ export const useReceptionStore = defineStore("reception", {
             },
           }
         );
-        console.log("Reception updated:", response.data);
         const index = this.receptions.findIndex(
           (reception) => reception.id === id
         );
         if (index !== -1) {
-          console.log(
-            `Reception with ID ${id} found at index ${index}. Updating...`
-          );
-          this.receptions[index] = response.data.reception; // Mettre à jour la réception dans la liste
-        } else {
-          console.warn(`Reception with ID ${id} not found.`);
+          this.receptions[index] = response.data.reception;
         }
       } catch (error) {
         console.error("Error updating reception:", error);
@@ -84,17 +99,15 @@ export const useReceptionStore = defineStore("reception", {
 
     async deleteReception(id) {
       const authStore = useAuthStore();
-      console.log(`Deleting reception with ID ${id}...`);
       try {
         await axios.delete(`http://localhost:3000/api/receptions/${id}`, {
           headers: {
             Authorization: `Bearer ${authStore.token}`,
           },
         });
-        console.log(`Reception with ID ${id} deleted successfully.`);
         this.receptions = this.receptions.filter(
           (reception) => reception.id !== id
-        ); // Supprimer la réception de la liste
+        );
       } catch (error) {
         console.error("Error deleting reception:", error);
         throw error;
