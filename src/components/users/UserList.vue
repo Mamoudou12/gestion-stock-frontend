@@ -17,19 +17,30 @@
     <table class="table table-bordered" v-if="!loading && filteredUsers.length">
       <thead>
         <tr>
-          <th>ID</th> <!-- Nouvelle colonne pour l'ID -->
+          <th>ID</th>
           <th>Name</th>
           <th>Email</th>
           <th>Role</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="user in filteredUsers" :key="user.id">
-          <td>{{ user.id }}</td> <!-- Affichage de l'ID -->
+          <td>{{ user.id }}</td>
           <td>{{ user.name }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
+          <td>
+            <span
+              :class="{
+                'badge bg-success': user.status,
+                'badge bg-secondary': !user.status,
+              }"
+            >
+              {{ user.status ? "Active" : "Inactive" }}
+            </span>
+          </td>
           <td>
             <button
               @click="viewUser(user)"
@@ -44,6 +55,15 @@
               title="Edit"
             >
               <i class="fas fa-edit"></i>
+            </button>
+            <button
+              @click="toggleUserStatus(user)"
+              class="btn btn-outline-primary me-2"
+              :title="user.status ? 'Deactivate' : 'Activate'"
+            >
+              <i
+                :class="user.status ? 'fas fa-user-slash' : 'fas fa-user-check'"
+              ></i>
             </button>
             <button
               @click="deleteUser(user.id)"
@@ -61,28 +81,44 @@
       No users found.
     </div>
 
+    <!-- Modal for adding/editing user -->
     <user-form
-      v-if="showModal"
+      v-if="showModal && !showDetailModal"
       :user="currentUser"
       :edit-mode="editMode"
       @close="closeModal"
       @refresh="fetchUsers"
+    />
+
+    <!-- Modal for viewing user details -->
+    <user-detail-modal
+      v-if="showDetailModal"
+      :user="currentUser"
+      @close="closeDetailModal"
     />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useUserStore } from "../../stores/userStore"; // Assurez-vous que ce store existe
-import UserForm from "./UserForm.vue"; // Importez le formulaire utilisateur
+import { useUserStore } from "../../stores/userStore";
+import UserForm from "./UserForm.vue";
+import UserDetailModal from "./UserView.vue";
 import Swal from "sweetalert2";
 
 const userStore = useUserStore();
 const searchQuery = ref("");
 const loading = ref(true);
 const showModal = ref(false);
+const showDetailModal = ref(false);
 const editMode = ref(false);
-const currentUser = ref({ id: "", name: "", email: "", role: "" }); // Ajout de l'id ici
+const currentUser = ref({
+  id: "",
+  name: "",
+  email: "",
+  role: "",
+  status: false,
+});
 
 onMounted(async () => {
   await fetchUsers();
@@ -94,21 +130,27 @@ const fetchUsers = async () => {
   loading.value = false;
 };
 
-const filteredUsers = computed(() =>
-  userStore.users.filter((user) =>
-    user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
-);
+const filteredUsers = computed(() => {
+  return userStore.users
+    .filter((user) =>
+      user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Les utilisateurs actifs (status: true) apparaissent avant les inactifs (status: false)
+      return b.status - a.status;
+    });
+});
+
 
 const openAddUserModal = () => {
-  currentUser.value = { id: "", name: "", email: "", role: "" }; // Assurez-vous d'initialiser l'ID
+  currentUser.value = { id: "", name: "", email: "", role: "", status: false };
   editMode.value = false;
   showModal.value = true;
 };
 
 const viewUser = (user) => {
   currentUser.value = { ...user };
-  showModal.value = true;
+  showDetailModal.value = true;
 };
 
 const editUser = (user) => {
@@ -116,6 +158,27 @@ const editUser = (user) => {
   editMode.value = true;
   showModal.value = true;
 };
+
+const toggleUserStatus = async (user) => {
+  try {
+    // Inverse le statut de l'utilisateur
+    user.status = !user.status;
+
+    // Met à jour le statut dans le store
+    await userStore.updateUserStatus(user.id, user.status);
+
+    // Affiche un message de succès avec SweetAlert
+    Swal.fire(
+      "Succès",
+      `Le statut de l'utilisateur a été changé à ${user.status ? "Actif" : "Inactif"}.`,
+      "success"
+    );
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du statut de l'utilisateur:", error);
+    Swal.fire("Erreur", "Une erreur est survenue lors de la mise à jour du statut.", "error");
+  }
+};
+
 
 const deleteUser = async (id) => {
   const result = await Swal.fire({
@@ -143,6 +206,10 @@ const deleteUser = async (id) => {
 const closeModal = () => {
   showModal.value = false;
   editMode.value = false;
+};
+
+const closeDetailModal = () => {
+  showDetailModal.value = false;
 };
 </script>
 

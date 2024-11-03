@@ -1,6 +1,5 @@
 <template>
   <div :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
-    <!-- Header -->
     <header class="header">
       <div class="header-left">
         <button @click="toggleSidebar" class="btn btn-primary">
@@ -11,80 +10,103 @@
       <div class="header-right">
         <button class="btn btn-primary" @click="toggleTheme">
           <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
-          <span class="ms-2">{{ isDarkMode ? "Light Mode" : "Dark Mode" }}</span>
+          <span class="ms-2">{{
+            isDarkMode
+              ? $t("app.header.theme.lightMode")
+              : $t("app.header.theme.darkMode")
+          }}</span>
         </button>
         <div class="notification">
           <i class="fas fa-bell"></i>
           <span class="badge">{{ notifications }}</span>
         </div>
-
-        <!-- Profil Utilisateur -->
-        <div class="profile">
-          <span class="profile-name">John Doe</span>
-          <button class="btn btn-outline-light ms-2" @click="handleLogout">Déconnexion</button>
-        </div>
+        <select
+          v-model="currentLanguage"
+          @change="handleLanguageChange"
+          class="form-select custom-select"
+        >
+          <option value="fr">fr</option>
+          <option value="en">en</option>
+          <option value="ar">ar</option>
+        </select>
       </div>
     </header>
 
-    <!-- Sidebar -->
     <nav class="sidebar">
       <div class="sidebar-header">
         <i class="fas fa-cube fa-2x"></i>
-        <h4 v-if="!isSidebarCollapsed">Mon Application</h4>
+        <h4 v-if="!isSidebarCollapsed">{{ $t("app.header.title") }}</h4>
       </div>
       <ul class="list-unstyled">
         <li>
           <router-link to="/dashboard/home" class="nav-link">
             <i class="fas fa-home me-2"></i>
-            <span v-if="!isSidebarCollapsed">Accueil</span>
+            <span v-if="!isSidebarCollapsed">{{ $t("app.header.home") }}</span>
           </router-link>
         </li>
         <li>
           <router-link to="/dashboard/products" class="nav-link">
             <i class="fas fa-box-open me-2"></i>
-            <span v-if="!isSidebarCollapsed">Produits</span>
+            <span v-if="!isSidebarCollapsed">{{
+              $t("app.header.products")
+            }}</span>
           </router-link>
         </li>
         <li>
           <router-link to="/dashboard/suppliers" class="nav-link">
             <i class="fas fa-industry me-2"></i>
-            <span v-if="!isSidebarCollapsed">Fournisseurs</span>
+            <span v-if="!isSidebarCollapsed">{{
+              $t("app.header.suppliers")
+            }}</span>
           </router-link>
         </li>
         <li>
           <router-link to="/dashboard/receptions" class="nav-link">
             <i class="fas fa-clipboard-check me-2"></i>
-            <span v-if="!isSidebarCollapsed">Réceptions</span>
+            <span v-if="!isSidebarCollapsed">{{
+              $t("app.header.receipts")
+            }}</span>
           </router-link>
         </li>
         <li>
           <router-link to="/dashboard/sales" class="nav-link">
             <i class="fas fa-shopping-cart me-2"></i>
-            <span v-if="!isSidebarCollapsed">Ventes</span>
+            <span v-if="!isSidebarCollapsed">{{ $t("app.header.sales") }}</span>
           </router-link>
         </li>
         <li>
           <router-link to="/dashboard/users" class="nav-link">
             <i class="fas fa-users me-2"></i>
-            <span v-if="!isSidebarCollapsed">Utilisateurs</span>
+            <span v-if="!isSidebarCollapsed">{{ $t("app.header.users") }}</span>
           </router-link>
         </li>
         <li>
           <router-link to="/dashboard/inventory" class="nav-link">
             <i class="fas fa-warehouse me-2"></i>
-            <span v-if="!isSidebarCollapsed">Inventaires</span>
+            <span v-if="!isSidebarCollapsed">{{
+              $t("app.header.inventory")
+            }}</span>
           </router-link>
         </li>
         <li>
           <router-link to="/dashboard/movements" class="nav-link">
             <i class="fas fa-exchange-alt me-2"></i>
-            <span v-if="!isSidebarCollapsed">Mouvement de stock</span>
+            <span v-if="!isSidebarCollapsed">{{
+              $t("app.header.stockMovements")
+            }}</span>
           </router-link>
+        </li>
+        <li>
+          <button class="nav-link" @click="handleLogout">
+            <i class="fas fa-sign-out-alt me-2"></i>
+            <span v-if="!isSidebarCollapsed">{{
+              $t("app.header.logout")
+            }}</span>
+          </button>
         </li>
       </ul>
     </nav>
 
-    <!-- Main Content -->
     <div class="content" :class="{ 'content-collapsed': isSidebarCollapsed }">
       <router-view />
     </div>
@@ -93,44 +115,43 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { useAuthStore } from "../stores/AuthStore"; // Importez le store
+import { useAuthStore } from "../stores/AuthStore";
+import { useI18n } from "vue-i18n";
 
-// State Management
 const isSidebarCollapsed = ref(false);
 const isDarkMode = ref(false);
 const notifications = ref(0);
-const authStore = useAuthStore(); // Initialisez le store d'authentification
+const currentLanguage = ref("fr");
+const authStore = useAuthStore();
+const { locale } = useI18n();
 
-// Toggle sidebar collapse
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
 };
 
-// Toggle light/dark mode
 const toggleTheme = () => {
   isDarkMode.value = !isDarkMode.value;
 };
 
-// Watch for theme changes
+const handleLanguageChange = () => {
+  locale.value = currentLanguage.value;
+};
+
 watch(isDarkMode, (newVal) => {
   document.body.classList.toggle("dark-mode", newVal);
 });
 
-// Simulate notification updates
 setInterval(() => {
   notifications.value++;
-}, 10000); // Augmente le nombre de notifications toutes les 10 secondes
+}, 10000);
 
-// Logout functionality
 const handleLogout = () => {
-  authStore.logout(); // Appeler la méthode de déconnexion du store
-  // Rediriger vers la page de connexion
-  window.location.href = '/'; // Redirection vers la page de connexion
+  authStore.logout();
+  window.location.href = "/";
 };
 </script>
 
 <style scoped>
-/* Sidebar Collapsed */
 .sidebar-collapsed .sidebar {
   width: 80px;
 }
@@ -139,24 +160,24 @@ const handleLogout = () => {
   margin-left: 80px;
 }
 
-/* Main Content */
 .content {
   margin-top: 60px;
   margin-left: 250px;
   padding: 20px;
-  background-color: #f8f9fa; /* Light background */
+  background-color: #f8f9fa;
   transition: margin-left 0.3s ease;
+  overflow-y: auto;
+  height: calc(100vh - 60px);
 }
 
 .content-collapsed {
-  margin-left: 80px; /* Ajustez ceci pour correspondre à la largeur de la sidebar réduite */
+  margin-left: 80px;
 }
 
-/* Header, Sidebar, Dark Mode Styles */
 .header {
   width: 100%;
   height: 60px;
-  background-color: #284b63; /* Blue header */
+  background-color: #FBFBFB;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -193,14 +214,15 @@ const handleLogout = () => {
 
 .sidebar {
   width: 250px;
-  background-color: #284b63; /* Blue sidebar */
-  color: white;
+  background-color: #FAFAFA;
+  color: #000000;
   padding: 20px;
   position: fixed;
   top: 60px;
   left: 0;
   height: calc(100vh - 60px);
   transition: width 0.3s ease;
+  overflow-y: auto;
 }
 
 .sidebar-header {
@@ -219,21 +241,24 @@ const handleLogout = () => {
 }
 
 .nav-link:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #E8EACC;
   border-radius: 5px;
 }
 
-/* Profile Styles */
 .profile {
   display: flex;
   align-items: center;
-  color: white; /* Couleur du texte */
+  color: white;
+}
+
+.custom-select {
+  width: 70px;
 }
 
 .profile-name {
   margin-right: 10px;
   font-weight: bold;
-  font-size: 1rem; /* Taille de police pour le nom */
+  font-size: 1rem;
 }
 
 .btn-outline-light {
@@ -244,20 +269,34 @@ const handleLogout = () => {
 
 .btn-outline-light:hover {
   background-color: white;
-  color: #284b63; /* Change la couleur du texte lors du survol */
+  color: #284b63;
 }
 
-/* Dark Mode Styles */
-body.dark-mode {
-  background-color: #1a1a1a; /* Dark background */
-  color: white;
+.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
 }
 
-body.dark-mode .header {
-  background-color: #153243; /* Darker blue for header */
+.dark-mode .header {
+  background-color: #1f1f1f;
 }
 
-body.dark-mode .sidebar {
-  background-color: #153243; /* Dark sidebar */
+.dark-mode .sidebar {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+/* .dark-mode .content {
+  background-color: #0C0F0A;
+  color: #ffffff;
+} */
+
+.dark-mode h4 {
+  background-color: #0C0F0A;
+  color: #ffffff;
+}
+
+.dark-mode .nav-link:hover {
+  background-color: #000000;
 }
 </style>

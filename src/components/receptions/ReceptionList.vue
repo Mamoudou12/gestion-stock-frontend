@@ -15,10 +15,7 @@
 
     <div v-if="loading" class="alert alert-info">Loading receptions...</div>
 
-    <table
-      class="table table-bordered"
-      v-if="!loading && filteredReceptions.length"
-    >
+    <table class="table table-bordered" v-if="!loading && filteredReceptions.length">
       <thead>
         <tr>
           <th>Supplier</th>
@@ -34,29 +31,16 @@
           <td>{{ reception.supplier }}</td>
           <td>{{ reception.receptionDate }}</td>
           <td>{{ getProductName(reception.product) }}</td>
-          <!-- Affichage du nom du produit -->
           <td>{{ reception.quantity }}</td>
           <td>{{ parseFloat(reception.price).toFixed(2) }} MRU</td>
           <td>
-            <button
-              @click="viewReception(reception)"
-              class="btn btn-outline-info me-2"
-              title="View"
-            >
+            <button @click="viewReception(reception)" class="btn btn-outline-info me-2" title="View">
               <i class="fas fa-eye"></i>
             </button>
-            <button
-              @click="editReception(reception)"
-              class="btn btn-outline-warning me-2"
-              title="Edit"
-            >
+            <button @click="editReception(reception)" class="btn btn-outline-warning me-2" title="Edit">
               <i class="fas fa-edit"></i>
             </button>
-            <button
-              @click="deleteReception(reception.id)"
-              class="btn btn-outline-danger"
-              title="Delete"
-            >
+            <button @click="deleteReception(reception.id)" class="btn btn-outline-danger" title="Delete">
               <i class="fas fa-trash"></i>
             </button>
           </td>
@@ -64,13 +48,34 @@
       </tbody>
     </table>
 
-    <div
-      v-if="!loading && !filteredReceptions.length"
-      class="alert alert-warning"
-    >
+    <div v-if="!loading && !filteredReceptions.length" class="alert alert-warning">
       No receptions found.
     </div>
 
+    <!-- Modale pour l'aperçu détaillé de la réception -->
+    <div v-if="showDetailModal" class="modal fade show d-block" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Reception Details</h5>
+            <button type="button" class="btn-close" @click="closeDetailModal"></button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Supplier:</strong> {{ currentReception.supplier }}</p>
+            <p><strong>Date:</strong> {{ currentReception.receptionDate }}</p>
+            <p><strong>Product:</strong> {{ getProductName(currentReception.product) }}</p>
+            <p><strong>Quantity:</strong> {{ currentReception.quantity }}</p>
+            <p><strong>Price:</strong> {{ parseFloat(currentReception.price).toFixed(2) }} MRU</p>
+            <!-- Ajout d'autres informations si nécessaire -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @click="closeDetailModal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulaire pour l'ajout ou l'édition de réception -->
     <reception-form
       v-if="showModal"
       :reception="currentReception"
@@ -84,17 +89,18 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useReceptionStore } from "../../stores/receptionStore";
-import { useProductStore } from "../../stores/productStore"; // Importer le store des produits
-import { useSupplierStore } from "../../stores/supplierStore"; // Importer le store des fournisseurs
+import { useProductStore } from "../../stores/productStore";
+import { useSupplierStore } from "../../stores/supplierStore";
 import ReceptionForm from "./ReceptionForm.vue";
 import Swal from "sweetalert2";
 
 const receptionStore = useReceptionStore();
-const productStore = useProductStore(); // Créer une instance du store des produits
-const supplierStore = useSupplierStore(); // Créer une instance du store des fournisseurs
+const productStore = useProductStore();
+const supplierStore = useSupplierStore();
 const searchQuery = ref("");
 const loading = ref(true);
 const showModal = ref(false);
+const showDetailModal = ref(false); // Variable pour afficher ou masquer la modale de détails
 const editMode = ref(false);
 const currentReception = ref({
   supplier: "",
@@ -108,45 +114,35 @@ onMounted(async () => {
   await fetchReceptions();
 });
 
-// Fonction pour récupérer les réceptions
 const fetchReceptions = async () => {
   loading.value = true;
   await receptionStore.fetchReceptions();
-  console.log(receptionStore.receptions);
   loading.value = false;
 };
 
-// Filtrer les réceptions en fonction de la requête de recherche
 const filteredReceptions = computed(() =>
   receptionStore.receptions
     .map((reception) => {
-      const detail = reception.detailReceptions[0]; // Assurez-vous d'adapter si nécessaire
+      const detail = reception.detailReceptions[0];
       return {
         id: reception.id,
         receptionDate: reception.receptionDate,
         supplierId: reception.supplierId,
-        product: detail ? detail.productId : "", // Récupérer l'ID du produit
+        product: detail ? detail.productId : "",
         quantity: detail ? detail.quantity : 0,
         price: detail ? detail.price : "",
         supplier:
-          supplierStore.suppliers.find((s) => s.id === reception.supplierId)
-            ?.email || "Unknown Supplier", // Utilisation de supplierStore pour obtenir le nom du fournisseur
+          supplierStore.suppliers.find((s) => s.id === reception.supplierId)?.email || "Unknown Supplier",
       };
     })
-    .filter(
-      (reception) =>
-        reception.supplierId &&
-        reception.supplierId
-          .toString()
-          .toLowerCase()
-          .includes(searchQuery.value.toLowerCase())
+    .filter((reception) =>
+      reception.supplierId?.toString().toLowerCase().includes(searchQuery.value.toLowerCase())
     )
 );
 
-// Fonction pour obtenir le nom du produit par son ID
 const getProductName = (productId) => {
   const product = productStore.products.find((p) => p.id === productId);
-  return product ? product.name : "Produit inconnu"; // Retourner 'Produit inconnu' si le produit n'est pas trouvé
+  return product ? product.name : "Unknown Product";
 };
 
 const openAddReceptionModal = () => {
@@ -157,7 +153,7 @@ const openAddReceptionModal = () => {
 
 const viewReception = (reception) => {
   currentReception.value = { ...reception };
-  showModal.value = true;
+  showDetailModal.value = true; // Ouvrir la modale de détails
 };
 
 const editReception = (reception) => {
@@ -193,6 +189,10 @@ const closeModal = () => {
   showModal.value = false;
   editMode.value = false;
 };
+
+const closeDetailModal = () => {
+  showDetailModal.value = false; // Fermer la modale de détails
+};
 </script>
 
 <style>
@@ -205,5 +205,10 @@ const closeModal = () => {
   background-color: #f8f9fa;
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal.fade.show {
+  display: block;
+  background: rgba(0, 0, 0, 0.5);
 }
 </style>

@@ -45,27 +45,6 @@ export const useSaleStore = defineStore('sale', {
       }
     },
 
-    async updateSale(id, updatedSale) {
-      const authStore = useAuthStore();
-      console.log('Updating sale with ID:', id, 'to:', updatedSale);
-      try {
-        const response = await axios.put(`http://localhost:3000/api/sales/${id}`, updatedSale, {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        });
-        console.log('Sale updated:', response.data.sale);
-        const index = this.sales.findIndex(sale => sale.id === id);
-        if (index !== -1) {
-          this.sales[index] = response.data.sale; // Mise à jour de la vente dans la liste
-        }
-      } catch (error) {
-        const errorMessage = error.response?.data?.message || 'Error updating sale';
-        console.error('Error updating sale:', errorMessage);
-        throw new Error(errorMessage); // Propagation de l'erreur avec le message de l'API
-      }
-    },
-
     async deleteSale(id) {
       const authStore = useAuthStore();
       console.log('Deleting sale with ID:', id);

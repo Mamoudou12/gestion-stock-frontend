@@ -24,7 +24,8 @@
         <tr>
           <th>Quantity</th>
           <th>Remarks</th>
-          <th>Product ID</th>
+          <th>Product Name</th>
+          <!-- Changed header to Product Name -->
           <th>Actions</th>
         </tr>
       </thead>
@@ -32,7 +33,8 @@
         <tr v-for="item in filteredInventory" :key="item.id">
           <td>{{ item.quantity }}</td>
           <td>{{ item.remarks }}</td>
-          <td>{{ item.productId }}</td>
+          <td>{{ getProductName(item.productId) }}</td>
+          <!-- Display product name -->
           <td>
             <button
               @click="viewInventory(item)"
@@ -74,44 +76,57 @@
       @close="closeModal"
       @refresh="fetchInventory"
     />
+
+    <InventoryDetailModal
+      v-if="showDetailModal"
+      :inventory="currentInventory"
+      @close="closeDetailModal"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useInventoryStore } from "../../stores/inventoryStore";
+import { useProductStore } from "../../stores/productStore"; // Import productStore
 import InventoryForm from "./InventoryForm.vue";
+import InventoryDetailModal from "./InventoryView.vue";
 import Swal from "sweetalert2";
 
 const inventoryStore = useInventoryStore();
+const productStore = useProductStore(); // Initialize product store
 const searchQuery = ref("");
 const loading = ref(true);
 const showModal = ref(false);
+const showDetailModal = ref(false);
 const editMode = ref(false);
 const currentInventory = ref({ quantity: "", remarks: "", productId: "" });
 
 onMounted(async () => {
-  try {
-    console.log("Initializing inventory fetch...");
-    await fetchInventory();
-  } catch (error) {
-    console.error("Error during initial fetch:", error);
-  }
+  await fetchInventory();
 });
 
+// Fetch inventory items from the store
 const fetchInventory = async () => {
   loading.value = true;
   await inventoryStore.fetchInventories();
   loading.value = false;
 };
 
+// Filter inventory items based on the search query
 const filteredInventory = computed(() => {
-  console.log("Inventory data:", inventoryStore.inventories);
-  if (!inventoryStore.inventories) return [];
   return inventoryStore.inventories.filter((item) =>
     item.productId.toString().includes(searchQuery.value.toLowerCase())
   );
 });
+
+// Get product name from productStore using product ID
+const getProductName = (productId) => {
+  const product = productStore.products.find(
+    (product) => product.id === productId
+  );
+  return product ? product.name : "Unknown Product"; // Return product name or a default message
+};
 
 const openAddInventoryModal = () => {
   currentInventory.value = { quantity: "", remarks: "", productId: "" };
@@ -121,7 +136,7 @@ const openAddInventoryModal = () => {
 
 const viewInventory = (item) => {
   currentInventory.value = { ...item };
-  showModal.value = true;
+  showDetailModal.value = true;
 };
 
 const editInventory = (item) => {
@@ -156,6 +171,10 @@ const deleteInventory = async (id) => {
 const closeModal = () => {
   showModal.value = false;
   editMode.value = false;
+};
+
+const closeDetailModal = () => {
+  showDetailModal.value = false;
 };
 </script>
 

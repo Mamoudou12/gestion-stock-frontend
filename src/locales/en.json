@@ -1,0 +1,48 @@
+{
+    "app": {
+        "header": {
+            "title": "My Application",
+            "home": "Home",
+            "products": "Products",
+            "suppliers": "Suppliers",
+            "receipts": "Receipts",
+            "sales": "Sales",
+            "users": "Users",
+            "inventory": "Inventory",
+            "stockMovements": "Stock Movements",
+            "logout": "Logout",
+            "language": "Language",
+            "theme": {
+                "darkMode": "Dark Mode",
+                "lightMode": "Light Mode"
+            },
+            "notifications": "Notifications"
+        }
+    },
+    "productModal": {
+        "title": {
+            "add": "Add Product",
+            "edit": "Edit Product"
+        },
+        "labels": {
+            "name": "Name:",
+            "stock": "Stock:",
+            "purchasePrice": "Purchase Price:",
+            "salePrice": "Sale Price:",
+            "safetyStock": "Safety Stock:",
+            "barcode": "Barcode:"
+        },
+        "buttons": {
+            "close": "Close",
+            "submit": {
+                "add": "Add",
+                "update": "Update"
+            }
+        },
+        "error": "All fields are required and must be valid",
+        "success": {
+            "add": "Product added successfully",
+            "update": "Product updated successfully"
+        }
+    }
+}

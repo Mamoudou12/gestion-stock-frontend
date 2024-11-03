@@ -11,17 +11,17 @@ export const useUserStore = defineStore('user', {
 
   actions: {
     async fetchUsers() {
-      const authStore = useAuthStore(); // Get the authentication store
+      const authStore = useAuthStore();
       try {
         const response = await axios.get('http://localhost:3000/api/users', {
           headers: {
-            Authorization: `Bearer ${authStore.token}`, // Add the authentication token
+            Authorization: `Bearer ${authStore.token}`,
           },
         });
-        this.users = response.data.users; // Ensure this matches the structure of your API
+        this.users = response.data.users; // Assurez-vous que `status` est inclus dans la réponse de l'API
       } catch (error) {
         console.error('Error fetching users:', error);
-        throw error; // Propagate the error for further handling
+        throw error;
       }
     },
 
@@ -33,7 +33,7 @@ export const useUserStore = defineStore('user', {
             Authorization: `Bearer ${authStore.token}`,
           },
         });
-        this.users.push(response.data.user); // Add the new user to the list
+        this.users.push(response.data.user); // Inclure `status` lors de l'ajout d'un nouvel utilisateur
       } catch (error) {
         console.error('Error creating user:', error);
         throw error;
@@ -50,7 +50,7 @@ export const useUserStore = defineStore('user', {
         });
         const index = this.users.findIndex(user => user.id === id);
         if (index !== -1) {
-          this.users[index] = response.data.user; // Update the user in the list
+          this.users[index] = response.data.user; // Mettre à jour l'utilisateur dans la liste, incluant `status`
         }
       } catch (error) {
         console.error('Error updating user:', error);
@@ -66,7 +66,7 @@ export const useUserStore = defineStore('user', {
             Authorization: `Bearer ${authStore.token}`,
           },
         });
-        this.users = this.users.filter(user => user.id !== id); // Remove the user from the list
+        this.users = this.users.filter(user => user.id !== id);
       } catch (error) {
         console.error('Error deleting user:', error);
         throw error;
@@ -81,9 +81,28 @@ export const useUserStore = defineStore('user', {
             Authorization: `Bearer ${authStore.token}`,
           },
         });
-        return response.data.user; // Return the user data
+        return response.data.user; // Retourne l'utilisateur avec `status`
       } catch (error) {
         console.error('Error fetching user by ID:', error);
+        throw error;
+      }
+    },
+
+    // Mettre à jour le statut de l'utilisateur
+    async updateUserStatus(id, status) {
+      const authStore = useAuthStore();
+      try {
+        const response = await axios.patch(`http://localhost:3000/api/users/${id}/status`, { status }, {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+          },
+        });
+        const index = this.users.findIndex(user => user.id === id);
+        if (index !== -1) {
+          this.users[index].status = response.data.user.status; // Mettre à jour le statut dans la liste
+        }
+      } catch (error) {
+        console.error('Error updating user status:', error);
         throw error;
       }
     },

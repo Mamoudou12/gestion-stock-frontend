@@ -8,11 +8,32 @@ import { createPinia } from 'pinia';
 import { useAuthStore } from './stores/AuthStore';
 import 'bootstrap/dist/css/bootstrap.css'; // Importer le CSS de Bootstrap
 import 'bootstrap'; // Importer le JS de Bootstrap
+import { createI18n } from 'vue-i18n';
+
+
+
+// Importer les fichiers de langues
+import en from './locales/en.json';
+import fr from './locales/fr.json';
+import ar from './locales/ar.json';
+
+const messages = {
+  en,
+  fr,
+  ar,
+};
+
+// Créer une instance d'i18n
+const i18n = createI18n({
+  locale: 'fr', // langue par défaut
+  messages,
+});
 
 
 
 const app = createApp(App);
 const pinia = createPinia();
+app.use(i18n); 
 app.use(router);
 app.use(pinia);
 app.mount('#app');

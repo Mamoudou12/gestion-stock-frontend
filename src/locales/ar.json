@@ -1,0 +1,48 @@
+{
+    "app": {
+        "header": {
+            "title": "تطبيقي",
+            "home": "الرئيسية",
+            "products": "المنتجات",
+            "suppliers": "الموردين",
+            "receipts": "الإيصالات",
+            "sales": "المبيعات",
+            "users": "المستخدمين",
+            "inventory": "المخزون",
+            "stockMovements": "حركة المخزون",
+            "logout": "تسجيل الخروج",
+            "language": "اللغة",
+            "theme": {
+                "darkMode": "الوضع الداكن",
+                "lightMode": "الوضع الفاتح"
+            },
+            "notifications": "الإشعارات"
+        }
+    },
+    "productModal": {
+        "title": {
+            "add": "إضافة منتج",
+            "edit": "تعديل المنتج"
+        },
+        "labels": {
+            "name": "الاسم:",
+            "stock": "المخزون:",
+            "purchasePrice": "سعر الشراء:",
+            "salePrice": "سعر البيع:",
+            "safetyStock": "مخزون الأمان:",
+            "barcode": "الرمز الشريطي:"
+        },
+        "buttons": {
+            "close": "إغلاق",
+            "submit": {
+                "add": "إضافة",
+                "update": "تحديث"
+            }
+        },
+        "error": "جميع الحقول مطلوبة ويجب أن تكون صحيحة",
+        "success": {
+            "add": "تم إضافة المنتج بنجاح",
+            "update": "تم تحديث المنتج بنجاح"
+        }
+    }
+}

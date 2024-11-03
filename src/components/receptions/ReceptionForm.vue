@@ -38,6 +38,7 @@
             />
           </div>
 
+          <!-- Détails de produit avec trois champs sur la même ligne -->
           <div
             v-for="(product, index) in reception.detailReceptions"
             :key="index"
@@ -45,47 +46,51 @@
           >
             <h6>Product {{ index + 1 }}</h6>
 
-            <div class="mb-2">
-              <label :for="'productId-' + index">Product:</label>
-              <select
-                :id="'productId-' + index"
-                v-model="product.productId"
-                required
-                class="form-control"
-              >
-                <option value="" disabled>Select a product</option>
-                <option
-                  v-for="prod in products"
-                  :key="prod.id"
-                  :value="prod.id"
+            <div class="row">
+              <!-- Champ Product -->
+              <div class="col-md-4 mb-2">
+                <label :for="'productId-' + index">Product:</label>
+                <select
+                  :id="'productId-' + index"
+                  v-model="product.productId"
+                  required
+                  class="form-control"
                 >
-                  {{ prod.name }}
-                  <!-- Afficher le nom du produit -->
-                </option>
-              </select>
-            </div>
+                  <option value="" disabled>Select a product</option>
+                  <option
+                    v-for="prod in products"
+                    :key="prod.id"
+                    :value="prod.id"
+                  >
+                    {{ prod.name }}
+                  </option>
+                </select>
+              </div>
 
-            <div class="mb-2">
-              <label :for="'quantity-' + index">Quantity:</label>
-              <input
-                :id="'quantity-' + index"
-                v-model="product.quantity"
-                required
-                class="form-control"
-                type="number"
-              />
-            </div>
+              <!-- Champ Quantity -->
+              <div class="col-md-4 mb-2">
+                <label :for="'quantity-' + index">Quantity:</label>
+                <input
+                  :id="'quantity-' + index"
+                  v-model="product.quantity"
+                  required
+                  class="form-control"
+                  type="number"
+                />
+              </div>
 
-            <div class="mb-2">
-              <label :for="'price-' + index">Price:</label>
-              <input
-                :id="'price-' + index"
-                v-model="product.price"
-                required
-                class="form-control"
-                type="number"
-                step="0.01"
-              />
+              <!-- Champ Price -->
+              <div class="col-md-4 mb-2">
+                <label :for="'price-' + index">Price:</label>
+                <input
+                  :id="'price-' + index"
+                  v-model="product.price"
+                  required
+                  class="form-control"
+                  type="number"
+                  step="0.01"
+                />
+              </div>
             </div>
 
             <button
@@ -124,12 +129,12 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits, computed } from "vue";
+import { ref, computed, defineProps, defineEmits } from "vue";
 import { useReceptionStore } from "../../stores/receptionStore";
-import { useSupplierStore } from "../../stores/supplierStore"; // Importer le store des fournisseurs
-import { useProductStore } from "../../stores/productStore"; // Importer le store des produits
+import { useSupplierStore } from "../../stores/supplierStore";
+import { useProductStore } from "../../stores/productStore";
 import Swal from "sweetalert2";
-import Datepicker from "vue3-datepicker"; // Importer vue3-datepicker
+import Datepicker from "vue3-datepicker";
 
 const props = defineProps({
   reception: {
@@ -146,23 +151,18 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "refresh"]);
 const receptionStore = useReceptionStore();
-const supplierStore = useSupplierStore(); // Utiliser le store des fournisseurs
-const productStore = useProductStore(); // Utiliser le store des produits
+const supplierStore = useSupplierStore();
+const productStore = useProductStore();
 
-// Récupérer la liste des fournisseurs
 const suppliers = computed(() => supplierStore.suppliers);
+const products = computed(() => productStore.products);
 
-// Récupérer la liste des produits
-const products = computed(() => productStore.products); // Assurez-vous que ce store existe
-
-// Initialisation des champs
 const reception = ref({
   supplierId: props.reception.supplierId || "",
   receptionDate: props.reception.receptionDate || new Date(),
   detailReceptions: props.reception.detailReceptions || [],
 });
 
-// Ajouter un produit à la liste
 const addProduct = () => {
   reception.value.detailReceptions.push({
     productId: "",
@@ -171,12 +171,10 @@ const addProduct = () => {
   });
 };
 
-// Supprimer un produit spécifique
 const removeProduct = (index) => {
   reception.value.detailReceptions.splice(index, 1);
 };
 
-// Valider et soumettre le formulaire
 const submitReception = async () => {
   const { supplierId, receptionDate, detailReceptions } = reception.value;
 
@@ -196,7 +194,6 @@ const submitReception = async () => {
     } else {
       await receptionStore.createReception(reception.value);
       Swal.fire("Success", "Reception added successfully", "success");
-      // Réinitialiser les valeurs si en mode ajout
       reception.value.supplierId = "";
       reception.value.receptionDate = new Date();
       reception.value.detailReceptions = [];
@@ -214,38 +211,15 @@ const submitReception = async () => {
   }
 };
 
-// Fermer le modal
 const close = () => {
   emit("close");
 };
-
-// Surveiller les changements de réception
-watch(
-  () => props.reception,
-  (newValue) => {
-    reception.value = { ...newValue };
-    if (!props.editMode) {
-      reception.value.supplierId = "";
-      reception.value.receptionDate = new Date();
-      reception.value.detailReceptions = [];
-    }
-  }
-);
 </script>
 
 <style scoped>
 .product-entry {
-  border: 1px solid #ddd;
-  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
   margin-bottom: 10px;
-  border-radius: 5px;
-}
-
-.custom-datepicker {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ced4da;
-  background-color: #f8f9fa;
 }
 </style>

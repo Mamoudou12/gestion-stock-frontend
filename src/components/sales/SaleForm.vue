@@ -3,20 +3,19 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ editMode ? "Edit" : "Add" }} Sale</h5>
+          <h5 class="modal-title">Add Sale</h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
 
         <div class="modal-body">
-          <!-- Display error messages -->
           <div v-if="errorMessage" class="alert alert-danger">
             {{ errorMessage }}
           </div>
 
           <div class="mb-3 row">
-            <label for="saleDate" class="col-sm-3 col-form-label"
-              >Sale Date:</label
-            >
+            <label for="saleDate" class="col-sm-3 col-form-label">
+              Sale Date:
+            </label>
             <div class="col-sm-9">
               <DatePicker
                 v-model="sale.saleDate"
@@ -29,9 +28,9 @@
           </div>
 
           <div class="mb-3 row">
-            <label for="firstName" class="col-sm-3 col-form-label"
-              >First Name:</label
-            >
+            <label for="firstName" class="col-sm-3 col-form-label">
+              First Name:
+            </label>
             <div class="col-sm-9">
               <input
                 id="firstName"
@@ -44,9 +43,9 @@
           </div>
 
           <div class="mb-3 row">
-            <label for="lastName" class="col-sm-3 col-form-label"
-              >Last Name:</label
-            >
+            <label for="lastName" class="col-sm-3 col-form-label">
+              Last Name:
+            </label>
             <div class="col-sm-9">
               <input
                 id="lastName"
@@ -59,9 +58,9 @@
           </div>
 
           <div class="mb-3 row">
-            <label for="address" class="col-sm-3 col-form-label"
-              >Address:</label
-            >
+            <label for="address" class="col-sm-3 col-form-label">
+              Address:
+            </label>
             <div class="col-sm-9">
               <input
                 id="address"
@@ -73,7 +72,6 @@
             </div>
           </div>
 
-          <!-- Product Details -->
           <div
             v-for="(product, index) in sale.saleDetails"
             :key="index"
@@ -82,25 +80,29 @@
             <h6>Product {{ index + 1 }}</h6>
 
             <div class="row">
-              <label :for="'productId-' + index" class="col-sm-3 col-form-label"
-                >Product ID:</label
-              >
-              <div class="col-sm-9">
-                <input
+              <div class="col-md-4 mb-2">
+                <label :for="'productId-' + index">Product:</label>
+                <select
                   :id="'productId-' + index"
                   v-model="product.productId"
                   required
                   class="form-control"
-                  type="number"
-                />
+                  @change="updateProductPrice(product)"
+                >
+                  <option value="" disabled>Select a product</option>
+                  <option
+                    v-for="prod in products"
+                    :key="prod.id"
+                    :value="prod.id"
+                  >
+                    {{ prod.name }}
+                  </option>
+                </select>
               </div>
-            </div>
-
-            <div class="row">
-              <label :for="'quantity-' + index" class="col-sm-3 col-form-label"
-                >Quantity:</label
-              >
-              <div class="col-sm-9">
+              <div class="col">
+                <label :for="'quantity-' + index" class="form-label">
+                  Quantity:
+                </label>
                 <input
                   :id="'quantity-' + index"
                   v-model="product.quantity"
@@ -109,13 +111,8 @@
                   type="number"
                 />
               </div>
-            </div>
-
-            <div class="row">
-              <label :for="'price-' + index" class="col-sm-3 col-form-label"
-                >Price:</label
-              >
-              <div class="col-sm-9">
+              <div class="col">
+                <label :for="'price-' + index" class="form-label">Price:</label>
                 <input
                   :id="'price-' + index"
                   v-model="product.price"
@@ -150,7 +147,7 @@
             Close
           </button>
           <button type="button" class="btn btn-primary" @click="submitSale">
-            {{ editMode ? "Update" : "Add" }} Sale
+            Add Sale
           </button>
         </div>
       </div>
@@ -159,40 +156,28 @@
 </template>
 
 <script setup>
-import { ref, watch, defineProps, defineEmits } from "vue";
+import { ref, computed, watch, defineProps, defineEmits } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
+import { useProductStore } from "../../stores/productStore";
 import Swal from "sweetalert2";
 import DatePicker from "vue3-datepicker";
 
-const props = defineProps({
-  sale: {
-    type: Object,
-    required: true,
-    default: () => ({
-      saleDate: "",
-      firstName: "",
-      lastName: "",
-      address: "",
-      saleDetails: [],
-    }),
-  },
-  editMode: Boolean,
-});
-
 const emit = defineEmits(["close", "refresh"]);
 const saleStore = useSaleStore();
+const productStore = useProductStore();
+
+const products = computed(() => productStore.products);
 
 const sale = ref({
-  saleDate: props.sale.saleDate || "",
-  firstName: props.sale.firstName || "",
-  lastName: props.sale.lastName || "",
-  address: props.sale.address || "",
-  saleDetails: props.sale.saleDetails || [],
+  saleDate: "",
+  firstName: "",
+  lastName: "",
+  address: "",
+  saleDetails: [],
 });
 
 const errorMessage = ref("");
 
-// Add a product
 const addProduct = () => {
   sale.value.saleDetails.push({
     productId: "",
@@ -201,12 +186,17 @@ const addProduct = () => {
   });
 };
 
-// Remove a product
 const removeProduct = (index) => {
   sale.value.saleDetails.splice(index, 1);
 };
 
-// Submit sale form
+const updateProductPrice = (product) => {
+  const selectedProduct = products.value.find(
+    (prod) => prod.id === product.productId
+  );
+  product.price = selectedProduct ? selectedProduct.sale_price : 0;
+};
+
 const submitSale = async () => {
   const { saleDate, firstName, lastName, address, saleDetails } = sale.value;
   errorMessage.value = "";
@@ -224,52 +214,18 @@ const submitSale = async () => {
   }
 
   try {
-    if (props.editMode) {
-      await saleStore.updateSale(props.sale.id, sale.value);
-      Swal.fire("Success", "Sale updated successfully", "success");
-    } else {
-      await saleStore.createSale(sale.value);
-      Swal.fire("Success", "Sale added successfully", "success");
-      sale.value = {
-        saleDate: "",
-        firstName: "",
-        lastName: "",
-        address: "",
-        saleDetails: [],
-      };
-    }
+    await saleStore.createSale(sale.value);
+    Swal.fire("Success", "Sale added successfully!", "success");
     emit("refresh");
+    emit("close");
   } catch (error) {
-    errorMessage.value = "An error occurred while processing your request.";
-  } finally {
-    close();
+    errorMessage.value = "An error occurred while saving the sale.";
+    console.error(error);
   }
 };
 
+// Fonction pour fermer le modal
 const close = () => {
   emit("close");
 };
-
-watch(
-  () => props.sale,
-  (newValue) => {
-    sale.value = { ...newValue };
-    if (!props.editMode) {
-      sale.value.saleDate = "";
-      sale.value.firstName = "";
-      sale.value.lastName = "";
-      sale.value.address = "";
-      sale.value.saleDetails = [];
-    }
-  }
-);
 </script>
-
-<style scoped>
-.product-entry {
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
-</style>

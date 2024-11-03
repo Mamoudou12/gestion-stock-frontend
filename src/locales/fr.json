@@ -1,0 +1,44 @@
+{
+    "app": {
+        "header": {
+            "title": "Mon Application",
+            "home": "Accueil",
+            "products": "Produits",
+            "suppliers": "Fournisseurs",
+            "receipts": "Réceptions",
+            "sales": "Ventes",
+            "users": "Utilisateurs",
+            "inventory": "Inventaires",
+            "stockMovements": "Mouvement de stock",
+            "logout": "Déconnexion",
+            "language": "Langue",
+            "theme": {
+                "darkMode": "Mode Sombre",
+                "lightMode": "Mode Clair"
+            },
+            "notifications": "Notifications"
+        }
+    },
+    "product_management": "Gestion des Produits",
+    "add_product": "Ajouter un Produit",
+    "search_product": "Rechercher un produit",
+    "loading_products": "Chargement des produits...",
+    "no_products_found": "Aucun produit trouvé.",
+    "confirm_delete": "Êtes-vous sûr?",
+    "delete_warning": "Vous ne pourrez pas revenir en arrière!",
+    "confirm_delete_button": "Oui, supprimez-le!",
+    "deleted": "Supprimé!",
+    "product_deleted": "Le produit a été supprimé.",
+    "error": "Erreur",
+    "an_error_occurred": "Une erreur est survenue",
+    "view": "Voir",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "id": "ID:",
+    "stock": "Stock:",
+    "purchase_price": "Prix d'Achat:",
+    "sale_price": "Prix de Vente:",
+    "safety_stock": "Stock de Sécurité:",
+    "barcode": "Code-barres:",
+    "unnamed_product": "Produit Sans Nom"
+}

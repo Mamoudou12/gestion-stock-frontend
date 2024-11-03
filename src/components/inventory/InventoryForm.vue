@@ -22,13 +22,17 @@
             <input v-model="inventory.remarks" class="form-control" />
           </div>
           <div class="mb-3">
-            <label>Product ID:</label>
-            <input
-              v-model="inventory.productId"
-              required
-              type="number"
-              class="form-control"
-            />
+            <label>Product:</label>
+            <select v-model="inventory.productId" required class="form-control">
+              <option disabled value="">Select a product</option>
+              <option
+                v-for="product in products"
+                :key="product.id"
+                :value="product.id"
+              >
+                {{ product.name }}
+              </option>
+            </select>
           </div>
         </div>
         <div class="modal-footer">
@@ -50,7 +54,8 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { useInventoryStore } from "../../stores/inventoryStore"; // Adjust the import based on your file structure
+import { useInventoryStore } from "../../stores/inventoryStore";
+import { useProductStore } from "../../stores/productStore"; // Import the product store
 import Swal from "sweetalert2";
 
 const props = defineProps({
@@ -61,10 +66,11 @@ const props = defineProps({
 const emit = defineEmits(["close", "refresh"]);
 
 const inventoryStore = useInventoryStore();
+const productStore = useProductStore(); // Initialize product store
 
 const submitInventory = async () => {
   if (!props.inventory.quantity || !props.inventory.productId) {
-    Swal.fire("Error", "Quantity and Product ID are required", "error");
+    Swal.fire("Error", "Quantity and Product are required", "error");
     return;
   }
 
@@ -99,17 +105,24 @@ const close = () => {
   emit("close");
 };
 
-watch(
-  () => props.inventory,
-  (newValue) => {
-    if (!props.editMode) {
-      // Reset the form when not in edit mode
-      Object.assign(props.inventory, {
-        quantity: "",
-        remarks: "",
-        productId: "",
-      });
-    }
-  }
-);
+// Fetch products on mount
+const products = ref([]);
+const fetchProducts = async () => {
+  await productStore.fetchProducts();
+  products.value = productStore.products; // Assign products from the store
+};
+
+// Call fetch on setup
+fetchProducts();
 </script>
+
+<style scoped>
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+</style>
