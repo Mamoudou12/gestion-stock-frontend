@@ -40,5 +40,28 @@
     "sale_price": "Prix de Vente:",
     "safety_stock": "Stock de Sécurité:",
     "barcode": "Code-barres:",
-    "unnamed_product": "Produit Sans Nom"
+    "unnamed_product": "Produit Sans Nom",
+    "edit_product": "Modifier le Produit",
+    "name": "Nom",
+    "close": "Fermer",
+    "update": "Mettre à Jour",
+    "add": "Ajouter",
+    "all_fields_required": "Tous les champs sont requis et doivent être valides",
+    "success": "Succès",
+    "product_updated_successfully": "Produit mis à jour avec succès",
+    "product_added_successfully": "Produit ajouté avec succès",
+    "modal": {
+        "title": "Aperçu du Produit",
+        "fields": {
+            "name": "Nom",
+            "id": "ID",
+            "stock": "Stock",
+            "purchase_price": "Prix d'Achat",
+            "sale_price": "Prix de Vente",
+            "safety_stock": "Stock de Sécurité",
+            "barcode": "Code-barres"
+        },
+        "currency": "MRU",
+        "close": "Fermer"
+    }
 }

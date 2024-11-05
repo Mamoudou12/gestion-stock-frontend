@@ -19,30 +19,44 @@
             "notifications": "الإشعارات"
         }
     },
-    "productModal": {
-        "title": {
-            "add": "إضافة منتج",
-            "edit": "تعديل المنتج"
-        },
-        "labels": {
-            "name": "الاسم:",
-            "stock": "المخزون:",
-            "purchasePrice": "سعر الشراء:",
-            "salePrice": "سعر البيع:",
-            "safetyStock": "مخزون الأمان:",
-            "barcode": "الرمز الشريطي:"
-        },
-        "buttons": {
-            "close": "إغلاق",
-            "submit": {
-                "add": "إضافة",
-                "update": "تحديث"
-            }
-        },
-        "error": "جميع الحقول مطلوبة ويجب أن تكون صحيحة",
-        "success": {
-            "add": "تم إضافة المنتج بنجاح",
-            "update": "تم تحديث المنتج بنجاح"
-        }
-    }
+    "product_management": "إدارة المنتجات",
+    "add_product": "إضافة منتج",
+    "search_product": "البحث عن منتج",
+    "loading_products": "جاري تحميل المنتجات...",
+    "no_products_found": "لم يتم العثور على أي منتجات.",
+    "confirm_delete": "هل أنت متأكد؟",
+    "delete_warning": "لن تتمكن من التراجع عن هذا!",
+    "confirm_delete_button": "نعم، احذفه!",
+    "deleted": "تم الحذف!",
+    "product_deleted": "تم حذف المنتج.",
+    "error": "خطأ",
+    "an_error_occurred": "حدث خطأ",
+    "view": "عرض",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "name": "الاسم",
+    "id": "المعرف:",
+    "add": "إضافة",
+    "close": "إغلاق",
+    "stock": "المخزون:",
+    "purchase_price": "سعر الشراء:",
+    "sale_price": "سعر البيع:",
+    "safety_stock": "المخزون الاحتياطي:",
+    "barcode": "الرمز الشريطي:",
+    "unnamed_product": "منتج بدون اسم",
+    "modal": {
+    "title": "معاينة المنتج",
+    "fields": {
+      "name": "الاسم",
+      "id": "المعرف",
+      "stock": "المخزون",
+      "purchase_price": "سعر الشراء",
+      "sale_price": "سعر البيع",
+      "safety_stock": "المخزون الاحتياطي",
+      "barcode": "الرمز الشريطي"
+    },
+    "currency": "أوقية",
+    "close": "إغلاق"
+  }
 }
+

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="text-primary mb-4">Supplier Management</h2>
-    <button @click="openAddSupplierModal" class="btn btn-danger mb-4">
+    <button @click="openAddSupplierModal" class="btn btn-primary mb-4">
       <i class="fas fa-plus"></i> Add Supplier
     </button>
 
@@ -36,7 +36,7 @@
           <td>
             <button
               @click="openViewSupplierModal(supplier)"
-              class="btn btn-outline-info me-2"
+              class="btn btn-outline-primary me-2"
               title="View"
             >
               <i class="fas fa-eye"></i>

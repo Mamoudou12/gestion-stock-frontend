@@ -34,7 +34,6 @@ const email = ref("");
 const password = ref("");
 const loading = ref(false);
 const error = ref(null);
-
 const handleLogin = async () => {
   error.value = null;
   loading.value = true;

@@ -19,30 +19,48 @@
             "notifications": "Notifications"
         }
     },
-    "productModal": {
-        "title": {
-            "add": "Add Product",
-            "edit": "Edit Product"
-        },
-        "labels": {
-            "name": "Name:",
-            "stock": "Stock:",
-            "purchasePrice": "Purchase Price:",
-            "salePrice": "Sale Price:",
-            "safetyStock": "Safety Stock:",
-            "barcode": "Barcode:"
-        },
-        "buttons": {
-            "close": "Close",
-            "submit": {
-                "add": "Add",
-                "update": "Update"
-            }
-        },
-        "error": "All fields are required and must be valid",
-        "success": {
-            "add": "Product added successfully",
-            "update": "Product updated successfully"
-        }
-    }
+    "product_management": "Product Management",
+    "add_product": "Add Product",
+    "search_product": "Search Product",
+    "loading_products": "Loading products...",
+    "no_products_found": "No products found.",
+    "confirm_delete": "Are you sure?",
+    "delete_warning": "You won't be able to revert this!",
+    "confirm_delete_button": "Yes, delete it!",
+    "deleted": "Deleted!",
+    "product_deleted": "The product has been deleted.",
+    "error": "Error",
+    "an_error_occurred": "An error occurred",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "id": "ID:",
+    "stock": "Stock:",
+    "purchase_price": "Purchase Price:",
+    "sale_price": "Sale Price:",
+    "safety_stock": "Safety Stock:",
+    "barcode": "Barcode:",
+    "unnamed_product": "Unnamed Product",
+    "edit_product": "Edit Product",
+    "name": "Name",
+    "close": "Close",
+    "update": "Update",
+    "all_fields_required": "All fields are required and must be valid",
+    "success": "Success",
+    "product_updated_successfully": "Product updated successfully",
+    "product_added_successfully": "Product added successfully",
+     "modal": {
+    "title": "Product Preview",
+    "fields": {
+        "name": "Name",
+        "id": "ID",
+        "stock": "Stock",
+        "purchase_price": "Purchase Price",
+        "sale_price": "Sale Price",
+        "safety_stock": "Safety Stock",
+        "barcode": "Barcode"
+    },
+    "currency": "MRU",
+    "close": "Close"
+}
 }

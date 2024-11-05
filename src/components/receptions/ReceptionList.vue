@@ -2,7 +2,7 @@
   <div>
     <h2 class="text-primary mb-4">Reception Management</h2>
 
-    <button @click="openAddReceptionModal" class="btn btn-danger mb-4">
+    <button @click="openAddReceptionModal" class="btn btn-primary mb-4">
       <i class="fas fa-plus"></i> Add Reception
     </button>
 
@@ -34,7 +34,7 @@
           <td>{{ reception.quantity }}</td>
           <td>{{ parseFloat(reception.price).toFixed(2) }} MRU</td>
           <td>
-            <button @click="viewReception(reception)" class="btn btn-outline-info me-2" title="View">
+            <button @click="viewReception(reception)" class="btn btn-outline-primary me-2" title="View">
               <i class="fas fa-eye"></i>
             </button>
             <button @click="editReception(reception)" class="btn btn-outline-warning me-2" title="Edit">

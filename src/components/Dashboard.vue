@@ -2,24 +2,17 @@
   <div :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
     <header class="header">
       <div class="header-left">
-        <button @click="toggleSidebar" class="btn btn-primary">
+        <button @click="toggleSidebar" class="btn menu">
           <i class="fas fa-bars"></i>
         </button>
       </div>
-
       <div class="header-right">
-        <button class="btn btn-primary" @click="toggleTheme">
-          <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+        <button class="btn mode" @click="toggleTheme">
+          <i :class="isDarkMode ? 'fas fa-moon' : 'fas fa-sun'"></i>
           <span class="ms-2">{{
-            isDarkMode
-              ? $t("app.header.theme.lightMode")
-              : $t("app.header.theme.darkMode")
+            isDarkMode ? "Mode sombre" : "Mode claire"
           }}</span>
         </button>
-        <div class="notification">
-          <i class="fas fa-bell"></i>
-          <span class="badge">{{ notifications }}</span>
-        </div>
         <select
           v-model="currentLanguage"
           @change="handleLanguageChange"
@@ -109,6 +102,12 @@
 
     <div class="content" :class="{ 'content-collapsed': isSidebarCollapsed }">
       <router-view />
+      <!-- <div class="body-content">
+        <h1>Bienvenue dans l'application!</h1>
+        <p>Utilisez le menu à gauche pour naviguer dans l'application.</p>
+        <p>Vous pouvez changer le thème et la langue selon vos préférences.</p>
+        <img src="../assets//ek2.jpg" alt="stock">
+      </div> -->
     </div>
   </div>
 </template>
@@ -156,6 +155,15 @@ const handleLogout = () => {
   width: 80px;
 }
 
+.body-content {
+  margin-top: 0;
+}
+
+.body-content img {
+  width: 80%;
+  margin-left: 80px;
+}
+
 .sidebar-collapsed .content {
   margin-left: 80px;
 }
@@ -177,7 +185,7 @@ const handleLogout = () => {
 .header {
   width: 100%;
   height: 60px;
-  background-color: #FBFBFB;
+  background-color: #fbfbfb;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -195,26 +203,9 @@ const handleLogout = () => {
   gap: 15px;
 }
 
-.notification {
-  position: relative;
-  font-size: 1.5rem;
-  color: white;
-}
-
-.notification .badge {
-  position: absolute;
-  top: -5px;
-  right: -10px;
-  background-color: red;
-  color: white;
-  border-radius: 50%;
-  padding: 2px 8px;
-  font-size: 0.75rem;
-}
-
 .sidebar {
   width: 250px;
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   color: #000000;
   padding: 20px;
   position: fixed;
@@ -241,8 +232,9 @@ const handleLogout = () => {
 }
 
 .nav-link:hover {
-  background-color: #E8EACC;
+  background-color: #000000;
   border-radius: 5px;
+  color: #ffffff;
 }
 
 .profile {
@@ -272,6 +264,26 @@ const handleLogout = () => {
   color: #284b63;
 }
 
+.menu {
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.menu:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.mode {
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.mode:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+
 .dark-mode {
   background-color: #121212;
   color: #ffffff;
@@ -286,17 +298,33 @@ const handleLogout = () => {
   color: #ffffff;
 }
 
-/* .dark-mode .content {
-  background-color: #0C0F0A;
-  color: #ffffff;
-} */
-
-.dark-mode h4 {
-  background-color: #0C0F0A;
+.dark-mode .nav-link:hover {
+  background-color: #0c0f0a;
   color: #ffffff;
 }
 
+.dark-mode .menu {
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.dark-mode .menu:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.dark-mode .mode {
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.dark-mode .mode:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
 .dark-mode .nav-link:hover {
-  background-color: #000000;
+  background-color: #e8eacc;
+  color: #000000;
 }
 </style>

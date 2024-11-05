@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="text-primary mb-4">Sales Management</h2>
-    <button @click="openAddSaleModal" class="btn btn-danger mb-4">
+    <button @click="openAddSaleModal" class="btn btn-primary mb-4">
       <i class="fas fa-plus"></i> Add Sale
     </button>
 
