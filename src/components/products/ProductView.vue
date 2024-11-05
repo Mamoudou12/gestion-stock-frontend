@@ -3,39 +3,44 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Product Preview</h5>
+          <h5 class="modal-title">{{ $t("modal.title") }}</h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
         <div class="modal-body">
           <ul class="list-group">
             <li class="list-group-item">
-              <strong>Name:</strong> {{ product.name }}
+              <strong>{{ $t("modal.fields.name") }}:</strong> {{ product.name }}
             </li>
             <li class="list-group-item">
-              <strong>ID:</strong> {{ product.id }}
+              <strong>{{ $t("modal.fields.id") }}:</strong> {{ product.id }}
             </li>
             <li class="list-group-item">
-              <strong>Stock:</strong> {{ product.stock }}
+              <strong>{{ $t("modal.fields.stock") }}:</strong>
+              {{ product.stock }}
             </li>
             <li class="list-group-item">
-              <strong>Purchase Price:</strong>
-              {{ parseFloat(product.purshase_price).toFixed(2) }} MRU
+              <strong>{{ $t("modal.fields.purchase_price") }}:</strong>
+              {{ parseFloat(product.purshase_price).toFixed(2) }}
+              {{ $t("modal.currency") }}
             </li>
             <li class="list-group-item">
-              <strong>Sale Price:</strong>
-              {{ parseFloat(product.sale_price).toFixed(2) }} MRU
+              <strong>{{ $t("modal.fields.sale_price") }}:</strong>
+              {{ parseFloat(product.sale_price).toFixed(2) }}
+              {{ $t("modal.currency") }}
             </li>
             <li class="list-group-item text-danger">
-              <strong>Safety Stock:</strong> {{ product.safetyStock }}
+              <strong>{{ $t("modal.fields.safety_stock") }}:</strong>
+              {{ product.safetyStock }}
             </li>
             <li class="list-group-item">
-              <strong>Barcode:</strong> {{ product.barcode }}
+              <strong>{{ $t("modal.fields.barcode") }}:</strong>
+              {{ product.barcode }}
             </li>
           </ul>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="close">
-            Close
+            {{ $t("modal.close") }}
           </button>
         </div>
       </div>

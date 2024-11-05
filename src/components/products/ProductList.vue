@@ -13,7 +13,9 @@
       class="form-control mb-4 search-input"
     />
 
-    <div v-if="loading" class="alert alert-info">{{ $t('loading_products') }}</div>
+    <div v-if="loading" class="alert alert-info">
+      {{ $t("loading_products") }}
+    </div>
 
     <div
       v-if="!loading && filteredProducts.length"
@@ -25,23 +27,21 @@
           style="width: 100%; max-width: 400px; border-radius: 15px"
         >
           <div class="card-body">
-            <h5 class="card-title">{{ product.name ?? $t('unnamed_product') }}</h5>
+            <h5 class="card-title">
+              <strong>{{ product.name ?? $t("unnamed_product") }}</strong>
+            </h5>
             <ul class="list-group list-group-flush mb-2">
-              <li class="list-group-item">
-                <strong>{{ $t('id') }}</strong> {{ product.id }}
+              <li class="list-group-item">{{ $t("id") }} {{ product.id }}</li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+              >
+                {{ $t("stock") }}
+                <span class="badge bg-info">{{ product.stock ?? 0 }}</span>
               </li>
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
               >
-                <strong>{{ $t('stock') }}</strong>
-                <span class="badge bg-info">{{
-                  product.stock ?? 0
-                }}</span>
-              </li>
-              <li
-                class="list-group-item d-flex justify-content-between align-items-center"
-              >
-                <strong>{{ $t('purchase_price') }}</strong>
+                {{ $t("purchase_price") }}
                 <span class="badge bg-primary"
                   >{{ parseFloat(product.purshase_price).toFixed(2) }} MRU</span
                 >
@@ -49,7 +49,7 @@
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
               >
-                <strong>{{ $t('sale_price') }}</strong>
+                {{ $t("sale_price") }}
                 <span class="badge bg-success"
                   >{{ parseFloat(product.sale_price).toFixed(2) }} MRU</span
                 >
@@ -57,7 +57,7 @@
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
               >
-                <strong>{{ $t('safety_stock') }}</strong>
+                {{ $t("safety_stock") }}
                 <span class="badge bg-danger">{{
                   product.safetyStock ?? 0
                 }}</span>
@@ -65,7 +65,7 @@
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
               >
-                <strong>{{ $t('barcode') }}</strong>
+                {{ $t("barcode") }}
                 <span class="barcode-color">{{
                   product.barcode ?? "N/A"
                 }}</span>
@@ -85,14 +85,14 @@
               class="btn btn-outline-warning btn-sm me-2"
               :title="$t('edit')"
             >
-              <i class="fas fa-edit"></i> 
+              <i class="fas fa-edit"></i>
             </button>
             <button
               @click="deleteProduct(product.id)"
               class="btn btn-outline-danger btn-sm"
-              :title="$t('delete')"
+              title="Delete"
             >
-              <i class="fas fa-trash"></i> 
+              <i class="fas fa-trash"></i>
             </button>
           </div>
         </div>
@@ -103,7 +103,7 @@
       v-if="!loading && !filteredProducts.length"
       class="alert alert-warning"
     >
-      {{ $t('no_products_found') }}
+      {{ $t("no_products_found") }}
     </div>
 
     <!-- Modal pour l'ajout ou l'édition d'un produit -->
@@ -193,32 +193,34 @@ const editProduct = (product) => {
 
 const deleteProduct = async (productId) => {
   const result = await Swal.fire({
-    title: $t('confirm_delete'),
-    text: $t('delete_warning'),
+    title: "Confirm Deletion",
+    text: "Are you sure you want to delete this product?",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: $t('confirm_delete_button'),
+    confirmButtonText: "Yes, delete it!",
     cancelButtonText: "Cancel",
   });
+
   if (result.isConfirmed) {
     try {
       await productStore.deleteProduct(productId);
       Swal.fire({
         icon: "success",
-        title: $t('deleted'),
-        text: $t('product_deleted'),
+        title: "Deleted!",
+        text: "The product has been deleted.",
         showConfirmButton: false,
         timer: 1500,
       });
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: $t('error'),
-        text: $t('an_error_occurred'),
+        title: "Error",
+        text: "An error occurred while deleting the product.",
       });
     }
   }
 };
+
 
 const closeModal = () => {
   showModal.value = false;

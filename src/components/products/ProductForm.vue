@@ -11,7 +11,12 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label>Name:</label>
-              <input v-model="product.name" :disabled="previewMode" required class="form-control" />
+              <input
+                v-model="product.name"
+                :disabled="previewMode"
+                required
+                class="form-control"
+              />
             </div>
             <div class="col-md-6 mb-3">
               <label>Stock:</label>
@@ -78,7 +83,12 @@
           <button type="button" class="btn btn-secondary" @click="close">
             Close
           </button>
-          <button type="button" class="btn btn-primary" @click="submitProduct" :disabled="previewMode">
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="submitProduct"
+            :disabled="previewMode"
+          >
             {{ editMode ? "Update" : "Add" }}
           </button>
         </div>
@@ -132,7 +142,10 @@ const submitProduct = async () => {
   try {
     if (props.editMode) {
       // Mise à jour d'un produit existant
-      await productStore.updateProduct(currentProduct.value.id, currentProduct.value);
+      await productStore.updateProduct(
+        currentProduct.value.id,
+        currentProduct.value
+      );
       Swal.fire("Success", "Product updated successfully", "success");
     } else {
       // Ajout d'un nouveau produit
