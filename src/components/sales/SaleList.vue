@@ -1,29 +1,33 @@
+html Copier le code
 <template>
   <div>
-    <h2 class="text-primary mb-4">Sales Management</h2>
+    <h2 class="text-primary mb-4">{{ $t("salesManagement") }}</h2>
     <button @click="openAddSaleModal" class="btn btn-primary mb-4">
-      <i class="fas fa-plus"></i> Add Sale
+      <i class="fas fa-plus"></i> {{ $t("addSale") }}
     </button>
 
     <input
       type="text"
       v-model="searchQuery"
-      placeholder="Search for a sale"
+      :placeholder="$t('searchSale')"
       class="form-control mb-4 search-input"
     />
 
-    <div v-if="loading" class="alert alert-info">Loading sales...</div>
+    <div v-if="loading" class="alert alert-info">{{ $t("loadingSales") }}</div>
 
-    <table class="table table-bordered" v-if="!loading && filteredSales.length">
+    <table
+      class="table table-hover table-bordered"
+      v-if="!loading && filteredSales.length"
+    >
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Customer Name</th>
-          <th>Address</th>
-          <th>Products</th>
-          <th>Total Amount</th>
-          <th>Date</th>
-          <th>Actions</th>
+          <th>{{ $t("id") }}</th>
+          <th>{{ $t("customerName") }}</th>
+          <th>{{ $t("address") }}</th>
+          <th>{{ $t("products") }}</th>
+          <th>{{ $t("totalAmount") }}</th>
+          <th>{{ $t("date") }}</th>
+          <th>{{ $t("actions") }}</th>
         </tr>
       </thead>
       <tbody>
@@ -38,14 +42,14 @@
             <button
               @click="viewDetail(sale, 'Sale')"
               class="btn btn-outline-info me-2"
-              title="View Details"
+              :title="$t('viewDetails')"
             >
               <i class="fas fa-eye"></i>
             </button>
             <button
               @click="deleteSale(sale.id)"
               class="btn btn-outline-danger"
-              title="Delete"
+              :title="$t('delete')"
             >
               <i class="fas fa-trash"></i>
             </button>
@@ -55,7 +59,7 @@
     </table>
 
     <div v-if="!loading && !filteredSales.length" class="alert alert-warning">
-      No sales found.
+      {{ $t("noSalesFound") }}
     </div>
 
     <!-- Modal pour afficher les détails de la vente -->
@@ -70,7 +74,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="detailLabel">
-              {{ modalContext }} Details
+              {{ modalContext }} {{ $t("saleDetails") }}
             </h5>
             <button
               type="button"
@@ -82,16 +86,16 @@
           <div class="modal-body">
             <div v-if="selectedDetail">
               <h6>
-                Customer Name: {{ selectedDetail.firstName }}
+                {{ $t("customerName") }}: {{ selectedDetail.firstName }}
                 {{ selectedDetail.lastName }}
               </h6>
-              <p>Address: {{ selectedDetail.address }}</p>
+              <p>{{ $t("address") }}: {{ selectedDetail.address }}</p>
               <p>
-                Date:
+                {{ $t("date") }}:
                 {{ new Date(selectedDetail.saleDate).toLocaleDateString() }}
               </p>
 
-              <h6>Sale Details:</h6>
+              <h6>{{ $t("saleDetails") }}:</h6>
               <ul class="list-group">
                 <li
                   class="list-group-item d-flex justify-content-between align-items-center"
@@ -99,9 +103,11 @@
                   :key="item.productId"
                 >
                   <div>
-                    <strong>Product:</strong> {{ item.productName }}<br />
-                    <strong>Quantity:</strong> {{ item.quantity }}<br />
-                    <strong>Price:</strong> {{ item.price }} MRU
+                    <strong>{{ $t("products") }}:</strong> {{ item.productName
+                    }}<br />
+                    <strong>{{ $t("quantity") }}:</strong> {{ item.quantity
+                    }}<br />
+                    <strong>{{ $t("price") }}:</strong> {{ item.price }} MRU
                   </div>
                   <span class="badge bg-primary rounded-pill">
                     {{ (item.quantity * item.price).toFixed(2) }} MRU
@@ -109,11 +115,11 @@
                 </li>
               </ul>
               <p class="mt-3 text-end">
-                <strong
-                  >Total Amount:
+                <strong>
+                  {{ $t("totalAmount") }}:
                   {{ calculateTotalAmount(selectedDetail.details).toFixed(2) }}
-                  MRU</strong
-                >
+                  MRU
+                </strong>
               </p>
             </div>
           </div>
@@ -123,7 +129,7 @@
               class="btn btn-secondary"
               data-bs-dismiss="modal"
             >
-              Close
+              {{ $t("close") }}
             </button>
           </div>
         </div>
@@ -148,6 +154,9 @@ import { useProductStore } from "../../stores/productStore";
 import Swal from "sweetalert2";
 import SaleForm from "./SaleForm.vue";
 import * as bootstrap from "bootstrap";
+import { useI18n } from "vue-i18n"; // Importer useI18n pour les traductions
+
+const { t } = useI18n();
 
 const saleStore = useSaleStore();
 const productStore = useProductStore();
@@ -235,19 +244,19 @@ const viewDetail = (detail, context) => {
 
 const deleteSale = async (id) => {
   const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to recover this sale!",
+    title: t("delete_confirmation"),
+    text: t("delete_text"),
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",
     cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: t("delete"),
   });
 
   if (result.isConfirmed) {
     try {
       await saleStore.deleteSale(id);
-      Swal.fire("Deleted!", "The sale has been deleted.", "success");
+      Swal.fire("Deleted!", t("deletion_success"), "success");
       fetchSales();
     } catch (error) {
       console.error("Error during deletion:", error);

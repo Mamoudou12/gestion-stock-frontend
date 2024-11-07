@@ -3,7 +3,7 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add Sale</h5>
+          <h5 class="modal-title">{{ $t("add_sale") }}</h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
 
@@ -13,8 +13,8 @@
           </div>
 
           <div class="mb-3 row">
-            <label for="saleDate" class="col-sm-3 col-form-label">
-              Sale Date:
+            <label for="sale_Date" class="col-sm-3 col-form-label">
+              {{ $t("sale_date") }}:
             </label>
             <div class="col-sm-9">
               <DatePicker
@@ -29,7 +29,7 @@
 
           <div class="mb-3 row">
             <label for="firstName" class="col-sm-3 col-form-label">
-              First Name:
+              {{ $t("first_name") }}:
             </label>
             <div class="col-sm-9">
               <input
@@ -44,7 +44,7 @@
 
           <div class="mb-3 row">
             <label for="lastName" class="col-sm-3 col-form-label">
-              Last Name:
+              {{ $t("last_name") }}:
             </label>
             <div class="col-sm-9">
               <input
@@ -59,7 +59,7 @@
 
           <div class="mb-3 row">
             <label for="address" class="col-sm-3 col-form-label">
-              Address:
+              {{ $t("address") }}:
             </label>
             <div class="col-sm-9">
               <input
@@ -77,11 +77,11 @@
             :key="index"
             class="product-entry mb-3"
           >
-            <h6>Product {{ index + 1 }}</h6>
+            <h6>{{ $t("product") }} {{ index + 1 }}</h6>
 
             <div class="row">
               <div class="col-md-4 mb-2">
-                <label :for="'productId-' + index">Product:</label>
+                <label :for="'productId-' + index">{{ $t("product") }}:</label>
                 <select
                   :id="'productId-' + index"
                   v-model="product.productId"
@@ -89,7 +89,7 @@
                   class="form-control"
                   @change="updateProductPrice(product)"
                 >
-                  <option value="" disabled>Select a product</option>
+                  <option value="" disabled>{{ $t("selectProduct") }}</option>
                   <option
                     v-for="prod in products"
                     :key="prod.id"
@@ -101,7 +101,7 @@
               </div>
               <div class="col">
                 <label :for="'quantity-' + index" class="form-label">
-                  Quantity:
+                  {{ $t("quantity") }}:
                 </label>
                 <input
                   :id="'quantity-' + index"
@@ -112,7 +112,9 @@
                 />
               </div>
               <div class="col">
-                <label :for="'price-' + index" class="form-label">Price:</label>
+                <label :for="'price-' + index" class="form-label">
+                  {{ $t("price") }}:
+                </label>
                 <input
                   :id="'price-' + index"
                   v-model="product.price"
@@ -129,7 +131,7 @@
               class="btn btn-danger mt-2"
               @click="removeProduct(index)"
             >
-              Remove Product
+              {{ $t("removeProduct") }}
             </button>
           </div>
 
@@ -138,16 +140,16 @@
             class="btn btn-secondary mt-3"
             @click="addProduct"
           >
-            Add Product
+            {{ $t("addProduct") }}
           </button>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="close">
-            Close
+            {{ $t("close") }}
           </button>
           <button type="button" class="btn btn-primary" @click="submitSale">
-            Add Sale
+            {{ $t("addSale") }}
           </button>
         </div>
       </div>
@@ -156,11 +158,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, defineProps, defineEmits } from "vue";
+import { ref, computed } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
 import { useProductStore } from "../../stores/productStore";
 import Swal from "sweetalert2";
 import DatePicker from "vue3-datepicker";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const emit = defineEmits(["close", "refresh"]);
 const saleStore = useSaleStore();
@@ -202,24 +207,24 @@ const submitSale = async () => {
   errorMessage.value = "";
 
   if (saleDetails.length === 0) {
-    errorMessage.value = "At least one product is required.";
+    errorMessage.value = $t("atLeastOneProductRequired");
     return;
   }
 
   for (const product of saleDetails) {
     if (!product.productId || product.quantity <= 0 || product.price <= 0) {
-      errorMessage.value = "Product details are required and must be valid.";
+      errorMessage.value = t("validProductDetailsRequired");
       return;
     }
   }
 
   try {
     await saleStore.createSale(sale.value);
-    Swal.fire("Success", "Sale added successfully!", "success");
+    Swal.fire(t("success"), t("saleAddedSuccessfully"), "success");
     emit("refresh");
     emit("close");
   } catch (error) {
-    errorMessage.value = "An error occurred while saving the sale.";
+    errorMessage.value =  t("errorSavingSale");
     console.error(error);
   }
 };
