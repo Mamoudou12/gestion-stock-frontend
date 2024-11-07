@@ -21,6 +21,8 @@
           <option value="fr">fr</option>
           <option value="en">en</option>
           <option value="ar">ar</option>
+          <option value="pl">pl</option>
+          <option value="es">es</option>
         </select>
       </div>
     </header>

@@ -50,7 +50,7 @@ const handleLogin = async () => {
       });
 
       // Redirection vers le tableau de bord
-      await router.replace("/dashboard");
+      await router.replace("/dashboard/home");
     }
   } catch (err) {
     error.value = err.message; // Affiche le message d'erreur de l'API

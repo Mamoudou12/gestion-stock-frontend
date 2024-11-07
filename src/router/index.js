@@ -31,7 +31,7 @@ import SaleForm from "../components/sales/SaleForm.vue";
 
 // Composants Mouvements de Stock
 import MovementList from "../components/movements/MovementList.vue";
-
+import Home from "../components/Home.vue";
 const routes = [
   { path: "/", component: Login },
   {
@@ -39,20 +39,37 @@ const routes = [
     component: Dashboard,
     meta: { requiresAuth: true },
     children: [
+      { path: "home", name: "home", component: Home },
       // Routes Produits
       { path: "products", name: "product-list", component: ProductList },
       { path: "products/add", name: "product-add", component: ProductForm },
-      { path: "products/edit/:id", name: "product-edit", component: ProductForm },
+      {
+        path: "products/edit/:id",
+        name: "product-edit",
+        component: ProductForm,
+      },
 
       // Routes Fournisseurs
       { path: "suppliers", name: "supplier-list", component: SupplierList },
       { path: "suppliers/add", name: "supplier-add", component: SupplierForm },
-      { path: "suppliers/edit/:id", name: "supplier-edit", component: SupplierForm },
+      {
+        path: "suppliers/edit/:id",
+        name: "supplier-edit",
+        component: SupplierForm,
+      },
 
       // Routes Réceptions
       { path: "receptions", name: "reception-list", component: ReceptionList },
-      { path: "receptions/add", name: "reception-add", component: ReceptionForm },
-      { path: "receptions/edit/:id", name: "reception-edit", component: ReceptionForm },
+      {
+        path: "receptions/add",
+        name: "reception-add",
+        component: ReceptionForm,
+      },
+      {
+        path: "receptions/edit/:id",
+        name: "reception-edit",
+        component: ReceptionForm,
+      },
 
       // Routes Utilisateurs
       { path: "users", name: "user-list", component: UserList },
@@ -61,8 +78,16 @@ const routes = [
 
       // Routes Inventaire
       { path: "inventory", name: "inventory-list", component: InventoryList },
-      { path: "inventory/add", name: "inventory-add", component: InventoryForm },
-      { path: "inventory/edit/:id", name: "inventory-edit", component: InventoryForm },
+      {
+        path: "inventory/add",
+        name: "inventory-add",
+        component: InventoryForm,
+      },
+      {
+        path: "inventory/edit/:id",
+        name: "inventory-edit",
+        component: InventoryForm,
+      },
 
       // Routes Ventes
       { path: "sales", name: "sale-list", component: SaleList },

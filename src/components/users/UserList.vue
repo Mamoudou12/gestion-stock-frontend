@@ -14,7 +14,7 @@
 
     <div v-if="loading" class="alert alert-info">Loading users...</div>
 
-    <table class="table table-bordered" v-if="!loading && filteredUsers.length">
+    <table class="table table-hover table-bordered" v-if="!loading && filteredUsers.length">
       <thead>
         <tr>
           <th>ID</th>

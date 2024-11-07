@@ -3,21 +3,22 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ editMode ? "Edit" : "Add" }} Reception</h5>
+          <h5 class="modal-title">
+            {{ editMode ? $t("editReception") : $t("addReception") }}
+          </h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
 
         <div class="modal-body">
-          <!-- Champ de sélection des fournisseurs -->
           <div class="mb-3">
-            <label for="supplierId">Supplier:</label>
+            <label for="supplierId">{{ $t("supplier") }}:</label>
             <select
               id="supplierId"
               v-model="reception.supplierId"
               required
               class="form-control"
             >
-              <option value="" disabled>Select a supplier</option>
+              <option value="" disabled>{{ $t("selectSupplier") }}</option>
               <option
                 v-for="supplier in suppliers"
                 :key="supplier.id"
@@ -28,9 +29,8 @@
             </select>
           </div>
 
-          <!-- Champ de sélection de date -->
           <div class="mb-3">
-            <label for="receptionDate">Reception Date:</label>
+            <label for="receptionDate">{{ $t("receptionDate") }}:</label>
             <Datepicker
               v-model="reception.receptionDate"
               format="yyyy-MM-dd"
@@ -38,25 +38,22 @@
             />
           </div>
 
-          <!-- Détails de produit avec trois champs sur la même ligne -->
           <div
             v-for="(product, index) in reception.detailReceptions"
             :key="index"
             class="product-entry"
           >
-            <h6>Product {{ index + 1 }}</h6>
-
+            <h6>{{ $t("product") }} {{ index + 1 }}</h6>
             <div class="row">
-              <!-- Champ Product -->
               <div class="col-md-4 mb-2">
-                <label :for="'productId-' + index">Product:</label>
+                <label :for="'productId-' + index">{{ $t("product") }}:</label>
                 <select
                   :id="'productId-' + index"
                   v-model="product.productId"
                   required
                   class="form-control"
                 >
-                  <option value="" disabled>Select a product</option>
+                  <option value="" disabled>{{ $t("selectSupplier") }}</option>
                   <option
                     v-for="prod in products"
                     :key="prod.id"
@@ -66,10 +63,8 @@
                   </option>
                 </select>
               </div>
-
-              <!-- Champ Quantity -->
               <div class="col-md-4 mb-2">
-                <label :for="'quantity-' + index">Quantity:</label>
+                <label :for="'quantity-' + index">{{ $t("quantity") }}:</label>
                 <input
                   :id="'quantity-' + index"
                   v-model="product.quantity"
@@ -78,10 +73,8 @@
                   type="number"
                 />
               </div>
-
-              <!-- Champ Price -->
               <div class="col-md-4 mb-2">
-                <label :for="'price-' + index">Price:</label>
+                <label :for="'price-' + index">{{ $t("price") }}:</label>
                 <input
                   :id="'price-' + index"
                   v-model="product.price"
@@ -92,13 +85,12 @@
                 />
               </div>
             </div>
-
             <button
               type="button"
               class="btn btn-danger mt-2"
               @click="removeProduct(index)"
             >
-              Remove Product
+              {{ $t("removeProduct") }}
             </button>
           </div>
 
@@ -107,20 +99,20 @@
             class="btn btn-secondary mt-3"
             @click="addProduct"
           >
-            Add Product
+            {{ $t("addProduct") }}
           </button>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="close">
-            Close
+            {{ $t("close") }}
           </button>
           <button
             type="button"
             class="btn btn-primary"
             @click="submitReception"
           >
-            {{ editMode ? "Update" : "Add" }} Reception
+            {{ editMode ? $t("updateReception") : $t("addReceptionButton") }}
           </button>
         </div>
       </div>
@@ -135,6 +127,9 @@ import { useSupplierStore } from "../../stores/supplierStore";
 import { useProductStore } from "../../stores/productStore";
 import Swal from "sweetalert2";
 import Datepicker from "vue3-datepicker";
+import { useI18n } from "vue-i18n"; // Importer useI18n pour les traductions
+
+const { t } = useI18n();
 
 const props = defineProps({
   reception: {
@@ -179,21 +174,17 @@ const submitReception = async () => {
   const { supplierId, receptionDate, detailReceptions } = reception.value;
 
   if (!supplierId || detailReceptions.length === 0) {
-    Swal.fire(
-      "Error",
-      "Supplier ID, Reception Date, and at least one product are required",
-      "error"
-    );
+    Swal.fire(t("error"), t("errorMessage"), "error");
     return;
   }
 
   try {
     if (props.editMode) {
       await receptionStore.updateReception(props.reception.id, reception.value);
-      Swal.fire("Success", "Reception updated successfully", "success");
+      Swal.fire(t("success"), t("receptionUpdated"), "success");
     } else {
       await receptionStore.createReception(reception.value);
-      Swal.fire("Success", "Reception added successfully", "success");
+      Swal.fire(t("success"), t("receptionAdded"), "success");
       reception.value.supplierId = "";
       reception.value.receptionDate = new Date();
       reception.value.detailReceptions = [];
@@ -202,8 +193,8 @@ const submitReception = async () => {
   } catch (error) {
     console.error("Error during reception add/update:", error);
     Swal.fire(
-      "Error",
-      error.response?.data?.message || "An error occurred",
+      t("error"),
+      error.response?.data?.message || t("unknownError"),
       "error"
     );
   } finally {

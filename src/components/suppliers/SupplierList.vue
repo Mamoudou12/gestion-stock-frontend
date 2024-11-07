@@ -1,30 +1,32 @@
 <template>
   <div>
-    <h2 class="text-primary mb-4">Supplier Management</h2>
+    <h2 class="text-primary mb-4">{{ $t("supplier_management") }}</h2>
     <button @click="openAddSupplierModal" class="btn btn-primary mb-4">
-      <i class="fas fa-plus"></i> Add Supplier
+      <i class="fas fa-plus"></i> {{ $t("add_supplier") }}
     </button>
 
     <input
       type="text"
       v-model="searchQuery"
-      placeholder="Search for a supplier"
+      :placeholder="$t('search_supplier')"
       class="form-control mb-4 search-input"
     />
 
-    <div v-if="loading" class="alert alert-info">Loading suppliers...</div>
+    <div v-if="loading" class="alert alert-info">
+      {{ $t("loading_suppliers") }}
+    </div>
 
     <table
-      class="table table-bordered"
+      class="table table-hover table-bordered"
       v-if="!loading && filteredSuppliers.length"
     >
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Address</th>
-          <th>Actions</th>
+          <th>{{ $t("id") }}</th>
+          <th>{{ $t("email") }}</th>
+          <th>{{ $t("phone") }}</th>
+          <th>{{ $t("address") }}</th>
+          <th>{{ $t("actions") }}</th>
         </tr>
       </thead>
       <tbody>
@@ -37,21 +39,21 @@
             <button
               @click="openViewSupplierModal(supplier)"
               class="btn btn-outline-primary me-2"
-              title="View"
+              :title="$t('view')"
             >
               <i class="fas fa-eye"></i>
             </button>
             <button
               @click="openEditSupplierModal(supplier)"
               class="btn btn-outline-warning me-2"
-              title="Edit"
+              :title="$t('edit')"
             >
               <i class="fas fa-edit"></i>
             </button>
             <button
               @click="deleteSupplier(supplier.id)"
               class="btn btn-outline-danger"
-              title="Delete"
+              :title="$t('delete')"
             >
               <i class="fas fa-trash"></i>
             </button>
@@ -64,7 +66,7 @@
       v-if="!loading && !filteredSuppliers.length"
       class="alert alert-warning"
     >
-      No suppliers found.
+      {{ $t("no_suppliers") }}
     </div>
 
     <!-- Formulaire d'ajout/édition de fournisseur -->
@@ -91,6 +93,9 @@ import { useSupplierStore } from "../../stores/supplierStore";
 import SupplierForm from "./SupplierForm.vue";
 import SupplierView from "./SupplierView.vue";
 import Swal from "sweetalert2";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const supplierStore = useSupplierStore();
 const searchQuery = ref("");
@@ -135,23 +140,23 @@ const openEditSupplierModal = (supplier) => {
 
 const deleteSupplier = async (id) => {
   const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to recover this supplier!",
+    title: t("delete_confirmation"),
+    text: t("delete_text"),
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",
     cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: t("delete"),
   });
 
   if (result.isConfirmed) {
     try {
       await supplierStore.deleteSupplier(id);
-      Swal.fire("Deleted!", "The supplier has been deleted.", "success");
+      Swal.fire(t("deleted"), t("deletion_success"), "success");
       fetchSuppliers();
     } catch (error) {
       console.error("Error during deletion:", error);
-      Swal.fire("Error", "An error occurred during deletion", "error");
+      Swal.fire("Error", t("error_deletion"), "error");
     }
   }
 };

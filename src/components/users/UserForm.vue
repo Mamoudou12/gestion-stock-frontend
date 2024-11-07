@@ -24,11 +24,13 @@
             <label>Password:</label>
             <input
               v-model="user.password"
-              required
-              v-if="!editMode"
+              :required="!editMode"
               type="password"
               class="form-control"
             />
+            <small v-if="editMode" class="form-text text-muted">
+              Leave blank to keep the current password.
+            </small>
           </div>
           <div class="mb-3">
             <label>Role:</label>
@@ -54,7 +56,7 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { useUserStore } from "../../stores/userStore"; // Ensure you have this store set up
+import { useUserStore } from "../../stores/userStore";
 import Swal from "sweetalert2";
 
 const props = defineProps({
@@ -63,15 +65,14 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close", "refresh"]);
-
 const userStore = useUserStore();
 
 const submitUser = async () => {
   if (
     !props.user.name ||
     !props.user.email ||
-    (props.editMode ? false : !props.user.password) || // Password required only when adding a user
-    !props.user.role  
+    !props.user.role ||
+    (!props.editMode && !props.user.password)
   ) {
     Swal.fire("Error", "All fields are required", "error");
     return;
@@ -79,12 +80,16 @@ const submitUser = async () => {
 
   try {
     if (props.editMode) {
-      await userStore.updateUser(props.user.id, props.user);
+      // If password is provided, include it in the update, otherwise exclude it
+      const userData = { ...props.user };
+      if (!userData.password) delete userData.password;
+
+      await userStore.updateUser(props.user.id, userData);
       Swal.fire("Success", "User updated successfully", "success");
     } else {
       await userStore.createUser(props.user);
       Swal.fire("Success", "User added successfully", "success");
-      props.user = { name: "", email: "", password: "", role: "" }; // Reset form for new user
+      props.user = { name: "", email: "", password: "", role: "" };
     }
     emit("refresh");
   } catch (error) {
@@ -108,7 +113,6 @@ watch(
   () => props.user,
   (newValue) => {
     if (!props.editMode) {
-      // Reset the form when not in edit mode
       Object.assign(props.user, {
         name: "",
         email: "",

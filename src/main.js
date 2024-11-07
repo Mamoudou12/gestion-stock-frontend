@@ -6,8 +6,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import router from './router';
 import { createPinia } from 'pinia';
 import { useAuthStore } from './stores/AuthStore';
-import 'bootstrap/dist/css/bootstrap.css'; // Importer le CSS de Bootstrap
-import 'bootstrap'; // Importer le JS de Bootstrap
+import 'bootstrap/dist/css/bootstrap.css'; 
+import 'bootstrap'; 
 import { createI18n } from 'vue-i18n';
 
 
@@ -16,16 +16,20 @@ import { createI18n } from 'vue-i18n';
 import en from './locales/en.json';
 import fr from './locales/fr.json';
 import ar from './locales/ar.json';
+import pl from './locales/pl.json';
+import es from './locales/es.json';
 
 const messages = {
   en,
   fr,
   ar,
+  pl,
+  es,
 };
 
 // Créer une instance d'i18n
 const i18n = createI18n({
-  locale: 'fr', // langue par défaut
+  locale: 'en', // langue par défaut
   messages,
 });
 

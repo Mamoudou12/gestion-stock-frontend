@@ -1,5 +1,5 @@
 <template>
-  <!-- <Dashboard /> -->
+  <Dashboard />
   <router-view />
 </template>
 

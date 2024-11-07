@@ -221,7 +221,6 @@ const deleteProduct = async (productId) => {
   }
 };
 
-
 const closeModal = () => {
   showModal.value = false;
 };

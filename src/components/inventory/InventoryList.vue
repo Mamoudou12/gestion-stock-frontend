@@ -17,7 +17,7 @@
     </div>
 
     <table
-      class="table table-bordered"
+      class="table table-hover table-bordered"
       v-if="!loading && filteredInventory.length"
     >
       <thead>
@@ -43,13 +43,13 @@
             >
               <i class="fas fa-eye"></i>
             </button>
-            <button
+            <!-- <button
               @click="editInventory(item)"
               class="btn btn-outline-warning me-2"
               title="Edit"
             >
               <i class="fas fa-edit"></i>
-            </button>
+            </button> -->
             <button
               @click="deleteInventory(item.id)"
               class="btn btn-outline-danger"
