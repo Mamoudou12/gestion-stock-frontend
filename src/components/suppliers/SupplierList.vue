@@ -36,27 +36,29 @@
           <td>{{ supplier.phone }}</td>
           <td>{{ supplier.address }}</td>
           <td>
-            <button
-              @click="openViewSupplierModal(supplier)"
-              class="btn btn-outline-primary me-2"
-              :title="$t('view')"
-            >
-              <i class="fas fa-eye"></i>
-            </button>
-            <button
-              @click="openEditSupplierModal(supplier)"
-              class="btn btn-outline-warning me-2"
-              :title="$t('edit')"
-            >
-              <i class="fas fa-edit"></i>
-            </button>
-            <button
-              @click="deleteSupplier(supplier.id)"
-              class="btn btn-outline-danger"
-              :title="$t('delete')"
-            >
-              <i class="fas fa-trash"></i>
-            </button>
+            <div class="d-flex justify-content-center">
+              <button
+                @click="openViewSupplierModal(supplier)"
+                class="btn btn-outline-primary me-2"
+                :title="$t('view')"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+              <button
+                @click="openEditSupplierModal(supplier)"
+                class="btn btn-outline-warning me-2"
+                :title="$t('edit')"
+              >
+                <i class="fas fa-edit"></i>
+              </button>
+              <button
+                @click="deleteSupplier(supplier.id)"
+                class="btn btn-outline-danger"
+                :title="$t('delete')"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>

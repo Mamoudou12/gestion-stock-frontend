@@ -45,6 +45,20 @@
     "success": "Succès",
     "product_updated_successfully": "Produit mis à jour avec succès",
     "product_added_successfully": "Produit ajouté avec succès",
+    "modal": {
+        "title": "Détails du produit",
+        "fields": {
+            "name": "Nom",
+            "id": "ID",
+            "stock": "Stock",
+            "purchase_price": "Prix d'achat",
+            "sale_price": "Prix de vente",
+            "safety_stock": "Stock de sécurité",
+            "barcode": "Code-barres"
+        },
+        "currency": "€",
+        "close": "Fermer"
+    },
     "receptionManagement": "Gestion des réceptions",
     "addReception": "Ajouter une réception",
     "searchPlaceholder": "Rechercher une réception",
@@ -122,10 +136,37 @@
     "submit_sale": "Ajouter la vente",
     "atLeastOneProductRequired": "Au moins un produit est requis.",
     "validProductDetailsRequired": "Les détails du produit sont requis et doivent être valides.",
-     "errorSavingSale": "Une erreur est survenue lors de l'enregistrement de la vente.",
+    "errorSavingSale": "Une erreur est survenue lors de l'enregistrement de la vente.",
     "error_message": {
-      "empty_product": "Au moins un produit est requis.",
-      "invalid_product": "Les détails du produit sont requis et doivent être valides.",
-      "save_error": "Une erreur est survenue lors de l'enregistrement de la vente." 
-    }
-  }
+        "empty_product": "Au moins un produit est requis.",
+        "invalid_product": "Les détails du produit sont requis et doivent être valides.",
+        "save_error": "Une erreur est survenue lors de l'enregistrement de la vente."
+    },
+    "userManagement": "Gestion des utilisateurs",
+    "addUser": "Ajouter un utilisateur",
+    "searchUser": "Rechercher un utilisateur",
+    "loadingUsers": "Chargement des utilisateurs...",
+    "role": "Rôle",
+    "status": "Statut",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "deactivate": "Désactiver",
+    "activate": "Activer",
+    "noUsersFound": "Aucun utilisateur trouvé.",
+    "userStatusChanged": "Le statut de l'utilisateur a été changé à",
+    "updateStatusError": "Une erreur est survenue lors de la mise à jour du statut.",
+    "areYouSure": "Êtes-vous sûr?",
+    "deleteWarning": "Vous ne pourrez pas récupérer cet utilisateur!",
+    "yesDelete": "Oui, supprimer!",
+    "userDeleted": "L'utilisateur a été supprimé.",
+    "deletionError": "Une erreur est survenue lors de la suppression",
+    "editUser": "Modifier l'utilisateur",
+    "password": "Mot de passe",
+    "selectRole": "Sélectionner un rôle",
+    "admin": "Administrateur",
+    "employee": "Employé",
+    "leaveBlankToKeepPassword": "Laissez vide pour garder le mot de passe actuel",
+    "userUpdatedSuccessfully": "Utilisateur mis à jour avec succès",
+    "userAddedSuccessfully": "Utilisateur ajouté avec succès",
+    "anErrorOccurred": "Une erreur est survenue"
+}

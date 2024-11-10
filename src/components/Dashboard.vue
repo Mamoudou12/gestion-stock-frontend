@@ -30,7 +30,7 @@
     <nav class="sidebar">
       <div class="sidebar-header">
         <i class="fas fa-cube fa-2x"></i>
-        <h4 v-if="!isSidebarCollapsed">{{ $t("app.header.title") }}</h4>
+        <h4 v-if="!isSidebarCollapsed">GDS</h4>
       </div>
       <ul class="list-unstyled">
         <li>
@@ -238,6 +238,7 @@ const handleLogout = () => {
   border-radius: 5px;
   color: #ffffff;
 }
+
 
 .profile {
   display: flex;

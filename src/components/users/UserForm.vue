@@ -3,16 +3,18 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ editMode ? "Edit" : "Add" }} User</h5>
+          <h5 class="modal-title">
+            {{ editMode ? $t("editUser") : $t("addUser") }}
+          </h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label>Name:</label>
+            <label>{{ $t("name") }}:</label>
             <input v-model="user.name" required class="form-control" />
           </div>
           <div class="mb-3">
-            <label>Email:</label>
+            <label>{{ $t("email") }}:</label>
             <input
               v-model="user.email"
               required
@@ -21,7 +23,7 @@
             />
           </div>
           <div class="mb-3">
-            <label>Password:</label>
+            <label>{{ $t("password") }}:</label>
             <input
               v-model="user.password"
               :required="!editMode"
@@ -29,24 +31,24 @@
               class="form-control"
             />
             <small v-if="editMode" class="form-text text-muted">
-              Leave blank to keep the current password.
+              {{ $t("leaveBlankToKeepPassword") }}
             </small>
           </div>
           <div class="mb-3">
-            <label>Role:</label>
+            <label>{{ $t("role") }}:</label>
             <select v-model="user.role" required class="form-select">
-              <option value="">Select role</option>
-              <option value="ADMIN">admin</option>
-              <option value="EMPLOYE">employe</option>
+              <option value="">{{ $t("selectRole") }}</option>
+              <option value="ADMIN">{{ $t("admin") }}</option>
+              <option value="EMPLOYE">{{ $t("employee") }}</option>
             </select>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="close">
-            Close
+            {{ $t("close") }}
           </button>
           <button type="button" class="btn btn-primary" @click="submitUser">
-            {{ editMode ? "Update" : "Add" }}
+            {{ editMode ? $t("update") : $t("add") }}
           </button>
         </div>
       </div>
@@ -58,6 +60,9 @@
 import { ref, watch } from "vue";
 import { useUserStore } from "../../stores/userStore";
 import Swal from "sweetalert2";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps({
   user: Object,
@@ -74,29 +79,28 @@ const submitUser = async () => {
     !props.user.role ||
     (!props.editMode && !props.user.password)
   ) {
-    Swal.fire("Error", "All fields are required", "error");
+    Swal.fire(t("error"), t("allFieldsRequired"), "error");
     return;
   }
 
   try {
     if (props.editMode) {
-      // If password is provided, include it in the update, otherwise exclude it
       const userData = { ...props.user };
       if (!userData.password) delete userData.password;
 
       await userStore.updateUser(props.user.id, userData);
-      Swal.fire("Success", "User updated successfully", "success");
+      Swal.fire(t("success"), t("userUpdatedSuccessfully"), "success");
     } else {
       await userStore.createUser(props.user);
-      Swal.fire("Success", "User added successfully", "success");
+      Swal.fire(t("success"), t("userAddedSuccessfully"), "success");
       props.user = { name: "", email: "", password: "", role: "" };
     }
     emit("refresh");
   } catch (error) {
     console.error("Error during add/update:", error);
     Swal.fire(
-      "Error",
-      error.response?.data?.message || "An error occurred",
+      t("error"),
+      error.response?.data?.message || t("anErrorOccurred"),
       "error"
     );
   } finally {

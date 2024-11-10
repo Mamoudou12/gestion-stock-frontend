@@ -40,27 +40,22 @@ vue Copier le code
           <td>{{ reception.quantity }}</td>
           <td>{{ parseFloat(reception.price).toFixed(2) }} MRU</td>
           <td>
-            <button
-              @click="viewReception(reception)"
-              class="btn btn-outline-primary me-2"
-              :title="$t('view')"
-            >
-              <i class="fas fa-eye"></i>
-            </button>
-            <button
-              @click="editReception(reception)"
-              class="btn btn-outline-warning me-2"
-              :title="$t('edit')"
-            >
-              <i class="fas fa-edit"></i>
-            </button>
-            <button
-              @click="deleteReception(reception.id)"
-              class="btn btn-outline-danger"
-              :title="$t('delete')"
-            >
-              <i class="fas fa-trash"></i>
-            </button>
+            <div class="d-flex justify-content-center">
+              <button
+                @click="viewReception(reception)"
+                class="btn btn-outline-primary me-2"
+                :title="$t('view')"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+              <button
+                @click="deleteReception(reception.id)"
+                class="btn btn-outline-danger"
+                :title="$t('delete')"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>

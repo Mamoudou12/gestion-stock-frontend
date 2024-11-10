@@ -1,6 +1,6 @@
 <template>
-  <div class="modal" style="display: block">
-    <div class="modal-dialog">
+  <div class="modal show d-block">
+    <div class="modal-dialog modal-lg custom-modal-width">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
@@ -10,6 +10,7 @@
         </div>
 
         <div class="modal-body">
+          <!-- Formulaire -->
           <div class="mb-3">
             <label for="supplierId">{{ $t("supplier") }}:</label>
             <select
@@ -29,6 +30,7 @@
             </select>
           </div>
 
+          <!-- Champs de date et détails produits -->
           <div class="mb-3">
             <label for="receptionDate">{{ $t("receptionDate") }}:</label>
             <Datepicker
@@ -38,6 +40,7 @@
             />
           </div>
 
+          <!-- Détails des produits -->
           <div
             v-for="(product, index) in reception.detailReceptions"
             :key="index"
@@ -213,4 +216,10 @@ const close = () => {
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
+
+/* Classe pour personnaliser la largeur du modal */
+.custom-modal-width {
+  max-width: 60%; /* Largeur de 90% de l'écran */
+}
 </style>
+

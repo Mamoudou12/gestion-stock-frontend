@@ -73,29 +73,29 @@ export const useReceptionStore = defineStore("reception", {
       }
     },
 
-    async updateReception(id, updatedReception) {
-      const authStore = useAuthStore();
-      try {
-        const response = await axios.put(
-          `http://localhost:3000/api/receptions/${id}`,
-          updatedReception,
-          {
-            headers: {
-              Authorization: `Bearer ${authStore.token}`,
-            },
-          }
-        );
-        const index = this.receptions.findIndex(
-          (reception) => reception.id === id
-        );
-        if (index !== -1) {
-          this.receptions[index] = response.data.reception;
-        }
-      } catch (error) {
-        console.error("Error updating reception:", error);
-        throw error;
-      }
-    },
+    // async updateReception(id, updatedReception) {
+    //   const authStore = useAuthStore();
+    //   try {
+    //     const response = await axios.put(
+    //       `http://localhost:3000/api/receptions/${id}`,
+    //       updatedReception,
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${authStore.token}`,
+    //         },
+    //       }
+    //     );
+    //     const index = this.receptions.findIndex(
+    //       (reception) => reception.id === id
+    //     );
+    //     if (index !== -1) {
+    //       this.receptions[index] = response.data.reception;
+    //     }
+    //   } catch (error) {
+    //     console.error("Error updating reception:", error);
+    //     throw error;
+    //   }
+    // },
 
     async deleteReception(id) {
       const authStore = useAuthStore();

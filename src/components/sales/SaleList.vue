@@ -39,20 +39,22 @@ html Copier le code
           <td>{{ calculateTotalAmount(sale.saleDetails).toFixed(2) }} MRU</td>
           <td>{{ new Date(sale.saleDate).toLocaleDateString() }}</td>
           <td>
-            <button
-              @click="viewDetail(sale, 'Sale')"
-              class="btn btn-outline-info me-2"
-              :title="$t('viewDetails')"
-            >
-              <i class="fas fa-eye"></i>
-            </button>
-            <button
-              @click="deleteSale(sale.id)"
-              class="btn btn-outline-danger"
-              :title="$t('delete')"
-            >
-              <i class="fas fa-trash"></i>
-            </button>
+            <div class="d-flex justify-content-center">
+              <button
+                @click="viewDetail(sale, 'Sale')"
+                class="btn btn-outline-info me-2"
+                :title="$t('viewDetails')"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+              <button
+                @click="deleteSale(sale.id)"
+                class="btn btn-outline-danger"
+                :title="$t('delete')"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>

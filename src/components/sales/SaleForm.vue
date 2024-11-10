@@ -1,6 +1,6 @@
 <template>
-  <div class="modal" style="display: block">
-    <div class="modal-dialog">
+  <div class="modal show d-block" style="background: rgba(0, 0, 0, 0.5)">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">{{ $t("add_sale") }}</h5>
@@ -13,10 +13,10 @@
           </div>
 
           <div class="mb-3 row">
-            <label for="sale_Date" class="col-sm-3 col-form-label">
+            <label for="sale_Date" class="col-sm-2 col-form-label">
               {{ $t("sale_date") }}:
             </label>
-            <div class="col-sm-9">
+            <div class="col-sm-10">
               <DatePicker
                 v-model="sale.saleDate"
                 :format="'YYYY-MM-DD'"
@@ -28,10 +28,10 @@
           </div>
 
           <div class="mb-3 row">
-            <label for="firstName" class="col-sm-3 col-form-label">
+            <label for="firstName" class="col-sm-2 col-form-label">
               {{ $t("first_name") }}:
             </label>
-            <div class="col-sm-9">
+            <div class="col-sm-10">
               <input
                 id="firstName"
                 v-model="sale.firstName"
@@ -43,10 +43,10 @@
           </div>
 
           <div class="mb-3 row">
-            <label for="lastName" class="col-sm-3 col-form-label">
+            <label for="lastName" class="col-sm-2 col-form-label">
               {{ $t("last_name") }}:
             </label>
-            <div class="col-sm-9">
+            <div class="col-sm-10">
               <input
                 id="lastName"
                 v-model="sale.lastName"
@@ -58,10 +58,10 @@
           </div>
 
           <div class="mb-3 row">
-            <label for="address" class="col-sm-3 col-form-label">
+            <label for="address" class="col-sm-2 col-form-label">
               {{ $t("address") }}:
             </label>
-            <div class="col-sm-9">
+            <div class="col-sm-10">
               <input
                 id="address"
                 v-model="sale.address"
@@ -80,7 +80,7 @@
             <h6>{{ $t("product") }} {{ index + 1 }}</h6>
 
             <div class="row">
-              <div class="col-md-4 mb-2">
+              <div class="col-md-4">
                 <label :for="'productId-' + index">{{ $t("product") }}:</label>
                 <select
                   :id="'productId-' + index"
@@ -99,7 +99,7 @@
                   </option>
                 </select>
               </div>
-              <div class="col">
+              <div class="col-md-4">
                 <label :for="'quantity-' + index" class="form-label">
                   {{ $t("quantity") }}:
                 </label>
@@ -111,7 +111,7 @@
                   type="number"
                 />
               </div>
-              <div class="col">
+              <div class="col-md-4">
                 <label :for="'price-' + index" class="form-label">
                   {{ $t("price") }}:
                 </label>
@@ -157,6 +157,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { ref, computed } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
@@ -191,6 +192,7 @@ const addProduct = () => {
   });
 };
 
+
 const removeProduct = (index) => {
   sale.value.saleDetails.splice(index, 1);
 };
@@ -224,7 +226,7 @@ const submitSale = async () => {
     emit("refresh");
     emit("close");
   } catch (error) {
-    errorMessage.value =  t("errorSavingSale");
+    errorMessage.value = t("errorSavingSale");
     console.error(error);
   }
 };

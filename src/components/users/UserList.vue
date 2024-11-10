@@ -1,28 +1,31 @@
 <template>
   <div>
-    <h2 class="text-primary mb-4">User Management</h2>
-    <button @click="openAddUserModal" class="btn btn-danger mb-4">
-      <i class="fas fa-plus"></i> Add User
+    <h2 class="text-primary mb-4">{{ $t("userManagement") }}</h2>
+    <button @click="openAddUserModal" class="btn btn-primary mb-4">
+      <i class="fas fa-plus"></i> {{ $t("addUser") }}
     </button>
 
     <input
       type="text"
       v-model="searchQuery"
-      placeholder="Search for a user"
+      :placeholder="$t('searchUser')"
       class="form-control mb-4 search-input"
     />
 
-    <div v-if="loading" class="alert alert-info">Loading users...</div>
+    <div v-if="loading" class="alert alert-info">{{ $t("loadingUsers") }}</div>
 
-    <table class="table table-hover table-bordered" v-if="!loading && filteredUsers.length">
+    <table
+      class="table table-hover table-bordered"
+      v-if="!loading && filteredUsers.length"
+    >
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Role</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th>{{ $t("id") }}</th>
+          <th>{{ $t("name") }}</th>
+          <th>{{ $t("email") }}</th>
+          <th>{{ $t("role") }}</th>
+          <th>{{ $t("status") }}</th>
+          <th>{{ $t("actions") }}</th>
         </tr>
       </thead>
       <tbody>
@@ -38,28 +41,29 @@
                 'badge bg-secondary': !user.status,
               }"
             >
-              {{ user.status ? "Active" : "Inactive" }}
+              {{ user.status ? $t("active") : $t("inactive") }}
             </span>
           </td>
           <td>
-            <button
+            <div class="d-flex justify-content-center">
+              <button
               @click="viewUser(user)"
               class="btn btn-outline-info me-2"
-              title="View"
+              :title="$t('view')"
             >
               <i class="fas fa-eye"></i>
             </button>
             <button
               @click="editUser(user)"
               class="btn btn-outline-warning me-2"
-              title="Edit"
+              :title="$t('edit')"
             >
               <i class="fas fa-edit"></i>
             </button>
             <button
               @click="toggleUserStatus(user)"
               class="btn btn-outline-primary me-2"
-              :title="user.status ? 'Deactivate' : 'Activate'"
+              :title="user.status ? $t('deactivate') : $t('activate')"
             >
               <i
                 :class="user.status ? 'fas fa-user-slash' : 'fas fa-user-check'"
@@ -68,17 +72,18 @@
             <button
               @click="deleteUser(user.id)"
               class="btn btn-outline-danger"
-              title="Delete"
+              :title="$t('delete')"
             >
               <i class="fas fa-trash"></i>
             </button>
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
 
     <div v-if="!loading && !filteredUsers.length" class="alert alert-warning">
-      No users found.
+      {{ $t("noUsersFound") }}
     </div>
 
     <!-- Modal for adding/editing user -->
@@ -105,6 +110,9 @@ import { useUserStore } from "../../stores/userStore";
 import UserForm from "./UserForm.vue";
 import UserDetailModal from "./UserView.vue";
 import Swal from "sweetalert2";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const userStore = useUserStore();
 const searchQuery = ref("");
@@ -136,11 +144,9 @@ const filteredUsers = computed(() => {
       user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
     .sort((a, b) => {
-      // Les utilisateurs actifs (status: true) apparaissent avant les inactifs (status: false)
       return b.status - a.status;
     });
 });
-
 
 const openAddUserModal = () => {
   currentUser.value = { id: "", name: "", email: "", role: "", status: false };
@@ -161,44 +167,40 @@ const editUser = (user) => {
 
 const toggleUserStatus = async (user) => {
   try {
-    // Inverse le statut de l'utilisateur
     user.status = !user.status;
-
-    // Met à jour le statut dans le store
     await userStore.updateUserStatus(user.id, user.status);
-
-    // Affiche un message de succès avec SweetAlert
     Swal.fire(
-      "Succès",
-      `Le statut de l'utilisateur a été changé à ${user.status ? "Actif" : "Inactif"}.`,
+      t("success"),
+      `${t("userStatusChanged")} ${
+        user.status ? t("active") : t("inactive")
+      }.`,
       "success"
     );
   } catch (error) {
-    console.error("Erreur lors de la mise à jour du statut de l'utilisateur:", error);
-    Swal.fire("Erreur", "Une erreur est survenue lors de la mise à jour du statut.", "error");
+    console.error("Error updating user status:", error);
+    Swal.fire(t("error"), t("updateStatusError"), "error");
   }
 };
 
-
 const deleteUser = async (id) => {
   const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to recover this user!",
+    title: t("areYouSure"),
+    text: t("deleteWarning"),
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#d33",
     cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: t("yesDelete"),
   });
 
   if (result.isConfirmed) {
     try {
       await userStore.deleteUser(id);
-      Swal.fire("Deleted!", "The user has been deleted.", "success");
+      Swal.fire(t("deleted"), t("userDeleted"), "success");
       fetchUsers();
     } catch (error) {
       console.error("Error during deletion:", error);
-      Swal.fire("Error", "An error occurred during deletion", "error");
+      Swal.fire(t("error"), t("deletionError"), "error");
     }
   }
 };
