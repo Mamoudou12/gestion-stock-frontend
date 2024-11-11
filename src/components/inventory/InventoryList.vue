@@ -36,7 +36,8 @@
           <td>{{ getProductName(item.productId) }}</td>
           <!-- Display product name -->
           <td>
-            <button
+            <div class="d-flex justify-content-center">
+              <button
               @click="viewInventory(item)"
               class="btn btn-outline-info me-2"
               title="View"
@@ -57,6 +58,7 @@
             >
               <i class="fas fa-trash"></i>
             </button>
+            </div>
           </td>
         </tr>
       </tbody>

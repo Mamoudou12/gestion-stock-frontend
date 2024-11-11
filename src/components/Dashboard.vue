@@ -22,7 +22,7 @@
           <option value="en">en</option>
           <option value="ar">ar</option>
           <option value="pl">pl</option>
-          <option value="es">es</option>
+          <option value="esp">esp</option>
         </select>
       </div>
     </header>

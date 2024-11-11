@@ -17,14 +17,14 @@ import en from './locales/en.json';
 import fr from './locales/fr.json';
 import ar from './locales/ar.json';
 import pl from './locales/pl.json';
-import es from './locales/es.json';
+import esp from './locales/esp.json';
 
 const messages = {
   en,
   fr,
   ar,
   pl,
-  es,
+  esp,
 };
 
 // Créer une instance d'i18n

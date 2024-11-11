@@ -1,5 +1,25 @@
-# Vue 3 + Vite
+# Gestion de Stock
+Une application de gestion de stock simple et efficace, construite avec Vue.js. Cette application permet aux utilisateurs de suivre les réceptions de stock, de gérer les produits, les ventes et les fournisseurs.
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Prérequis
+Avant de commencer, assurez-vous d'avoir les éléments suivants :
+- Node.js (version 14+ recommandée)
+- Vue CLI pour créer et gérer le projet Vue.js
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## Installation
+Suivez les étapes ci-dessous pour installer l'application sur votre machine locale.
+
+1. Clonez le dépôt :
+
+```bash
+git clone https://github.com/Mamoudou12/gestion-stock-frontend.git
+```
+
+2. Installez les dépendances :
+
+```bash
+npm install
+```
+
+[Mamoudou Adama Ba](https://github.com/Mamoudou12)
+
