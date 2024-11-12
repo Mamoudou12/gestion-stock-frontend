@@ -42,12 +42,13 @@ html Copier le code
             <div class="d-flex justify-content-center">
               <button
                 @click="viewDetail(sale, 'Sale')"
-                class="btn btn-outline-info me-2"
+                class="btn btn-outline-primary me-2"
                 :title="$t('viewDetails')"
               >
                 <i class="fas fa-eye"></i>
               </button>
               <button
+              v-if="authStore.role === 'ADMIN'"
                 @click="deleteSale(sale.id)"
                 class="btn btn-outline-danger"
                 :title="$t('delete')"
@@ -153,6 +154,7 @@ html Copier le code
 import { ref, computed, onMounted } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
 import { useProductStore } from "../../stores/productStore";
+import { useAuthStore } from "../../stores/authStore";
 import Swal from "sweetalert2";
 import SaleForm from "./SaleForm.vue";
 import * as bootstrap from "bootstrap";
@@ -162,6 +164,7 @@ const { t } = useI18n();
 
 const saleStore = useSaleStore();
 const productStore = useProductStore();
+const authStore = useAuthStore()
 const searchQuery = ref("");
 const loading = ref(true);
 const modalContext = ref("");

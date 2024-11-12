@@ -7,11 +7,19 @@
         </button>
       </div>
       <div class="header-right">
+        <!-- Affiche le nom de l'utilisateur connecté -->
+        <div class="profile-container">
+          <i class="fas fa-user-circle profile-icon"></i>
+          <span class="profile-name"
+            > {{ greeting }}, {{ userName }}</span
+          >
+        </div>
+
         <button class="btn mode" @click="toggleTheme">
           <i :class="isDarkMode ? 'fas fa-moon' : 'fas fa-sun'"></i>
-          <span class="ms-2">{{
-            isDarkMode ? "Mode sombre" : "Mode claire"
-          }}</span>
+          <span class="ms-2">
+            {{ isDarkMode ? "Mode sombre" : "Mode claire" }}
+          </span>
         </button>
         <select
           v-model="currentLanguage"
@@ -69,12 +77,13 @@
             <span v-if="!isSidebarCollapsed">{{ $t("app.header.sales") }}</span>
           </router-link>
         </li>
-        <li>
+        <li v-if="authStore.role === 'ADMIN'">
           <router-link to="/dashboard/users" class="nav-link">
             <i class="fas fa-users me-2"></i>
             <span v-if="!isSidebarCollapsed">{{ $t("app.header.users") }}</span>
           </router-link>
         </li>
+
         <li>
           <router-link to="/dashboard/inventory" class="nav-link">
             <i class="fas fa-warehouse me-2"></i>
@@ -115,7 +124,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useAuthStore } from "../stores/AuthStore";
 import { useI18n } from "vue-i18n";
 
@@ -125,6 +134,7 @@ const notifications = ref(0);
 const currentLanguage = ref("fr");
 const authStore = useAuthStore();
 const { locale } = useI18n();
+const userName = ref(localStorage.getItem("userName") || "");
 
 const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
@@ -150,6 +160,22 @@ const handleLogout = () => {
   authStore.logout();
   window.location.href = "/";
 };
+
+const greeting = ref("");
+
+const calculateGreeting = () => {
+  const hour = new Date().getHours();
+  greeting.value = hour < 12 ? "Bonjour" : "Bonsoir";
+};
+
+// Calculer la salutation lors du chargement du composant
+onMounted(() => {
+  calculateGreeting();
+  if (authStore.user) {
+    userName.value = authStore.user.name;
+    localStorage.setItem("userName", authStore.user.name); // Sauvegarder le nom de l'utilisateur dans le localStorage
+  }
+});
 </script>
 
 <style scoped>
@@ -205,6 +231,33 @@ const handleLogout = () => {
   gap: 15px;
 }
 
+.profile-container {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff; /* Fond neutre */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre légère pour effet de carte */
+}
+
+.profile-icon {
+  font-size: 1.5rem;
+  color: #4a90e2; /* Couleur distinctive pour l'icône */
+  margin-right: 10px;
+}
+
+.profile-name {
+  font-size: 1.2rem; /* Taille de texte agréable */
+  font-weight: 600;
+  color: #333; /* Couleur de texte professionnel */
+}
+
+.header-right .profile-container:hover {
+  background-color: #f0f4fa; /* Change de couleur au survol pour accentuer */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Légère ombre supplémentaire */
+}
+
 .sidebar {
   width: 250px;
   background-color: #fafafa;
@@ -238,7 +291,6 @@ const handleLogout = () => {
   border-radius: 5px;
   color: #ffffff;
 }
-
 
 .profile {
   display: flex;

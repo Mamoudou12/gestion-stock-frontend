@@ -25,7 +25,7 @@
 import { ref } from "vue";
 import { useAuthStore } from "../stores/authStore";
 import { useRouter } from "vue-router";
-import Swal from "sweetalert2"; // Import de sweetalert2
+import Swal from "sweetalert2";
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -34,6 +34,7 @@ const email = ref("");
 const password = ref("");
 const loading = ref(false);
 const error = ref(null);
+
 const handleLogin = async () => {
   error.value = null;
   loading.value = true;
@@ -41,10 +42,10 @@ const handleLogin = async () => {
   try {
     await authStore.login(email.value, password.value);
     if (authStore.isAuthenticated) {
-      // Afficher un message de succès
+      // Afficher un message de succès avec le nom et le rôle de l'utilisateur
       Swal.fire({
         title: "Connexion réussie!",
-        text: "Bienvenue, vous êtes maintenant connecté.",
+        text: `Bienvenue ${authStore.user.name}, vous êtes connecté en tant que ${authStore.role}.`,
         icon: "success",
         confirmButtonText: "OK",
       });
@@ -53,7 +54,7 @@ const handleLogin = async () => {
       await router.replace("/dashboard/home");
     }
   } catch (err) {
-    error.value = err.message; // Affiche le message d'erreur de l'API
+    error.value = err.message;
   } finally {
     loading.value = false;
   }

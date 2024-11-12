@@ -49,6 +49,7 @@ vue Copier le code
                 <i class="fas fa-eye"></i>
               </button>
               <button
+              v-if="authStore.role === 'ADMIN'"
                 @click="deleteReception(reception.id)"
                 class="btn btn-outline-danger"
                 :title="$t('delete')"
@@ -132,11 +133,13 @@ import { useSupplierStore } from "../../stores/supplierStore";
 import ReceptionForm from "./ReceptionForm.vue";
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n"; // Importer useI18n pour les traductions
+import { useAuthStore } from "../../stores/authStore";
 
 const { t } = useI18n();
 
 const receptionStore = useReceptionStore();
 const productStore = useProductStore();
+const authStore = useAuthStore()
 const supplierStore = useSupplierStore();
 const searchQuery = ref("");
 const loading = ref(true);

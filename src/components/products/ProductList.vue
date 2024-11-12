@@ -88,6 +88,7 @@
               <i class="fas fa-edit"></i>
             </button>
             <button
+              v-if="authStore.role === 'ADMIN'"
               @click="deleteProduct(product.id)"
               class="btn btn-outline-danger btn-sm"
               title="Delete"
@@ -127,11 +128,13 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useProductStore } from "../../stores/productStore";
+import { useAuthStore } from "../../stores/authStore";
 import Swal from "sweetalert2";
 import ProductForm from "./ProductForm.vue";
 import ProductView from "./ProductView.vue";
 
 const productStore = useProductStore();
+const authStore = useAuthStore();
 const searchQuery = ref("");
 const loading = ref(true);
 const showModal = ref(false);

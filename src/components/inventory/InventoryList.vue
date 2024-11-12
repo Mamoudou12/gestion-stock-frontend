@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="text-primary mb-4">Inventory Management</h2>
-    <button @click="openAddInventoryModal" class="btn btn-danger mb-4">
+    <button @click="openAddInventoryModal" class="btn btn-primary mb-4">
       <i class="fas fa-plus"></i> Add Inventory
     </button>
 
@@ -39,7 +39,7 @@
             <div class="d-flex justify-content-center">
               <button
               @click="viewInventory(item)"
-              class="btn btn-outline-info me-2"
+              class="btn btn-outline-primary me-2"
               title="View"
             >
               <i class="fas fa-eye"></i>
@@ -52,6 +52,7 @@
               <i class="fas fa-edit"></i>
             </button> -->
             <button
+            v-if="authStore.role === 'ADMIN'"
               @click="deleteInventory(item.id)"
               class="btn btn-outline-danger"
               title="Delete"
@@ -91,11 +92,13 @@
 import { ref, computed, onMounted } from "vue";
 import { useInventoryStore } from "../../stores/inventoryStore";
 import { useProductStore } from "../../stores/productStore"; // Import productStore
+import { useAuthStore } from "../../stores/authStore";
 import InventoryForm from "./InventoryForm.vue";
 import InventoryDetailModal from "./InventoryView.vue";
 import Swal from "sweetalert2";
 
 const inventoryStore = useInventoryStore();
+const authStore = useAuthStore()
 const productStore = useProductStore(); // Initialize product store
 const searchQuery = ref("");
 const loading = ref(true);
