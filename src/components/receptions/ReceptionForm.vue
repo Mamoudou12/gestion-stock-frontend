@@ -10,14 +10,14 @@
         </div>
 
         <div class="modal-body">
-          <!-- Formulaire -->
+          <!-- Sélection du fournisseur -->
           <div class="mb-3">
             <label for="supplierId">{{ $t("supplier") }}:</label>
             <select
               id="supplierId"
               v-model="reception.supplierId"
               required
-              class="form-control"
+              class="form-control form-control-sm w-100"
             >
               <option value="" disabled>{{ $t("selectSupplier") }}</option>
               <option
@@ -28,78 +28,123 @@
                 {{ supplier.email }}
               </option>
             </select>
+            <small v-if="errors.supplierId" class="text-danger">
+              {{ errors.supplierId }}
+            </small>
           </div>
 
-          <!-- Champs de date et détails produits -->
+          <!-- Date de réception avec icône de date -->
           <div class="mb-3">
             <label for="receptionDate">{{ $t("receptionDate") }}:</label>
-            <Datepicker
-              v-model="reception.receptionDate"
-              format="yyyy-MM-dd"
-              class="form-control custom-datepicker"
-            />
+            <div class="input-group">
+              <Datepicker
+                v-model="reception.receptionDate"
+                format="yyyy-MM-dd"
+                class="form-control form-control-sm w-100 custom-datepicker"
+              />
+              <span class="input-group-text">
+                <i class="fas fa-calendar-alt"></i>
+              </span>
+            </div>
           </div>
 
           <!-- Détails des produits -->
-          <div
-            v-for="(product, index) in reception.detailReceptions"
-            :key="index"
-            class="product-entry"
-          >
-            <h6>{{ $t("product") }} {{ index + 1 }}</h6>
-            <div class="row">
-              <div class="col-md-4 mb-2">
-                <label :for="'productId-' + index">{{ $t("product") }}:</label>
-                <select
-                  :id="'productId-' + index"
-                  v-model="product.productId"
-                  required
-                  class="form-control"
-                >
-                  <option value="" disabled>{{ $t("selectSupplier") }}</option>
-                  <option
-                    v-for="prod in products"
-                    :key="prod.id"
-                    :value="prod.id"
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(product, index) in reception.detailReceptions"
+                :key="index"
+              >
+                <td>
+                  <select
+                    class="form-control form-control-sm w-100"
+                    v-model="product.productId"
+                    required
                   >
-                    {{ prod.name }}
-                  </option>
-                </select>
-              </div>
-              <div class="col-md-4 mb-2">
-                <label :for="'quantity-' + index">{{ $t("quantity") }}:</label>
-                <input
-                  :id="'quantity-' + index"
-                  v-model="product.quantity"
-                  required
-                  class="form-control"
-                  type="number"
-                />
-              </div>
-              <div class="col-md-4 mb-2">
-                <label :for="'price-' + index">{{ $t("price") }}:</label>
-                <input
-                  :id="'price-' + index"
-                  v-model="product.price"
-                  required
-                  class="form-control"
-                  type="number"
-                  step="0.01"
-                />
-              </div>
-            </div>
-            <button
-              type="button"
-              class="btn btn-danger mt-2"
-              @click="removeProduct(index)"
-            >
-              {{ $t("removeProduct") }}
-            </button>
-          </div>
-
+                    <option value="" disabled>{{ $t("selectProduct") }}</option>
+                    <option
+                      v-for="prod in products"
+                      :key="prod.id"
+                      :value="prod.id"
+                    >
+                      {{ prod.name }}
+                    </option>
+                  </select>
+                  <small
+                    v-if="
+                      errors[`detailReceptions.${index}.productId`] ||
+                      product.productId === ''
+                    "
+                    class="text-danger"
+                  >
+                    {{
+                      errors[`detailReceptions.${index}.productId`] ||
+                      $t("selectProductError")
+                    }}
+                  </small>
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    v-model="product.quantity"
+                    class="form-control form-control-sm w-100"
+                    placeholder="Quantity"
+                    required
+                    min="1"
+                  />
+                  <small v-if="product.quantity <= 0" class="text-danger">{{
+                    $t("quantityGreaterThanZero")
+                  }}</small>
+                  <small
+                    v-if="errors[`detailReceptions.${index}.quantity`]"
+                    class="text-danger"
+                  >
+                    {{ errors[`detailReceptions.${index}.quantity`] }}
+                  </small>
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.01"
+                    v-model="product.price"
+                    class="form-control form-control-sm w-100"
+                    placeholder="Price"
+                    required
+                    min="0.01"
+                  />
+                  <small v-if="product.price <= 0" class="text-danger">{{
+                    $t("priceGreaterThanZero")
+                  }}</small>
+                  <small
+                    v-if="errors[`detailReceptions.${index}.price`]"
+                    class="text-danger"
+                  >
+                    {{ errors[`detailReceptions.${index}.price`] }}
+                  </small>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm w-100"
+                    @click="removeProduct(index)"
+                  >
+                    {{ $t("removeProduct") }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
           <button
             type="button"
-            class="btn btn-secondary mt-3"
+            class="btn btn-success btn-sm mt-3"
             @click="addProduct"
           >
             {{ $t("addProduct") }}
@@ -107,12 +152,12 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">
+          <button type="button" class="btn btn-secondary btn-sm" @click="close">
             {{ $t("close") }}
           </button>
           <button
             type="button"
-            class="btn btn-primary"
+            class="btn btn-primary btn-sm"
             @click="submitReception"
           >
             {{ editMode ? $t("updateReception") : $t("addReceptionButton") }}
@@ -128,11 +173,12 @@ import { ref, computed, defineProps, defineEmits } from "vue";
 import { useReceptionStore } from "../../stores/receptionStore";
 import { useSupplierStore } from "../../stores/supplierStore";
 import { useProductStore } from "../../stores/productStore";
-import Swal from "sweetalert2";
+import { useToast } from "vue-toastification";
 import Datepicker from "vue3-datepicker";
-import { useI18n } from "vue-i18n"; // Importer useI18n pour les traductions
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+const toast = useToast();
 
 const props = defineProps({
   reception: {
@@ -161,11 +207,13 @@ const reception = ref({
   detailReceptions: props.reception.detailReceptions || [],
 });
 
+const errors = ref({});
+
 const addProduct = () => {
   reception.value.detailReceptions.push({
     productId: "",
-    quantity: 0,
-    price: 0.0,
+    quantity: 1,
+    price: 0.01,
   });
 };
 
@@ -176,30 +224,31 @@ const removeProduct = (index) => {
 const submitReception = async () => {
   const { supplierId, receptionDate, detailReceptions } = reception.value;
 
-  if (!supplierId || detailReceptions.length === 0) {
-    Swal.fire(t("error"), t("errorMessage"), "error");
+  if (
+    !supplierId ||
+    detailReceptions.length === 0 ||
+    detailReceptions.some((p) => p.quantity <= 0 || p.price <= 0)
+  ) {
+    if (!supplierId) errors.value.supplierId = t("supplierRequired");
+    toast.error(t("errorMessage"));
     return;
   }
 
   try {
     if (props.editMode) {
       await receptionStore.updateReception(props.reception.id, reception.value);
-      Swal.fire(t("success"), t("receptionUpdated"), "success");
+      toast.success(t("receptionUpdated"));
     } else {
       await receptionStore.createReception(reception.value);
-      Swal.fire(t("success"), t("receptionAdded"), "success");
+      toast.success(t("receptionAdded"));
       reception.value.supplierId = "";
       reception.value.receptionDate = new Date();
       reception.value.detailReceptions = [];
     }
     emit("refresh");
   } catch (error) {
-    console.error("Error during reception add/update:", error);
-    Swal.fire(
-      t("error"),
-      error.response?.data?.message || t("unknownError"),
-      "error"
-    );
+    errors.value = error.response?.data?.errors || {};
+    toast.error(error.response?.data?.message || t("unknownError"));
   } finally {
     close();
   }
@@ -211,15 +260,12 @@ const close = () => {
 </script>
 
 <style scoped>
-.product-entry {
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
+.custom-modal-width {
+  max-width: 70%;
 }
 
-/* Classe pour personnaliser la largeur du modal */
-.custom-modal-width {
-  max-width: 60%; /* Largeur de 90% de l'écran */
+.form-control,
+.btn {
+  height: 36px; /* Hauteur uniforme pour les champs de formulaire et boutons */
 }
 </style>
-

@@ -1,6 +1,10 @@
 <template>
   <div class="text-primary mb-4 movement-list">
     <h2 class="text-center mb-4">Liste des Mouvements de Stock</h2>
+
+    <!-- Loader ici -->
+    <Loader v-if="isLoading" />
+
     <input
       type="text"
       v-model="searchQuery"
@@ -30,14 +34,23 @@
           <td>{{ movement.id }}</td>
           <td>{{ getProductName(movement.productId) }}</td>
           <td>{{ getUserName(movement.userId) }}</td>
-          <td :class="{'text-success': movement.type === 'in', 'text-danger': movement.type === 'out'}">
+          <td
+            :class="{
+              'text-success': movement.type === 'in',
+              'text-danger': movement.type === 'out',
+            }"
+          >
             {{ movement.type }}
           </td>
           <td>{{ movement.quantity }}</td>
           <td>{{ movement.entity }}</td>
           <td>{{ new Date(movement.movementDate).toLocaleDateString() }}</td>
           <td class="text-center">
-            <button @click="openMovementModal(movement)" class="btn btn-outline-primary" title="Voir">
+            <button
+              @click="openMovementModal(movement)"
+              class="btn btn-outline-primary"
+              title="Voir"
+            >
               <i class="fas fa-eye"></i>
             </button>
           </td>
@@ -48,19 +61,35 @@
     <!-- Pagination Controls -->
     <nav v-if="totalPages > 1" aria-label="Page navigation">
       <ul class="pagination justify-content-center">
-        <li :class="['page-item', { disabled: currentPage === 1 }]" @click="prevPage">
+        <li
+          :class="['page-item', { disabled: currentPage === 1 }]"
+          @click="prevPage"
+        >
           <button class="page-link">Précédent</button>
         </li>
-        <li v-for="page in visiblePages" :key="page" :class="['page-item', { active: currentPage === page }]" @click="goToPage(page)">
+        <li
+          v-for="page in visiblePages"
+          :key="page"
+          :class="['page-item', { active: currentPage === page }]"
+          @click="goToPage(page)"
+        >
           <button class="page-link">{{ page }}</button>
         </li>
-        <li :class="['page-item', { disabled: currentPage === totalPages }]" @click="nextPage">
+        <li
+          :class="['page-item', { disabled: currentPage === totalPages }]"
+          @click="nextPage"
+        >
           <button class="page-link">Suivant</button>
         </li>
       </ul>
     </nav>
 
-    <GenericModal v-if="selectedMovement" :movement="selectedMovement" modalTitle="Détails du Mouvement" @close="closeMovementModal" />
+    <GenericModal
+      v-if="selectedMovement"
+      :movement="selectedMovement"
+      modalTitle="Détails du Mouvement"
+      @close="closeMovementModal"
+    />
   </div>
 </template>
 
@@ -70,6 +99,7 @@ import { useMovementStore } from "../../stores/movementStore";
 import { useProductStore } from "../../stores/productStore";
 import { useUserStore } from "../../stores/userStore";
 import GenericModal from "./MovementModal.vue";
+import Loader from "../Loader.vue"; // Importer le composant Loader
 
 const movementStore = useMovementStore();
 const productStore = useProductStore();
@@ -82,16 +112,21 @@ const selectedMovement = ref(null);
 const currentPage = ref(1);
 const pageSize = ref(8);
 
+// État du loader
+const isLoading = ref(true);
+
 // Filtrer les mouvements de stock par nom de produit
 const filteredMovements = computed(() => {
-  return movements.filter(movement => {
+  return movements.filter((movement) => {
     const productName = getProductName(movement.productId).toLowerCase();
     return productName.includes(searchQuery.value.toLowerCase());
   });
 });
 
 // Calculer le nombre total de pages
-const totalPages = computed(() => Math.ceil(filteredMovements.value.length / pageSize.value));
+const totalPages = computed(() =>
+  Math.ceil(filteredMovements.value.length / pageSize.value)
+);
 
 // Calculer les mouvements de la page actuelle
 const paginatedMovements = computed(() => {
@@ -113,9 +148,20 @@ const visiblePages = computed(() => {
 });
 
 onMounted(async () => {
-  await movementStore.fetchMovements();
-  await productStore.fetchProducts();
-  await userStore.fetchUsers();
+  try {
+    isLoading.value = true;
+    // Simuler un chargement avec un délai de 2 secondes pour tester le loader
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Récupérer les données
+    await movementStore.fetchMovements();
+    await productStore.fetchProducts();
+    await userStore.fetchUsers();
+  } catch (error) {
+    console.error("Erreur lors du chargement des données:", error);
+  } finally {
+    isLoading.value = false;
+  }
 });
 
 const openMovementModal = (movement) => {

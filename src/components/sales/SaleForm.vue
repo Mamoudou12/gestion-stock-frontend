@@ -13,131 +13,136 @@
           </div>
 
           <div class="mb-3 row">
-            <label for="sale_Date" class="col-sm-2 col-form-label">
-              {{ $t("sale_date") }}:
-            </label>
-            <div class="col-sm-10">
-              <DatePicker
-                v-model="sale.saleDate"
-                :format="'YYYY-MM-DD'"
-                :clearable="true"
-                :editable="true"
-                class="form-control"
-              />
+            <!-- Date and First Name on the same line -->
+            <div class="col-sm-6">
+              <label for="sale_Date" class="col-form-label">
+                {{ $t("sale_date") }}:
+              </label>
+              <div class="input-group">
+                <DatePicker
+                  v-model="sale.saleDate"
+                  :format="'YYYY-MM-DD'"
+                  class="form-control form-control-sm"
+                />
+                <span class="input-group-text">
+                  <i class="fas fa-calendar-alt"></i>
+                </span>
+              </div>
             </div>
-          </div>
-
-          <div class="mb-3 row">
-            <label for="firstName" class="col-sm-2 col-form-label">
-              {{ $t("first_name") }}:
-            </label>
-            <div class="col-sm-10">
+            <div class="col-sm-6">
+              <label for="firstName" class="col-form-label">
+                {{ $t("first_name") }}:
+              </label>
               <input
                 id="firstName"
                 v-model="sale.firstName"
-                required
                 class="form-control"
                 type="text"
+                placeholder="Enter First Name"
               />
             </div>
           </div>
 
           <div class="mb-3 row">
-            <label for="lastName" class="col-sm-2 col-form-label">
-              {{ $t("last_name") }}:
-            </label>
-            <div class="col-sm-10">
-              <input
-                id="lastName"
-                v-model="sale.lastName"
-                required
-                class="form-control"
-                type="text"
-              />
-            </div>
-          </div>
-
-          <div class="mb-3 row">
-            <label for="address" class="col-sm-2 col-form-label">
-              {{ $t("address") }}:
-            </label>
-            <div class="col-sm-10">
+            <!-- Address and Last Name on the same line -->
+            <div class="col-sm-6">
+              <label for="address" class="col-form-label">
+                {{ $t("address") }}:
+              </label>
               <input
                 id="address"
                 v-model="sale.address"
-                required
                 class="form-control"
                 type="text"
+                placeholder="Enter Address"
+              />
+            </div>
+            <div class="col-sm-6">
+              <label for="lastName" class="col-form-label">
+                {{ $t("last_name") }}:
+              </label>
+              <input
+                id="lastName"
+                v-model="sale.lastName"
+                class="form-control"
+                type="text"
+                placeholder="Enter Last Name"
               />
             </div>
           </div>
 
-          <div
-            v-for="(product, index) in sale.saleDetails"
-            :key="index"
-            class="product-entry mb-3"
-          >
-            <h6>{{ $t("product") }} {{ index + 1 }}</h6>
-
-            <div class="row">
-              <div class="col-md-4">
-                <label :for="'productId-' + index">{{ $t("product") }}:</label>
-                <select
-                  :id="'productId-' + index"
-                  v-model="product.productId"
-                  required
-                  class="form-control"
-                  @change="updateProductPrice(product)"
-                >
-                  <option value="" disabled>{{ $t("selectProduct") }}</option>
-                  <option
-                    v-for="prod in products"
-                    :key="prod.id"
-                    :value="prod.id"
-                  >
-                    {{ prod.name }}
-                  </option>
-                </select>
-              </div>
-              <div class="col-md-4">
-                <label :for="'quantity-' + index" class="form-label">
-                  {{ $t("quantity") }}:
-                </label>
-                <input
-                  :id="'quantity-' + index"
-                  v-model="product.quantity"
-                  required
-                  class="form-control"
-                  type="number"
-                />
-              </div>
-              <div class="col-md-4">
-                <label :for="'price-' + index" class="form-label">
-                  {{ $t("price") }}:
-                </label>
-                <input
-                  :id="'price-' + index"
-                  v-model="product.price"
-                  required
-                  class="form-control"
-                  type="number"
-                  step="0.01"
-                />
-              </div>
-            </div>
-
-            <button
-              type="button"
-              class="btn btn-danger mt-2"
-              @click="removeProduct(index)"
-            >
-              {{ $t("removeProduct") }}
-            </button>
+          <div class="table-responsive mb-3">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>{{ $t("product") }}</th>
+                  <th>{{ $t("quantity") }}</th>
+                  <th>{{ $t("price") }}</th>
+                  <th>{{ $t("action") }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(product, index) in sale.saleDetails" :key="index">
+                  <td>
+                    <select
+                      v-model="product.productId"
+                      class="form-control"
+                      @change="updateProductPrice(product)"
+                    >
+                      <option value="" disabled>
+                        {{ $t("selectProduct") }}
+                      </option>
+                      <option
+                        v-for="prod in products"
+                        :key="prod.id"
+                        :value="prod.id"
+                      >
+                        {{ prod.name }}
+                      </option>
+                    </select>
+                    <small v-if="!product.productId" class="text-danger">
+                      {{ $t("selectProductError") }}
+                    </small>
+                  </td>
+                  <td>
+                    <input
+                      v-model="product.quantity"
+                      class="form-control"
+                      type="number"
+                      min="1"
+                      placeholder="Quantity"
+                    />
+                    <small v-if="product.quantity <= 0" class="text-danger">
+                      {{ $t("validQuantityRequired") }}
+                    </small>
+                  </td>
+                  <td>
+                    <input
+                      v-model="product.price"
+                      class="form-control"
+                      type="number"
+                      step="0.01"
+                      readonly
+                      placeholder="Price"
+                    />
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm w-100"
+                      @click="removeProduct(index)"
+                    >
+                      {{ $t("removeProduct") }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           <button
             type="button"
-            class="btn btn-secondary mt-3"
+            class="btn btn-success btn-sm"
             @click="addProduct"
           >
             {{ $t("addProduct") }}
@@ -145,10 +150,14 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">
+          <button type="button" class="btn btn-secondary btn-sm" @click="close">
             {{ $t("close") }}
           </button>
-          <button type="button" class="btn btn-primary" @click="submitSale">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            @click="submitSale"
+          >
             {{ $t("addSale") }}
           </button>
         </div>
@@ -157,16 +166,16 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, computed } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
 import { useProductStore } from "../../stores/productStore";
-import Swal from "sweetalert2";
-import DatePicker from "vue3-datepicker";
 import { useI18n } from "vue-i18n";
+import { useToast } from "vue-toastification";
+import DatePicker from "vue3-datepicker";
 
 const { t } = useI18n();
+const toast = useToast();
 
 const emit = defineEmits(["close", "refresh"]);
 const saleStore = useSaleStore();
@@ -175,7 +184,7 @@ const productStore = useProductStore();
 const products = computed(() => productStore.products);
 
 const sale = ref({
-  saleDate: "",
+  saleDate: new Date(),
   firstName: "",
   lastName: "",
   address: "",
@@ -184,19 +193,21 @@ const sale = ref({
 
 const errorMessage = ref("");
 
+// Function to add a product to the sale
 const addProduct = () => {
   sale.value.saleDetails.push({
     productId: "",
-    quantity: 0,
+    quantity: 1,
     price: 0.0,
   });
 };
 
-
+// Function to remove a product from the sale
 const removeProduct = (index) => {
   sale.value.saleDetails.splice(index, 1);
 };
 
+// Function to update the price when a product is selected
 const updateProductPrice = (product) => {
   const selectedProduct = products.value.find(
     (prod) => prod.id === product.productId
@@ -204,35 +215,64 @@ const updateProductPrice = (product) => {
   product.price = selectedProduct ? selectedProduct.sale_price : 0;
 };
 
+// Function to submit the sale
 const submitSale = async () => {
   const { saleDate, firstName, lastName, address, saleDetails } = sale.value;
   errorMessage.value = "";
 
   if (saleDetails.length === 0) {
-    errorMessage.value = $t("atLeastOneProductRequired");
+    toast.error(t("atLeastOneProductRequired"));
     return;
   }
 
+  // Validate saleDetails to ensure all fields are properly filled
   for (const product of saleDetails) {
     if (!product.productId || product.quantity <= 0 || product.price <= 0) {
-      errorMessage.value = t("validProductDetailsRequired");
+      toast.error(t("validProductDetailsRequired"));
       return;
     }
   }
 
   try {
     await saleStore.createSale(sale.value);
-    Swal.fire(t("success"), t("saleAddedSuccessfully"), "success");
+    toast.success(t("saleAddedSuccessfully"));
     emit("refresh");
     emit("close");
   } catch (error) {
-    errorMessage.value = t("errorSavingSale");
+    toast.error(t("errorSavingSale"));
     console.error(error);
   }
 };
 
-// Fonction pour fermer le modal
+// Close the modal
 const close = () => {
   emit("close");
 };
 </script>
+
+<style scoped>
+.modal-dialog {
+  max-width: 70%;
+}
+
+.form-control,
+.btn {
+  height: 36px;
+}
+
+.table td input {
+  width: 100%;
+  height: 36px;
+}
+
+.input-group .input-group-text {
+  background-color: #fff;
+  border-left: 0;
+  padding: 0.375rem 0.75rem;
+  font-size: 1.1rem;
+}
+
+.input-group .form-control {
+  border-right: 0;
+}
+</style>

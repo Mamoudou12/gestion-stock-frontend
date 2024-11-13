@@ -9,6 +9,9 @@ import { useAuthStore } from './stores/AuthStore';
 import 'bootstrap/dist/css/bootstrap.css'; 
 import 'bootstrap'; 
 import { createI18n } from 'vue-i18n';
+import Toast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
+
 
 
 
@@ -38,6 +41,7 @@ const i18n = createI18n({
 const app = createApp(App);
 const pinia = createPinia();
 app.use(i18n); 
+app.use(Toast);
 app.use(router);
 app.use(pinia);
 app.mount('#app');

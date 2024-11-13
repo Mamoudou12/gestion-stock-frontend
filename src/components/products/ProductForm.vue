@@ -17,6 +17,7 @@
                 required
                 class="form-control"
               />
+              <small class="text-danger">{{ errors.name }}</small>
             </div>
             <div class="col-md-6 mb-3">
               <label>Stock:</label>
@@ -27,12 +28,13 @@
                 required
                 class="form-control"
               />
+              <small class="text-danger">{{ errors.stock }}</small>
             </div>
           </div>
 
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label>Purshase Price:</label>
+              <label>Purchase Price:</label>
               <input
                 type="number"
                 v-model="product.purshase_price"
@@ -41,6 +43,7 @@
                 class="form-control"
                 step="0.01"
               />
+              <small class="text-danger">{{ errors.purshase_price }}</small>
             </div>
             <div class="col-md-6 mb-3">
               <label>Sale Price:</label>
@@ -52,6 +55,7 @@
                 class="form-control"
                 step="0.01"
               />
+              <small class="text-danger">{{ errors.sale_price }}</small>
             </div>
           </div>
 
@@ -65,6 +69,7 @@
                 required
                 class="form-control"
               />
+              <small class="text-danger">{{ errors.safetyStock }}</small>
             </div>
             <div class="col-md-6 mb-3">
               <label>Barcode:</label>
@@ -75,6 +80,7 @@
                 required
                 class="form-control"
               />
+              <small class="text-danger">{{ errors.barcode }}</small>
             </div>
           </div>
         </div>
@@ -100,30 +106,28 @@
 <script setup>
 import { ref, toRefs } from "vue";
 import Swal from "sweetalert2";
+import { useToast } from "vue-toastification";
 import { useProductStore } from "../../stores/productStore";
 
-// Définir les props
+const toast = useToast();
+
 const props = defineProps({
   editMode: Boolean,
   product: Object,
-  previewMode: Boolean, // Nouvelle prop pour le mode aperçu
+  previewMode: Boolean,
 });
 
-// Définir l'emit pour émettre des événements vers le parent
 const emit = defineEmits(["close", "refresh"]);
-
-// Extraire le produit depuis les props avec "toRefs"
 const { product: currentProduct } = toRefs(props);
-
-// Accéder au store des produits
 const productStore = useProductStore();
+const errors = ref({});
 
-// Fonction pour soumettre le formulaire (ajout ou mise à jour)
 const submitProduct = async () => {
+  errors.value = {}; // Reset errors
+
   const { name, stock, purshase_price, sale_price, safetyStock, barcode } =
     currentProduct.value;
 
-  // Validation simple des champs
   if (
     !name ||
     stock <= 0 ||
@@ -132,37 +136,45 @@ const submitProduct = async () => {
     safetyStock <= 0 ||
     !barcode
   ) {
-    return Swal.fire(
-      "Error",
-      "All fields are required and must be valid",
-      "error"
-    );
+    errors.value = {
+      name: !name ? "Name is required" : "",
+      stock: stock <= 0 ? "Stock must be positive" : "",
+      purshase_price:
+        purshase_price <= 0 ? "Purchase price must be positive" : "",
+      sale_price: sale_price <= 0 ? "Sale price must be positive" : "",
+      safetyStock: safetyStock <= 0 ? "Safety stock must be positive" : "",
+      barcode: !barcode ? "Barcode is required" : "",
+    };
+    toast.error("Please fill out all required fields correctly");
+    return;
   }
 
   try {
     if (props.editMode) {
-      // Mise à jour d'un produit existant
       await productStore.updateProduct(
         currentProduct.value.id,
         currentProduct.value
       );
       Swal.fire("Success", "Product updated successfully", "success");
     } else {
-      // Ajout d'un nouveau produit
       await productStore.createProduct(currentProduct.value);
       Swal.fire("Success", "Product added successfully", "success");
     }
 
-    // Fermer la modal et rafraîchir la liste des produits
     close();
     emit("refresh");
   } catch (error) {
-    console.error(error);
-    Swal.fire("Error", "An error occurred", "error");
+    if (error.response && error.response.data.errors) {
+      error.response.data.errors.forEach((err) => {
+        errors.value[err.param] = err.msg;
+        toast.error(err.msg); // Affiche chaque message d'erreur spécifique
+      });
+    } else {
+      toast.error("An error occurred while processing your request");
+    }
   }
 };
 
-// Fonction pour fermer la modal
 const close = () => {
   emit("close");
 };
@@ -170,6 +182,6 @@ const close = () => {
 
 <style scoped>
 .modal {
-  background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>

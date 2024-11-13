@@ -215,10 +215,13 @@ const deleteProduct = async (productId) => {
         timer: 1500,
       });
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "An error occurred while deleting the product.";
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "An error occurred while deleting the product.",
+        text: errorMessage,
       });
     }
   }

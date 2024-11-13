@@ -16,7 +16,12 @@
               required
               class="form-control"
               :readonly="displayMode === 'view'"
+              @input="validateField('email')"
+              :placeholder="$t('enterEmail')"
             />
+            <div v-if="errors.email" class="text-danger">
+              {{ errors.email }}
+            </div>
           </div>
           <div class="mb-3">
             <label>{{ $t("phone") }}:</label>
@@ -25,7 +30,12 @@
               required
               class="form-control"
               :readonly="displayMode === 'view'"
+              @input="validateField('phone')"
+              :placeholder="$t('enterPhone')"
             />
+            <div v-if="errors.phone" class="text-danger">
+              {{ errors.phone }}
+            </div>
           </div>
           <div class="mb-3">
             <label>{{ $t("address") }}:</label>
@@ -34,7 +44,12 @@
               required
               class="form-control"
               :readonly="displayMode === 'view'"
+              @input="validateField('address')"
+              :placeholder="$t('enterAddress')"
             />
+            <div v-if="errors.address" class="text-danger">
+              {{ errors.address }}
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -58,10 +73,11 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useSupplierStore } from "../../stores/supplierStore";
-import Swal from "sweetalert2";
+import { useToast } from "vue-toastification";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+const toast = useToast();
 
 const props = defineProps({
   supplier: Object,
@@ -70,32 +86,57 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close", "refresh"]);
-
 const supplierStore = useSupplierStore();
 
+// Gestion des erreurs
+const errors = ref({
+  email: "",
+  phone: "",
+  address: "",
+});
+
+const validateField = (field) => {
+  if (field === "email") {
+    errors.value.email =
+      props.supplier.email && props.supplier.email.includes("@")
+        ? ""
+        : t("invalidEmail");
+  }
+  if (field === "phone") {
+    errors.value.phone =
+      props.supplier.phone && props.supplier.phone.length >= 8
+        ? ""
+        : t("invalidPhone");
+  }
+  if (field === "address") {
+    errors.value.address = props.supplier.address ? "" : t("addressRequired");
+  }
+};
+
 const submitSupplier = async () => {
-  if (
-    !props.supplier.email ||
-    !props.supplier.phone ||
-    !props.supplier.address
-  ) {
-    Swal.fire(t("error"), t("allFieldsRequired"), "error");
+  // Validation du formulaire complet
+  validateField("email");
+  validateField("phone");
+  validateField("address");
+
+  if (errors.value.email || errors.value.phone || errors.value.address) {
+    toast.error(t("fixErrors"));
     return;
   }
 
   try {
     if (props.editMode) {
       await supplierStore.updateSupplier(props.supplier.id, props.supplier);
-      Swal.fire(t("success"), t("successUpdate"), "success");
+      toast.success(t("successUpdate"));
     } else {
       await supplierStore.createSupplier(props.supplier);
-      Swal.fire(t("success"), t("successAdd"), "success");
-      props.supplier = { email: "", phone: "", address: "" };
+      toast.success(t("successAdd"));
+      Object.assign(props.supplier, { email: "", phone: "", address: "" });
     }
     emit("refresh");
   } catch (error) {
     console.error("Error during add/update:", error);
-    Swal.fire(t("error"), error.response?.data?.message || t("error"), "error");
+    toast.error(error.response?.data?.message || t("error"));
   } finally {
     close();
   }

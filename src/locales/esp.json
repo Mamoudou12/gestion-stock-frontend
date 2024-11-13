@@ -124,8 +124,14 @@
     "validProductDetailsRequired": "Los detalles del producto son necesarios y deben ser válidos.",
     "errorSavingSale": "Ocurrió un error al guardar la venta.",
     "error_message": {
-      "empty_product": "Se requiere al menos un producto.",
-      "invalid_product": "Los detalles del producto son necesarios y deben ser válidos.",
-      "save_error": "Ocurrió un error al guardar la venta."
-    }
+        "empty_product": "Se requiere al menos un producto.",
+        "invalid_product": "Los detalles del producto son necesarios y deben ser válidos.",
+        "save_error": "Ocurrió un error al guardar la venta."
+    },
+    "enterEmail": "Ingresa el correo electrónico",
+    "enterPhone": "Ingresa el teléfono",
+    "enterAddress": "Ingresa la dirección",
+    "quantityGreaterThanZero": "La cantidad debe ser mayor que cero",
+    "priceGreaterThanZero": "El precio debe ser mayor que cero",
+    "selectProduct": "Por favor, seleccione un producto"
 }
