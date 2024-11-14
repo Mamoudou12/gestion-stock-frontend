@@ -32,14 +32,21 @@ import SaleForm from "../components/sales/SaleForm.vue";
 // Composants Mouvements de Stock
 import MovementList from "../components/movements/MovementList.vue";
 import Home from "../components/Home.vue";
+import ForgotPassword from "../components/ForgotPassword.vue";
+import RessetPassword from "../components/RessetPassword.vue";
+import EditCurrentuser from "../components/users/EditCurrentuser.vue";
 const routes = [
   { path: "/", component: Login },
+  { path: "/forgot-password", component: ForgotPassword },
+  { path: "/reset-password", component: RessetPassword },
+
   {
     path: "/dashboard",
     component: Dashboard,
     meta: { requiresAuth: true },
     children: [
       { path: "home", name: "home", component: Home },
+      { path: "edit-user", name: "edit-user", component: EditCurrentuser },
       // Routes Produits
       { path: "products", name: "product-list", component: ProductList },
       { path: "products/add", name: "product-add", component: ProductForm },

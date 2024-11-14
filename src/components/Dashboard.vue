@@ -2,29 +2,65 @@
   <div :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
     <header class="header">
       <div class="header-left">
-        <button @click="toggleSidebar" class="btn menu">
+        <button @click="toggleSidebar" class="btn menu" aria-label="Menu">
           <i class="fas fa-bars"></i>
         </button>
       </div>
+
       <div class="header-right">
         <!-- Affiche le nom de l'utilisateur connecté -->
-        <div class="profile-container">
-          <i class="fas fa-user-circle profile-icon"></i>
-          <span class="profile-name"
-            > {{ greeting }}, {{ userName }}</span
+        <div
+          class="profile-container"
+          @click="toggleProfileMenu"
+          aria-haspopup="true"
+          aria-expanded="isProfileMenuOpen.toString()"
+        >
+          <i class="fas fa-user-circle profile-icon" aria-hidden="true"></i>
+          <span class="profile-name">{{ userName }}</span>
+
+          <!-- Menu déroulant du profil -->
+          <div
+            v-if="isProfileMenuOpen"
+            class="profile-dropdown"
+            aria-labelledby="profileDropdown"
           >
+            <ul>
+              <li @click="goToProfile">
+                <i class="fas fa-user" aria-hidden="true"></i> Profil
+              </li>
+              <li>
+                <i class="fas fa-key" aria-hidden="true"></i>
+                <a href="/change-password">Changer le mot de passe</a>
+              </li>
+              <li>
+                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                <a @click="handleLogout">Déconnexion</a>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <button class="btn mode" @click="toggleTheme">
-          <i :class="isDarkMode ? 'fas fa-moon' : 'fas fa-sun'"></i>
+        <!-- Bouton pour activer/désactiver le mode sombre -->
+        <button
+          class="btn mode"
+          @click="toggleTheme"
+          aria-label="Changer le mode"
+        >
+          <i
+            :class="isDarkMode ? 'fas fa-moon' : 'fas fa-sun'"
+            aria-hidden="true"
+          ></i>
           <span class="ms-2">
             {{ isDarkMode ? "Mode sombre" : "Mode claire" }}
           </span>
         </button>
+
+        <!-- Sélecteur de langue -->
         <select
           v-model="currentLanguage"
           @change="handleLanguageChange"
           class="form-select custom-select"
+          aria-label="Sélectionner la langue"
         >
           <option value="fr">fr</option>
           <option value="en">en</option>
@@ -127,6 +163,9 @@
 import { ref, watch, onMounted } from "vue";
 import { useAuthStore } from "../stores/AuthStore";
 import { useI18n } from "vue-i18n";
+import { getCurrentInstance } from "vue";
+
+const { proxy } = getCurrentInstance();
 
 const isSidebarCollapsed = ref(false);
 const isDarkMode = ref(false);
@@ -140,9 +179,15 @@ const toggleSidebar = () => {
   isSidebarCollapsed.value = !isSidebarCollapsed.value;
 };
 
+const goToProfile = () => {
+  proxy.$router.push("/dashboard/edit-user");
+};
+
 const toggleTheme = () => {
   isDarkMode.value = !isDarkMode.value;
 };
+
+const isProfileMenuOpen = ref(false);
 
 const handleLanguageChange = () => {
   locale.value = currentLanguage.value;
@@ -161,6 +206,14 @@ const handleLogout = () => {
   window.location.href = "/";
 };
 
+// const navigateToProfile = () => {
+//   window.location.href = "/profile"; // Rediriger vers la page du profil
+// };
+
+// const navigateToPassword = () => {
+//   window.location.href = "/change-password"; // Rediriger vers la page de changement de mot de passe
+// };
+
 const greeting = ref("");
 
 const calculateGreeting = () => {
@@ -176,6 +229,11 @@ onMounted(() => {
     localStorage.setItem("userName", authStore.user.name); // Sauvegarder le nom de l'utilisateur dans le localStorage
   }
 });
+
+// Fonction pour ouvrir/fermer le menu du profil
+const toggleProfileMenu = () => {
+  isProfileMenuOpen.value = !isProfileMenuOpen.value;
+};
 </script>
 
 <style scoped>
@@ -373,13 +431,141 @@ onMounted(() => {
   border: 1px solid #ffffff;
 }
 
-.dark-mode .mode:hover {
-  background-color: #ffffff;
-  color: #000000;
+
+.profile-dropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.dark-mode .nav-link:hover {
-  background-color: #e8eacc;
-  color: #000000;
+.profile-dropdown ul li {
+  padding: 10px;
+  text-align: left;
+}
+
+.profile-dropdown ul li a {
+  color: #333;
+  text-decoration: none;
+  display: block;
+}
+
+.profile-dropdown ul li:hover {
+  background-color: #f1f1f1;
+}
+
+.profile-container:hover .profile-dropdown {
+  display: block;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.profile-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.profile-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.profile-container:hover {
+  transform: scale(1.05); /* Légère animation de survol */
+}
+
+.profile-icon {
+  font-size: 24px;
+  color: #333;
+  margin-right: 12px;
+  transition: color 0.3s ease;
+}
+
+.profile-icon:hover {
+  color: #007bff; /* Changement de couleur au survol */
+}
+
+.profile-name {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px; 
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+  z-index: 100;
+  width: 260px; /* Augmenter la largeur pour plus de confort */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+.profile-container:hover .profile-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.profile-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-dropdown li {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  color: #333;
+  font-size: 14px;
+  transition: background-color 0.3s ease, padding-left 0.2s ease;
+  width: 100%;
+  border-radius: 6px; /* Coins arrondis pour chaque élément */
+}
+
+.profile-dropdown li:hover {
+  background-color: #f0f0f0;
+  padding-left: 20px; /* Légère marge à gauche pour un effet de survol */
+}
+
+.profile-dropdown li i {
+  margin-right: 12px;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.profile-dropdown li:hover i {
+  color: #007bff; /* Changer la couleur des icônes au survol */
+}
+
+.profile-dropdown li:first-child {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.profile-dropdown li:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
 }
 </style>

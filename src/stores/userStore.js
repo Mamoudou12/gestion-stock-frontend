@@ -1,26 +1,28 @@
 // src/stores/userStore.js
 
-import { defineStore } from 'pinia';
-import axios from 'axios';
-import { useAuthStore } from './AuthStore'; // Import the authentication store
+import { defineStore } from "pinia";
+import axios from "axios";
+import { useAuthStore } from "./AuthStore"; // Import the authentication store
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore("user", {
   state: () => ({
     users: [],
+    userName: "",
+    user: {},
   }),
 
   actions: {
     async fetchUsers() {
       const authStore = useAuthStore();
       try {
-        const response = await axios.get('http://localhost:3000/api/users', {
+        const response = await axios.get("http://localhost:3000/api/users", {
           headers: {
             Authorization: `Bearer ${authStore.token}`,
           },
         });
         this.users = response.data.users; // Assurez-vous que `status` est inclus dans la réponse de l'API
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error("Error fetching users:", error);
         throw error;
       }
     },
@@ -28,14 +30,18 @@ export const useUserStore = defineStore('user', {
     async createUser(newUser) {
       const authStore = useAuthStore();
       try {
-        const response = await axios.post('http://localhost:3000/api/users', newUser, {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        });
+        const response = await axios.post(
+          "http://localhost:3000/api/users",
+          newUser,
+          {
+            headers: {
+              Authorization: `Bearer ${authStore.token}`,
+            },
+          }
+        );
         this.users.push(response.data.user); // Inclure `status` lors de l'ajout d'un nouvel utilisateur
       } catch (error) {
-        console.error('Error creating user:', error);
+        console.error("Error creating user:", error);
         throw error;
       }
     },
@@ -43,17 +49,21 @@ export const useUserStore = defineStore('user', {
     async updateUser(id, updatedUser) {
       const authStore = useAuthStore();
       try {
-        const response = await axios.put(`http://localhost:3000/api/users/${id}`, updatedUser, {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        });
-        const index = this.users.findIndex(user => user.id === id);
+        const response = await axios.put(
+          `http://localhost:3000/api/users/${id}`,
+          updatedUser,
+          {
+            headers: {
+              Authorization: `Bearer ${authStore.token}`,
+            },
+          }
+        );
+        const index = this.users.findIndex((user) => user.id === id);
         if (index !== -1) {
           this.users[index] = response.data.user; // Mettre à jour l'utilisateur dans la liste, incluant `status`
         }
       } catch (error) {
-        console.error('Error updating user:', error);
+        console.error("Error updating user:", error);
         throw error;
       }
     },
@@ -66,9 +76,9 @@ export const useUserStore = defineStore('user', {
             Authorization: `Bearer ${authStore.token}`,
           },
         });
-        this.users = this.users.filter(user => user.id !== id);
+        this.users = this.users.filter((user) => user.id !== id);
       } catch (error) {
-        console.error('Error deleting user:', error);
+        console.error("Error deleting user:", error);
         throw error;
       }
     },
@@ -76,14 +86,17 @@ export const useUserStore = defineStore('user', {
     async getUserById(id) {
       const authStore = useAuthStore();
       try {
-        const response = await axios.get(`http://localhost:3000/api/users/${id}`, {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        });
+        const response = await axios.get(
+          `http://localhost:3000/api/users/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authStore.token}`,
+            },
+          }
+        );
         return response.data.user; // Retourne l'utilisateur avec `status`
       } catch (error) {
-        console.error('Error fetching user by ID:', error);
+        console.error("Error fetching user by ID:", error);
         throw error;
       }
     },
@@ -92,17 +105,50 @@ export const useUserStore = defineStore('user', {
     async updateUserStatus(id, status) {
       const authStore = useAuthStore();
       try {
-        const response = await axios.patch(`http://localhost:3000/api/users/${id}/status`, { status }, {
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        });
-        const index = this.users.findIndex(user => user.id === id);
+        const response = await axios.patch(
+          `http://localhost:3000/api/users/${id}/status`,
+          { status },
+          {
+            headers: {
+              Authorization: `Bearer ${authStore.token}`,
+            },
+          }
+        );
+        const index = this.users.findIndex((user) => user.id === id);
         if (index !== -1) {
           this.users[index].status = response.data.user.status; // Mettre à jour le statut dans la liste
         }
       } catch (error) {
-        console.error('Error updating user status:', error);
+        console.error("Error updating user status:", error);
+        throw error;
+      }
+    },
+
+    // Mettre à jour les informations de l'utilisateur actuel
+    async updateCurrentUser(name, email) {
+      const authStore = useAuthStore();
+      try {
+        console.log("Données envoyées:", { name, email });
+
+        const response = await axios.put(
+          `http://localhost:3000/api/user/update`,
+          { name, email },
+          {
+            headers: {
+              Authorization: `Bearer ${authStore.token}`,
+            },
+          }
+        );
+
+        console.log("Réponse du serveur:", response.data);
+        if (response.data && response.data.user) {
+          this.user = response.data.user;
+          this.userName = this.user.name;
+        } else {
+          throw new Error("Réponse du serveur invalide");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la mise à jour des informations:", error);
         throw error;
       }
     },

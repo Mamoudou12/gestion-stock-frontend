@@ -16,6 +16,11 @@
           <span v-else>Login</span>
         </button>
         <p v-if="error" class="error">{{ error }}</p>
+
+        <!-- Lien "Forgot Password" -->
+        <p class="forgot-password">
+          <a href="/forgot-password">Forgot Password?</a>
+        </p>
       </form>
     </div>
   </div>
@@ -143,6 +148,21 @@ h2 {
   color: #e74c3c;
   margin-top: 15px;
   animation: shake 0.3s;
+}
+
+/* Lien "Forgot Password" */
+.forgot-password {
+  margin-top: 15px;
+}
+
+.forgot-password a {
+  color: #4a90e2;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
 }
 
 /* Animations */

@@ -66,7 +66,7 @@
               :title="user.status ? $t('deactivate') : $t('activate')"
             >
               <i
-                :class="user.status ? 'fas fa-user-slash' : 'fas fa-user-check'"
+                :class="user.status ? 'fas fa-user-check' : 'fas fa-user-slash'"
               ></i>
             </button>
             <button
