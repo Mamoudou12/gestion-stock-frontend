@@ -1,4 +1,3 @@
-<!-- GenericModal.vue -->
 <template>
   <div class="modal" style="display: block">
     <div class="modal-dialog">
@@ -8,7 +7,6 @@
           <button type="button" class="btn-close" @click="close"></button>
         </div>
         <div class="modal-body">
-          <!-- Affichage des informations du fournisseur -->
           <div v-if="isSupplier">
             <div class="row mb-3">
               <div class="col">
@@ -26,7 +24,6 @@
             </div>
           </div>
 
-          <!-- Affichage des informations du mouvement -->
           <div v-else-if="isMovement">
             <div class="row mb-3">
               <div class="col">
@@ -36,7 +33,7 @@
               <div class="col">
                 <label>Produit:</label>
                 <input
-                  v-model="movement.productId"
+                  :value="getProductName(movement.productId)"
                   class="form-control"
                   readonly
                 />
@@ -46,11 +43,12 @@
               <div class="col">
                 <label>Utilisateur:</label>
                 <input
-                  v-model="movement.userId"
+                  :value="getUserName(movement.userId)"
                   class="form-control"
                   readonly
                 />
               </div>
+
               <div class="col">
                 <label>Type:</label>
                 <input v-model="movement.type" class="form-control" readonly />
@@ -96,6 +94,8 @@
 
 <script setup>
 import { defineProps, defineEmits, computed } from "vue";
+import { useProductStore } from "../../stores/productStore";
+import { useUserStore } from "../../stores/userStore";
 
 const props = defineProps({
   supplier: {
@@ -113,23 +113,42 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close"]);
+const productStore = useProductStore(); 
+const userStore = useUserStore(); 
 
 const close = () => {
   emit("close");
 };
 
-// Détermine si le modal affiche des informations de fournisseur
 const isSupplier = computed(() => props.supplier !== null);
-// Détermine si le modal affiche des informations de mouvement
 const isMovement = computed(() => props.movement !== null);
 
-// Formater la date pour l'affichage
+const getProductName = (productId) => {
+  const product = productStore.products.find(
+    (product) => product.id === productId
+  );
+  return product ? product.name : "Produit inconnu"; 
+};
+
+const getUserName = (userId) => {
+  const user = userStore.users.find((user) => user.id === userId);
+  return user ? user.name : "Utilisateur inconnu";
+};
+
 const formatDate = (date) => {
   if (!date) return "";
-  return new Date(date).toLocaleDateString("fr-FR"); // Formatage français (jour/mois/année)
+  return new Date(date).toLocaleDateString("fr-FR"); 
 };
 </script>
 
 <style scoped>
-/* Ajoutez vos styles ici si nécessaire */
+label {
+  color: black;
+  font-size: 18px;
+}
+
+h5 {
+  color: black;
+}
+
 </style>

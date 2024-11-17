@@ -3,52 +3,81 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">
-            {{ editMode ? $t("editUser") : $t("addUser") }}
-          </h5>
+          <h5 class="modal-title">{{ editMode ? "Edit" : "Add" }} User</h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
+
         <div class="modal-body">
           <div class="mb-3">
-            <label>{{ $t("name") }}:</label>
-            <input v-model="user.name" required class="form-control" />
+            <label>Name:</label>
+            <input
+              v-model="user.name"
+              :disabled="previewMode"
+              required
+              class="form-control"
+            />
+            <small class="text-danger">{{ errors.name }}</small>
           </div>
+
           <div class="mb-3">
-            <label>{{ $t("email") }}:</label>
+            <label>Email:</label>
             <input
               v-model="user.email"
+              :disabled="previewMode"
               required
               type="email"
               class="form-control"
             />
+            <small class="text-danger">{{ errors.email }}</small>
           </div>
+
           <div class="mb-3">
-            <label>{{ $t("password") }}:</label>
-            <input
-              v-model="user.password"
-              :required="!editMode"
-              type="password"
-              class="form-control"
-            />
-            <small v-if="editMode" class="form-text text-muted">
-              {{ $t("leaveBlankToKeepPassword") }}
-            </small>
+            <label>Password:</label>
+            <div class="input-group">
+              <input
+                v-model="user.password"
+                :type="showPassword ? 'text' : 'password'"
+                :disabled="previewMode || editMode"
+                required
+                class="form-control"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                @click="togglePassword"
+                :disabled="previewMode || editMode"
+              >
+                <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+              </button>
+            </div>
+            <small class="text-danger">{{ errors.password }}</small>
           </div>
+
           <div class="mb-3">
-            <label>{{ $t("role") }}:</label>
-            <select v-model="user.role" required class="form-select">
-              <option value="">{{ $t("selectRole") }}</option>
-              <option value="ADMIN">{{ $t("admin") }}</option>
-              <option value="EMPLOYE">{{ $t("employee") }}</option>
+            <label>Role:</label>
+            <select
+              v-model="user.role"
+              :disabled="previewMode"
+              required
+              class="form-select"
+            >
+              <option value="">Select Role</option>
+              <option value="ADMIN">Admin</option>
+              <option value="EMPLOYEE">Employee</option>
             </select>
+            <small class="text-danger">{{ errors.role }}</small>
           </div>
         </div>
+
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">
-            {{ $t("close") }}
-          </button>
-          <button type="button" class="btn btn-primary" @click="submitUser">
-            {{ editMode ? $t("update") : $t("add") }}
+          <button type="button" class="btn btn-secondary" @click="close">Close</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="submitUser"
+            :disabled="previewMode"
+          >
+            {{ editMode ? "Update" : "Add" }}
           </button>
         </div>
       </div>
@@ -58,76 +87,72 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { useUserStore } from "../../stores/userStore";
 import Swal from "sweetalert2";
-import { useI18n } from "vue-i18n";
+import { useToast } from "vue-toastification";
+import { useUserStore } from "../../stores/userStore";
 
-const { t } = useI18n();
+const toast = useToast();
 
 const props = defineProps({
-  user: Object,
   editMode: Boolean,
+  user: Object,
+  previewMode: Boolean,
 });
 
 const emit = defineEmits(["close", "refresh"]);
 const userStore = useUserStore();
 
+const errors = ref({}); // Initialiser les erreurs comme un objet vide
+const serverErrors = ref([]); // Pour stocker temporairement les erreurs serveur
+const showPassword = ref(false); // Pour gérer la visibilité du mot de passe
+
+// Fonction pour basculer la visibilité du mot de passe
+const togglePassword = () => {
+  showPassword.value = !showPassword.value;
+};
+
+// Mapper les erreurs du serveur vers les champs individuels
+watch(serverErrors, (newErrors) => {
+  errors.value = {}; // Réinitialiser les erreurs
+  newErrors.forEach((err) => {
+    if (err.path === "name") errors.value.name = err.msg;
+    if (err.path === "email") errors.value.email = err.msg;
+    if (err.path === "password") errors.value.password = err.msg;
+    if (err.path === "role") errors.value.role = err.msg;
+  });
+});
+
+// Soumettre un utilisateur (créer ou mettre à jour)
 const submitUser = async () => {
-  if (
-    !props.user.name ||
-    !props.user.email ||
-    !props.user.role ||
-    (!props.editMode && !props.user.password)
-  ) {
-    Swal.fire(t("error"), t("allFieldsRequired"), "error");
-    return;
-  }
+  serverErrors.value = []; // Réinitialiser les erreurs serveur
 
   try {
     if (props.editMode) {
-      const userData = { ...props.user };
-      if (!userData.password) delete userData.password;
-
-      await userStore.updateUser(props.user.id, userData);
-      Swal.fire(t("success"), t("userUpdatedSuccessfully"), "success");
+      await userStore.updateUser(props.user.id, props.user);
+      Swal.fire("Success", "User updated successfully", "success");
     } else {
       await userStore.createUser(props.user);
-      Swal.fire(t("success"), t("userAddedSuccessfully"), "success");
-      props.user = { name: "", email: "", password: "", role: "" };
+      Swal.fire("Success", "User added successfully", "success");
     }
+
+    close();
     emit("refresh");
   } catch (error) {
-    console.error("Error during add/update:", error);
-    Swal.fire(
-      t("error"),
-      error.response?.data?.message || t("anErrorOccurred"),
-      "error"
-    );
-  } finally {
-    close();
+    if (error.response && error.response.data.errors) {
+      // Remplir les erreurs serveur
+      serverErrors.value = error.response.data.errors;
+    } else {
+      toast.error("An error occurred while processing your request");
+    }
   }
 };
 
+// Fermer le modal
 const close = () => {
   emit("close");
 };
-
-// Reset form when switching between edit and add mode
-watch(
-  () => props.user,
-  (newValue) => {
-    if (!props.editMode) {
-      Object.assign(props.user, {
-        name: "",
-        email: "",
-        password: "",
-        role: "",
-      });
-    }
-  }
-);
 </script>
 
 <style scoped>
-/* Add any additional styles here */
+/* Styles supplémentaires si nécessaire */
 </style>

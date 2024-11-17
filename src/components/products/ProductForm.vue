@@ -77,7 +77,6 @@
                 type="text"
                 v-model="product.barcode"
                 :disabled="previewMode"
-                required
                 class="form-control"
               />
               <small class="text-danger">{{ errors.barcode }}</small>
@@ -86,9 +85,7 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">
-            Close
-          </button>
+          <button type="button" class="btn btn-secondary" @click="close">Close</button>
           <button
             type="button"
             class="btn btn-primary"
@@ -104,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, toRefs } from "vue";
+import { ref, toRefs, watch } from "vue";
 import Swal from "sweetalert2";
 import { useToast } from "vue-toastification";
 import { useProductStore } from "../../stores/productStore";
@@ -120,41 +117,41 @@ const props = defineProps({
 const emit = defineEmits(["close", "refresh"]);
 const { product: currentProduct } = toRefs(props);
 const productStore = useProductStore();
-const errors = ref({});
+const errors = ref({}); // Initialiser les erreurs comme un objet vide
+
+const serverErrors = ref([]); // Pour stocker temporairement les erreurs serveur
+
+// Surveiller les erreurs serveur pour les remonter dans errors
+watch(serverErrors, (newErrors) => {
+  errors.value = {}; // Réinitialiser les erreurs
+  newErrors.forEach((err) => {
+    if (err.path === "name") {
+      errors.value.name = err.msg;
+    }
+    if (err.path === "stock") {
+      errors.value.stock = err.msg;
+    }
+    if (err.path === "purshase_price") {
+      errors.value.purshase_price = err.msg;
+    }
+    if (err.path === "sale_price") {
+      errors.value.sale_price = err.msg;
+    }
+    if (err.path === "safetyStock") {
+      errors.value.safetyStock = err.msg;
+    }
+    if (err.path === "barcode") {
+      errors.value.barcode = err.msg;
+    }
+  });
+});
 
 const submitProduct = async () => {
-  errors.value = {}; // Reset errors
-
-  const { name, stock, purshase_price, sale_price, safetyStock, barcode } =
-    currentProduct.value;
-
-  if (
-    !name ||
-    stock <= 0 ||
-    purshase_price <= 0 ||
-    sale_price <= 0 ||
-    safetyStock <= 0 ||
-    !barcode
-  ) {
-    errors.value = {
-      name: !name ? "Name is required" : "",
-      stock: stock <= 0 ? "Stock must be positive" : "",
-      purshase_price:
-        purshase_price <= 0 ? "Purchase price must be positive" : "",
-      sale_price: sale_price <= 0 ? "Sale price must be positive" : "",
-      safetyStock: safetyStock <= 0 ? "Safety stock must be positive" : "",
-      barcode: !barcode ? "Barcode is required" : "",
-    };
-    toast.error("Please fill out all required fields correctly");
-    return;
-  }
+  serverErrors.value = []; // Réinitialiser les erreurs serveur
 
   try {
     if (props.editMode) {
-      await productStore.updateProduct(
-        currentProduct.value.id,
-        currentProduct.value
-      );
+      await productStore.updateProduct(currentProduct.value.id, currentProduct.value);
       Swal.fire("Success", "Product updated successfully", "success");
     } else {
       await productStore.createProduct(currentProduct.value);
@@ -165,10 +162,8 @@ const submitProduct = async () => {
     emit("refresh");
   } catch (error) {
     if (error.response && error.response.data.errors) {
-      error.response.data.errors.forEach((err) => {
-        errors.value[err.param] = err.msg;
-        toast.error(err.msg); // Affiche chaque message d'erreur spécifique
-      });
+      // Remplir les erreurs serveur
+      serverErrors.value = error.response.data.errors;
     } else {
       toast.error("An error occurred while processing your request");
     }

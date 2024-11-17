@@ -293,28 +293,33 @@ const toggleProfileMenu = () => {
   display: flex;
   align-items: center;
   padding: 10px 15px;
-  border: 1px solid #ddd;
+  border: 1px solid #000000;
+  color: #ffffff;
   border-radius: 10px;
-  background-color: #ffffff; /* Fond neutre */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre légère pour effet de carte */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.dark-mode .profile-container {
+  border: 1px solid #ffffff;
 }
 
 .profile-icon {
   font-size: 1.5rem;
-  color: #4a90e2; /* Couleur distinctive pour l'icône */
+  color: #4a90e2; 
   margin-right: 10px;
 }
 
 .profile-name {
-  font-size: 1.2rem; /* Taille de texte agréable */
+  font-size: 1.2rem; 
   font-weight: 600;
-  color: #333; /* Couleur de texte professionnel */
+  color: #333; 
 }
 
-.header-right .profile-container:hover {
-  background-color: #f0f4fa; /* Change de couleur au survol pour accentuer */
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Légère ombre supplémentaire */
-}
+/* .header-right .profile-container:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); 
+  background-color: #ffffff;
+  color: #000000;
+} */
 
 .sidebar {
   width: 250px;
@@ -402,6 +407,12 @@ const toggleProfileMenu = () => {
   color: #ffffff;
 }
 
+.dark-mode .mode:hover {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+
 .dark-mode .header {
   background-color: #1f1f1f;
 }
@@ -431,7 +442,23 @@ const toggleProfileMenu = () => {
   border: 1px solid #ffffff;
 }
 
+.dark-mode .nav-link:hover {
+  background-color: #ffffff;
+  border-radius: 5px;
+  color: #000000;
+}
 
+.dark-mode .profile-icon {
+  color: #ffffff;
+}
+
+.dark-mode .profile-name {
+  color: #ffffff;
+}
+
+.dark-mode .profile-name {
+  color: #ffffff;
+}
 .profile-dropdown ul {
   list-style: none;
   margin: 0;
@@ -488,7 +515,7 @@ const toggleProfileMenu = () => {
 
 .profile-icon {
   font-size: 24px;
-  color: #333;
+  color: #000000;
   margin-right: 12px;
   transition: color 0.3s ease;
 }
@@ -499,7 +526,7 @@ const toggleProfileMenu = () => {
 
 .profile-name {
   font-weight: bold;
-  color: #333;
+  color: #000000;
   font-size: 16px; 
 }
 
@@ -513,7 +540,7 @@ const toggleProfileMenu = () => {
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   margin-top: 10px;
   z-index: 100;
-  width: 260px; /* Augmenter la largeur pour plus de confort */
+  width: 260px;
   opacity: 0;
   visibility: hidden;
   transform: translateY(10px);
@@ -546,7 +573,7 @@ const toggleProfileMenu = () => {
 
 .profile-dropdown li:hover {
   background-color: #f0f0f0;
-  padding-left: 20px; /* Légère marge à gauche pour un effet de survol */
+  padding-left: 20px; 
 }
 
 .profile-dropdown li i {

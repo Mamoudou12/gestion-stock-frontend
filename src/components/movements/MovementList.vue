@@ -1,6 +1,8 @@
 <template>
   <div class="text-primary mb-4 movement-list">
-    <h2 class="text-center mb-4">Liste des Mouvements de Stock</h2>
+    <div class="text-center">
+      <h2 class="title">Liste des Mouvements de Stock</h2>
+    </div>
 
     <!-- Loader ici -->
     <Loader v-if="isLoading" />
@@ -58,7 +60,6 @@
       </tbody>
     </table>
 
-    <!-- Pagination Controls -->
     <nav v-if="totalPages > 1" aria-label="Page navigation">
       <ul class="pagination justify-content-center">
         <li
@@ -99,8 +100,7 @@ import { useMovementStore } from "../../stores/movementStore";
 import { useProductStore } from "../../stores/productStore";
 import { useUserStore } from "../../stores/userStore";
 import GenericModal from "./MovementModal.vue";
-import Loader from "../Loader.vue"; // Importer le composant Loader
-
+import Loader from "../Loader.vue"; 
 const movementStore = useMovementStore();
 const productStore = useProductStore();
 const userStore = useUserStore();
@@ -108,7 +108,6 @@ const movements = movementStore.movements;
 const searchQuery = ref("");
 const selectedMovement = ref(null);
 
-// Pagination variables
 const currentPage = ref(1);
 const pageSize = ref(8);
 
@@ -213,5 +212,26 @@ const getUserName = (userId) => {
 .page-item.disabled .page-link {
   color: #6c757d;
   cursor: not-allowed;
+}
+
+.title {
+  font-family: "Georgia", serif;
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: #0056b3; /* Couleur de base du titre */
+  background: linear-gradient(to right, #0056b3, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  display: inline-block;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+.title:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 </style>

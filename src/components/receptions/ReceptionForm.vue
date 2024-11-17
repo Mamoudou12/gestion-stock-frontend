@@ -59,10 +59,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                v-for="(product, index) in reception.detailReceptions"
-                :key="index"
-              >
+              <tr v-for="(product, index) in reception.detailReceptions" :key="index">
                 <td>
                   <select
                     class="form-control form-control-sm w-100"
@@ -70,11 +67,7 @@
                     required
                   >
                     <option value="" disabled>{{ $t("selectProduct") }}</option>
-                    <option
-                      v-for="prod in products"
-                      :key="prod.id"
-                      :value="prod.id"
-                    >
+                    <option v-for="prod in products" :key="prod.id" :value="prod.id">
                       {{ prod.name }}
                     </option>
                   </select>
@@ -142,11 +135,7 @@
               </tr>
             </tbody>
           </table>
-          <button
-            type="button"
-            class="btn btn-success btn-sm mt-3"
-            @click="addProduct"
-          >
+          <button type="button" class="btn btn-success btn-sm mt-3" @click="addProduct">
             {{ $t("addProduct") }}
           </button>
         </div>
@@ -155,11 +144,7 @@
           <button type="button" class="btn btn-secondary btn-sm" @click="close">
             {{ $t("close") }}
           </button>
-          <button
-            type="button"
-            class="btn btn-primary btn-sm"
-            @click="submitReception"
-          >
+          <button type="button" class="btn btn-primary btn-sm" @click="submitReception">
             {{ editMode ? $t("updateReception") : $t("addReceptionButton") }}
           </button>
         </div>
@@ -229,7 +214,9 @@ const submitReception = async () => {
     detailReceptions.length === 0 ||
     detailReceptions.some((p) => p.quantity <= 0 || p.price <= 0)
   ) {
-    if (!supplierId) errors.value.supplierId = t("supplierRequired");
+    if (!supplierId)
+      errors.value.supplierId =
+        "Supplier ID, Reception Date, and at least one product are required";
     toast.error(t("errorMessage"));
     return;
   }

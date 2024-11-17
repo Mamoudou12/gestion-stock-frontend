@@ -13,37 +13,30 @@
               v-model="inventory.quantity"
               required
               type="number"
-              min="0"
+              min="1"
               class="form-control"
             />
+            <small v-if="quantityError" class="text-danger">{{ quantityError }}</small>
           </div>
           <div class="mb-3">
             <label>Remarks:</label>
             <input v-model="inventory.remarks" class="form-control" />
+            <small v-if="remarksError" class="text-danger">{{ remarksError }}</small>
           </div>
           <div class="mb-3">
             <label>Product:</label>
             <select v-model="inventory.productId" required class="form-control">
               <option disabled value="">Select a product</option>
-              <option
-                v-for="product in products"
-                :key="product.id"
-                :value="product.id"
-              >
+              <option v-for="product in products" :key="product.id" :value="product.id">
                 {{ product.name }}
               </option>
             </select>
+            <small v-if="productError" class="text-danger">{{ productError }}</small>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">
-            Close
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            @click="submitInventory"
-          >
+          <button type="button" class="btn btn-secondary" @click="close">Close</button>
+          <button type="button" class="btn btn-primary" @click="submitInventory">
             {{ editMode ? "Update" : "Add" }}
           </button>
         </div>
@@ -53,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useInventoryStore } from "../../stores/inventoryStore";
 import { useProductStore } from "../../stores/productStore"; // Import the product store
 import Swal from "sweetalert2";
@@ -68,9 +61,28 @@ const emit = defineEmits(["close", "refresh"]);
 const inventoryStore = useInventoryStore();
 const productStore = useProductStore(); // Initialize product store
 
+// Error states
+const quantityError = ref("");
+const remarksError = ref("");
+const productError = ref("");
+
 const submitInventory = async () => {
-  if (!props.inventory.quantity || !props.inventory.productId) {
-    Swal.fire("Error", "Quantity and Product are required", "error");
+  // Reset errors before validation
+  quantityError.value = "";
+  remarksError.value = "";
+  productError.value = "";
+
+  // Validate if quantity and product are provided
+  if (!props.inventory.quantity || props.inventory.quantity <= 0) {
+    quantityError.value = "Quantity must be a positive number";
+  }
+
+  if (!props.inventory.productId) {
+    productError.value = "At least one product must be selected";
+  }
+
+  // If there are validation errors, stop form submission
+  if (quantityError.value || productError.value) {
     return;
   }
 
@@ -91,11 +103,7 @@ const submitInventory = async () => {
     emit("refresh");
   } catch (error) {
     console.error("Error during add/update:", error);
-    Swal.fire(
-      "Error",
-      error.response?.data?.message || "An error occurred",
-      "error"
-    );
+    Swal.fire("Error", error.response?.data?.message || "An error occurred", "error");
   } finally {
     close();
   }
@@ -124,5 +132,9 @@ fetchProducts();
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.text-danger {
+  color: red;
 }
 </style>

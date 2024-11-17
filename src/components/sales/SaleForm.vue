@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ $t("add_sale") }}</h5>
+          <h5 class="modal-title">Add Sale</h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
 
@@ -15,9 +15,7 @@
           <div class="mb-3 row">
             <!-- Date and First Name on the same line -->
             <div class="col-sm-6">
-              <label for="sale_Date" class="col-form-label">
-                {{ $t("sale_date") }}:
-              </label>
+              <label for="sale_Date" class="col-form-label"> Sale Date: </label>
               <div class="input-group">
                 <DatePicker
                   v-model="sale.saleDate"
@@ -31,7 +29,7 @@
             </div>
             <div class="col-sm-6">
               <label for="firstName" class="col-form-label">
-                {{ $t("first_name") }}:
+                First Name:
               </label>
               <input
                 id="firstName"
@@ -46,9 +44,7 @@
           <div class="mb-3 row">
             <!-- Address and Last Name on the same line -->
             <div class="col-sm-6">
-              <label for="address" class="col-form-label">
-                {{ $t("address") }}:
-              </label>
+              <label for="address" class="col-form-label"> Address: </label>
               <input
                 id="address"
                 v-model="sale.address"
@@ -58,9 +54,7 @@
               />
             </div>
             <div class="col-sm-6">
-              <label for="lastName" class="col-form-label">
-                {{ $t("last_name") }}:
-              </label>
+              <label for="lastName" class="col-form-label"> Last Name: </label>
               <input
                 id="lastName"
                 v-model="sale.lastName"
@@ -75,10 +69,10 @@
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th>{{ $t("product") }}</th>
-                  <th>{{ $t("quantity") }}</th>
-                  <th>{{ $t("price") }}</th>
-                  <th>{{ $t("action") }}</th>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -89,9 +83,7 @@
                       class="form-control"
                       @change="updateProductPrice(product)"
                     >
-                      <option value="" disabled>
-                        {{ $t("selectProduct") }}
-                      </option>
+                      <option value="" disabled>Select Product</option>
                       <option
                         v-for="prod in products"
                         :key="prod.id"
@@ -101,7 +93,7 @@
                       </option>
                     </select>
                     <small v-if="!product.productId" class="text-danger">
-                      {{ $t("selectProductError") }}
+                      Please select a product
                     </small>
                   </td>
                   <td>
@@ -113,7 +105,7 @@
                       placeholder="Quantity"
                     />
                     <small v-if="product.quantity <= 0" class="text-danger">
-                      {{ $t("validQuantityRequired") }}
+                      Valid quantity is required
                     </small>
                   </td>
                   <td>
@@ -132,7 +124,7 @@
                       class="btn btn-danger btn-sm w-100"
                       @click="removeProduct(index)"
                     >
-                      {{ $t("removeProduct") }}
+                      Remove Product
                     </button>
                   </td>
                 </tr>
@@ -145,20 +137,20 @@
             class="btn btn-success btn-sm"
             @click="addProduct"
           >
-            {{ $t("addProduct") }}
+            Add Product
           </button>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary btn-sm" @click="close">
-            {{ $t("close") }}
+            Close
           </button>
           <button
             type="button"
             class="btn btn-primary btn-sm"
             @click="submitSale"
           >
-            {{ $t("addSale") }}
+            Add Sale
           </button>
         </div>
       </div>
@@ -170,11 +162,9 @@
 import { ref, computed } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
 import { useProductStore } from "../../stores/productStore";
-import { useI18n } from "vue-i18n";
 import { useToast } from "vue-toastification";
 import DatePicker from "vue3-datepicker";
 
-const { t } = useI18n();
 const toast = useToast();
 
 const emit = defineEmits(["close", "refresh"]);
@@ -221,25 +211,25 @@ const submitSale = async () => {
   errorMessage.value = "";
 
   if (saleDetails.length === 0) {
-    toast.error(t("atLeastOneProductRequired"));
+    toast.error("At least one product is required");
     return;
   }
 
   // Validate saleDetails to ensure all fields are properly filled
   for (const product of saleDetails) {
     if (!product.productId || product.quantity <= 0 || product.price <= 0) {
-      toast.error(t("validProductDetailsRequired"));
+      toast.error("Valid product details are required");
       return;
     }
   }
 
   try {
     await saleStore.createSale(sale.value);
-    toast.success(t("saleAddedSuccessfully"));
+    toast.success("Sale added successfully");
     emit("refresh");
     emit("close");
   } catch (error) {
-    toast.error(t("errorSavingSale"));
+    toast.error("Error saving sale");
     console.error(error);
   }
 };

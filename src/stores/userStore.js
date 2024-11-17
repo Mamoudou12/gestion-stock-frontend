@@ -124,7 +124,6 @@ export const useUserStore = defineStore("user", {
       }
     },
 
-    // Mettre à jour les informations de l'utilisateur actuel
     async updateCurrentUser(name, email) {
       const authStore = useAuthStore();
       try {
@@ -142,8 +141,9 @@ export const useUserStore = defineStore("user", {
 
         console.log("Réponse du serveur:", response.data);
         if (response.data && response.data.user) {
-          this.user = response.data.user;
+          this.user = response.data.user; // Vérifiez si cette ligne met à jour correctement `this.user`
           this.userName = this.user.name;
+          console.log("Utilisateur mis à jour:", this.user);
         } else {
           throw new Error("Réponse du serveur invalide");
         }

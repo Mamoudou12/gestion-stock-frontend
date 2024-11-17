@@ -1,7 +1,9 @@
 vue Copier le code
 <template>
   <div>
-    <h2 class="text-primary mb-4">{{ $t("receptionManagement") }}</h2>
+    <div class="text-center"> 
+      <h2 class="text-primary mb-4 title">{{ $t("receptionManagement") }}</h2>
+    </div>
 
     <button @click="openAddReceptionModal" class="btn btn-primary mb-4">
       <i class="fas fa-plus"></i> {{ $t("addReception") }}
@@ -49,7 +51,7 @@ vue Copier le code
                 <i class="fas fa-eye"></i>
               </button>
               <button
-              v-if="authStore.role === 'ADMIN'"
+                v-if="authStore.role === 'ADMIN'"
                 @click="deleteReception(reception.id)"
                 class="btn btn-outline-danger"
                 :title="$t('delete')"
@@ -139,7 +141,7 @@ const { t } = useI18n();
 
 const receptionStore = useReceptionStore();
 const productStore = useProductStore();
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const supplierStore = useSupplierStore();
 const searchQuery = ref("");
 const loading = ref(true);
@@ -259,4 +261,28 @@ const closeDetailModal = () => {
   display: block;
   background: rgba(0, 0, 0, 0.5);
 }
+
+.title {
+  font-family: "Georgia", serif;
+  font-size: 2.8rem;
+  font-weight: bold;
+  color: #0056b3; /* Couleur de base du titre */
+  background: linear-gradient(to right, #0056b3, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  /* border: 2px solid #000000; */
+  display: inline-block;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+.title:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+
 </style>

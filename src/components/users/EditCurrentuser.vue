@@ -1,9 +1,6 @@
 <template>
   <div class="container mt-5">
-    <button
-      @click="goBack"
-      class="btn btn-link text-decoration-none back-arrow"
-    >
+    <button @click="goBack" class="btn btn-link text-decoration-none back-arrow">
       <i class="fas fa-arrow-left"></i> Retour
     </button>
 
@@ -12,38 +9,25 @@
       <form @submit.prevent="updateUser">
         <div class="mb-3">
           <label for="name" class="form-label">Nom:</label>
-          <input
-            id="name"
-            v-model="name"
-            type="text"
-            class="form-control"
-            required
-          />
+          <input id="name" v-model="name" type="text" class="form-control" required />
         </div>
         <div class="mb-3">
           <label for="email" class="form-label">Email:</label>
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            class="form-control"
-            required
-          />
+          <input id="email" v-model="email" type="email" class="form-control" required />
         </div>
-        <button type="submit" class="btn btn-primary w-100">
-          Mettre à jour
-        </button>
+        <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
       </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../../stores/userStore";
 import { useToast } from "vue-toastification";
 
+// Récupérer le store Pinia de l'utilisateur
 const userStore = useUserStore();
 const router = useRouter();
 const toast = useToast();
@@ -52,12 +36,16 @@ const toast = useToast();
 const name = ref("");
 const email = ref("");
 
-// Surveille les changements dans les informations utilisateur
 watch(
   () => userStore.user,
   (newUser) => {
-    name.value = newUser.name || "";
-    email.value = newUser.email || "";
+    console.log("userStore.user avant modification:", newUser);
+    if (newUser && newUser.name) {
+      name.value = newUser.name || "";
+      email.value = newUser.email || "";
+    } else {
+      console.log("Aucun utilisateur chargé ou pas de nom");
+    }
   },
   { immediate: true }
 );
