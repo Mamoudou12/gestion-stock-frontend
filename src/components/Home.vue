@@ -150,72 +150,151 @@ setInterval(() => {
 
 <style scoped>
 @import "@fortawesome/fontawesome-free/css/all.min.css";
+@import "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap";
 
 .app {
-  background-color: #f8f9fa;
+  background: linear-gradient(to bottom, #e9f4fb, #fefefe);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 20px;
+  padding: 20px;
+  font-family: "Roboto", sans-serif;
 }
 
 .app-header {
-  color: #343a40;
-  background-color: #ffffff;
-  border-bottom: 2px solid #dee2e6;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 1200px;
-  margin-bottom: 20px;
-  border-radius: 8px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.app-header h1 {
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.app-header p {
+  font-weight: 400;
+  margin: 0;
+  font-size: 18px;
 }
 
 .dashboard-cards {
   display: flex;
-  gap: 20px;
+  gap: 30px;
   flex-wrap: wrap;
   justify-content: center;
   margin-top: 20px;
 }
 
-.summary-card {
-  background-color: #ffffff;
-  padding: 20px;
-  width: 250px;
-  text-align: center;
-  border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  position: relative;
+.summary-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0px 12px 30px rgba(0, 0, 0, 0.2);
 }
 
 .icon {
   font-size: 2rem;
-  color: #007bff;
+  color: #4b7bec;
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
+  opacity: 0.8;
 }
 
 .card-title {
-  font-size: 18px;
-  color: #6c757d;
-  margin-bottom: 10px;
+  font-size: 20px;
+  color: #34495e;
+  margin-bottom: 15px;
+  font-weight: 500;
 }
 
 .card-value {
-  font-size: 32px;
-  color: #007bff;
+  font-size: 42px;
+  color: #4b7bec;
   font-weight: bold;
 }
 
 .chart-container {
-  width: 80%;
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 8px;
+  width: 90%;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 40px;
+  background: linear-gradient(to bottom, #ffffff, #f7f9fc);
+  border-radius: 16px;
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5eaf0;
+}
+
+.chart-container:hover {
+  border-color: #4b7bec;
+  transition: border-color 0.3s ease;
+}
+
+.summary-card {
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+  padding: 30px;
+  width: 280px;
+  text-align: center;
+  border-radius: 20px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  overflow: hidden;
+}
+
+.summary-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #007bff, #28a745);
+  z-index: -1;
+  opacity: 0.15;
+  transform: scale(1.5);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.summary-card:hover::before {
+  opacity: 0.25;
+  transform: scale(1.1);
+}
+
+.summary-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.15), 0px 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  font-size: 1.5rem;
+  color: #007bff;
+  background: rgba(0, 123, 255, 0.1);
+  padding: 15px;
+  border-radius: 50%;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-title {
+  font-size: 15px;
+  color: #6c757d;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.card-value {
+  font-size: 40px;
+  color: #007bff;
+  font-weight: bold;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
 }
 </style>

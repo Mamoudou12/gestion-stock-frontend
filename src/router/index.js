@@ -35,6 +35,8 @@ import Home from "../components/Home.vue";
 import ForgotPassword from "../components/ForgotPassword.vue";
 import RessetPassword from "../components/RessetPassword.vue";
 import EditCurrentuser from "../components/users/EditCurrentuser.vue";
+import ChangePassword from "../components/users/ChangePassword.vue";
+
 const routes = [
   { path: "/", component: Login },
   { path: "/forgot-password", component: ForgotPassword },
@@ -47,6 +49,7 @@ const routes = [
     children: [
       { path: "home", name: "home", component: Home },
       { path: "edit-user", name: "edit-user", component: EditCurrentuser },
+      { path: "change-password", name: "change-password", component: ChangePassword },
       // Routes Produits
       { path: "products", name: "product-list", component: ProductList },
       { path: "products/add", name: "product-add", component: ProductForm },

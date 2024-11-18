@@ -63,7 +63,7 @@
             >
               <option value="">Select Role</option>
               <option value="ADMIN">Admin</option>
-              <option value="EMPLOYEE">Employee</option>
+              <option value="EMPLOYE">Employe</option>
             </select>
             <small class="text-danger">{{ errors.role }}</small>
           </div>

@@ -30,7 +30,7 @@
               </li>
               <li>
                 <i class="fas fa-key" aria-hidden="true"></i>
-                <a href="/change-password">Changer le mot de passe</a>
+                <a href="/dashboard/change-password">Changer le mot de passe</a>
               </li>
               <li>
                 <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
@@ -41,15 +41,8 @@
         </div>
 
         <!-- Bouton pour activer/désactiver le mode sombre -->
-        <button
-          class="btn mode"
-          @click="toggleTheme"
-          aria-label="Changer le mode"
-        >
-          <i
-            :class="isDarkMode ? 'fas fa-moon' : 'fas fa-sun'"
-            aria-hidden="true"
-          ></i>
+        <button class="btn mode" @click="toggleTheme" aria-label="Changer le mode">
+          <i :class="isDarkMode ? 'fas fa-moon' : 'fas fa-sun'" aria-hidden="true"></i>
           <span class="ms-2">
             {{ isDarkMode ? "Mode sombre" : "Mode claire" }}
           </span>
@@ -78,70 +71,89 @@
       </div>
       <ul class="list-unstyled">
         <li>
-          <router-link to="/dashboard/home" class="nav-link">
+          <router-link
+            to="/dashboard/home"
+            class="nav-link"
+            :class="{ active: $route.path === '/dashboard/home' }"
+          >
             <i class="fas fa-home me-2"></i>
             <span v-if="!isSidebarCollapsed">{{ $t("app.header.home") }}</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/dashboard/products" class="nav-link">
+          <router-link
+            to="/dashboard/products"
+            class="nav-link"
+            :class="{ active: $route.path === '/dashboard/products' }"
+          >
             <i class="fas fa-box-open me-2"></i>
-            <span v-if="!isSidebarCollapsed">{{
-              $t("app.header.products")
-            }}</span>
+            <span v-if="!isSidebarCollapsed">{{ $t("app.header.products") }}</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/dashboard/suppliers" class="nav-link">
+          <router-link
+            to="/dashboard/suppliers"
+            class="nav-link"
+            :class="{ active: $route.path === '/dashboard/suppliers' }"
+          >
             <i class="fas fa-industry me-2"></i>
-            <span v-if="!isSidebarCollapsed">{{
-              $t("app.header.suppliers")
-            }}</span>
+            <span v-if="!isSidebarCollapsed">{{ $t("app.header.suppliers") }}</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/dashboard/receptions" class="nav-link">
+          <router-link
+            to="/dashboard/receptions"
+            class="nav-link"
+            :class="{ active: $route.path === '/dashboard/receptions' }"
+          >
             <i class="fas fa-clipboard-check me-2"></i>
-            <span v-if="!isSidebarCollapsed">{{
-              $t("app.header.receipts")
-            }}</span>
+            <span v-if="!isSidebarCollapsed">{{ $t("app.header.receipts") }}</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/dashboard/sales" class="nav-link">
+          <router-link
+            to="/dashboard/sales"
+            class="nav-link"
+            :class="{ active: $route.path === '/dashboard/sales' }"
+          >
             <i class="fas fa-shopping-cart me-2"></i>
             <span v-if="!isSidebarCollapsed">{{ $t("app.header.sales") }}</span>
           </router-link>
         </li>
         <li v-if="authStore.role === 'ADMIN'">
-          <router-link to="/dashboard/users" class="nav-link">
+          <router-link
+            to="/dashboard/users"
+            class="nav-link"
+            :class="{ active: $route.path === '/dashboard/users' }"
+          >
             <i class="fas fa-users me-2"></i>
             <span v-if="!isSidebarCollapsed">{{ $t("app.header.users") }}</span>
           </router-link>
         </li>
-
         <li>
-          <router-link to="/dashboard/inventory" class="nav-link">
+          <router-link
+            to="/dashboard/inventory"
+            class="nav-link"
+            :class="{ active: $route.path === '/dashboard/inventory' }"
+          >
             <i class="fas fa-warehouse me-2"></i>
-            <span v-if="!isSidebarCollapsed">{{
-              $t("app.header.inventory")
-            }}</span>
+            <span v-if="!isSidebarCollapsed">{{ $t("app.header.inventory") }}</span>
           </router-link>
         </li>
         <li>
-          <router-link to="/dashboard/movements" class="nav-link">
+          <router-link
+            to="/dashboard/movements"
+            class="nav-link"
+            :class="{ active: $route.path === '/dashboard/movements' }"
+          >
             <i class="fas fa-exchange-alt me-2"></i>
-            <span v-if="!isSidebarCollapsed">{{
-              $t("app.header.stockMovements")
-            }}</span>
+            <span v-if="!isSidebarCollapsed">{{ $t("app.header.stockMovements") }}</span>
           </router-link>
         </li>
         <li>
           <button class="nav-link" @click="handleLogout">
             <i class="fas fa-sign-out-alt me-2"></i>
-            <span v-if="!isSidebarCollapsed">{{
-              $t("app.header.logout")
-            }}</span>
+            <span v-if="!isSidebarCollapsed">{{ $t("app.header.logout") }}</span>
           </button>
         </li>
       </ul>
@@ -149,12 +161,6 @@
 
     <div class="content" :class="{ 'content-collapsed': isSidebarCollapsed }">
       <router-view />
-      <!-- <div class="body-content">
-        <h1>Bienvenue dans l'application!</h1>
-        <p>Utilisez le menu à gauche pour naviguer dans l'application.</p>
-        <p>Vous pouvez changer le thème et la langue selon vos préférences.</p>
-        <img src="../assets//ek2.jpg" alt="stock">
-      </div> -->
     </div>
   </div>
 </template>
@@ -164,12 +170,14 @@ import { ref, watch, onMounted } from "vue";
 import { useAuthStore } from "../stores/AuthStore";
 import { useI18n } from "vue-i18n";
 import { getCurrentInstance } from "vue";
+import { useToast } from "vue-toastification";
 
 const { proxy } = getCurrentInstance();
 
 const isSidebarCollapsed = ref(false);
 const isDarkMode = ref(false);
 const notifications = ref(0);
+const toast = useToast();
 const currentLanguage = ref("fr");
 const authStore = useAuthStore();
 const { locale } = useI18n();
@@ -204,6 +212,7 @@ setInterval(() => {
 const handleLogout = () => {
   authStore.logout();
   window.location.href = "/";
+  toast.info("Vous avez été déconnecté.");
 };
 
 // const navigateToProfile = () => {
@@ -221,7 +230,6 @@ const calculateGreeting = () => {
   greeting.value = hour < 12 ? "Bonjour" : "Bonsoir";
 };
 
-// Calculer la salutation lors du chargement du composant
 onMounted(() => {
   calculateGreeting();
   if (authStore.user) {
@@ -296,7 +304,7 @@ const toggleProfileMenu = () => {
   border: 1px solid #000000;
   color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .dark-mode .profile-container {
@@ -305,18 +313,18 @@ const toggleProfileMenu = () => {
 
 .profile-icon {
   font-size: 1.5rem;
-  color: #4a90e2; 
+  color: #4a90e2;
   margin-right: 10px;
 }
 
 .profile-name {
-  font-size: 1.2rem; 
+  font-size: 1.2rem;
   font-weight: 600;
-  color: #333; 
+  color: #333;
 }
 
 /* .header-right .profile-container:hover {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); 
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   background-color: #ffffff;
   color: #000000;
 } */
@@ -411,7 +419,6 @@ const toggleProfileMenu = () => {
   background-color: #ffffff;
   color: #000000;
 }
-
 
 .dark-mode .header {
   background-color: #1f1f1f;
@@ -527,7 +534,7 @@ const toggleProfileMenu = () => {
 .profile-name {
   font-weight: bold;
   color: #000000;
-  font-size: 16px; 
+  font-size: 16px;
 }
 
 .profile-dropdown {
@@ -573,7 +580,7 @@ const toggleProfileMenu = () => {
 
 .profile-dropdown li:hover {
   background-color: #f0f0f0;
-  padding-left: 20px; 
+  padding-left: 20px;
 }
 
 .profile-dropdown li i {
@@ -594,5 +601,42 @@ const toggleProfileMenu = () => {
 .profile-dropdown li:last-child {
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 15px 10px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.nav-link.active {
+  background-color: #000000;
+  border-radius: 5px;
+  color: #ffffff;
+}
+
+.nav-link:hover {
+  background-color: #dddddd;
+  color: #007bff;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 15px 10px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.dark-mode .nav-link.active {
+  background-color: #ffffff;
+  border-radius: 5px;
+  color: #000000;
+}
+
+.dark-mode .nav-link:hover {
+  background-color: #dddddd;
+  color: #007bff;
 }
 </style>

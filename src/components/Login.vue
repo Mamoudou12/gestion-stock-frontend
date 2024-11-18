@@ -5,11 +5,23 @@
       <form @submit.prevent="handleLogin">
         <div class="input-group">
           <label for="email">Email</label>
-          <input type="email" id="email" v-model="email" required />
+          <input
+            type="email"
+            id="email"
+            v-model="email"
+            required
+            placeholder="Entrez votre email"
+          />
         </div>
         <div class="input-group">
           <label for="password">Password</label>
-          <input type="password" id="password" v-model="password" required />
+          <input
+            type="password"
+            id="password"
+            v-model="password"
+            required
+            placeholder="Entrez votre mot de passe"
+          />
         </div>
         <button type="submit" :disabled="loading" class="login-button">
           <span v-if="loading">Logging in...</span>
@@ -152,17 +164,21 @@ h2 {
 
 /* Lien "Forgot Password" */
 .forgot-password {
-  margin-top: 15px;
+  margin-top: 20px;
+  text-align: center; /* Centrer le texte */
 }
 
 .forgot-password a {
-  color: #4a90e2;
-  text-decoration: none;
-  font-size: 14px;
+  color: #4a90e2; /* Couleur bleue */
+  text-decoration: none; /* Supprimer le soulignement */
+  font-size: 14px; /* Taille du texte */
+  font-weight: 600; /* Augmenter le poids pour une meilleure visibilité */
+  transition: color 0.3s ease; /* Effet de transition */
 }
 
 .forgot-password a:hover {
-  text-decoration: underline;
+  color: #357ab8; /* Couleur au survol */
+  text-decoration: underline; /* Ajouter le soulignement au survol */
 }
 
 /* Animations */

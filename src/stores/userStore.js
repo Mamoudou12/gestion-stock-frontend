@@ -124,6 +124,24 @@ export const useUserStore = defineStore("user", {
       }
     },
 
+    async fetchCurrentUser() {
+      const authStore = useAuthStore();
+      try {
+        const response = await axios.get("http://localhost:3000/api/user/me", {
+          headers: {
+            Authorization: `Bearer ${authStore.token}`, // Assurez-vous que vous avez un token dans votre store
+          },
+        });
+        this.user = response.data.user;
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des informations utilisateur:",
+          error
+        );
+        throw error;
+      }
+    },
+
     async updateCurrentUser(name, email) {
       const authStore = useAuthStore();
       try {
@@ -143,13 +161,37 @@ export const useUserStore = defineStore("user", {
         if (response.data && response.data.user) {
           this.user = response.data.user; // Vérifiez si cette ligne met à jour correctement `this.user`
           this.userName = this.user.name;
-          console.log("Utilisateur mis à jour:", this.user);
         } else {
           throw new Error("Réponse du serveur invalide");
         }
       } catch (error) {
         console.error("Erreur lors de la mise à jour des informations:", error);
         throw error;
+      }
+    },
+
+    async changePassword(currentPassword, newPassword) {
+      const authStore = useAuthStore();
+      try {
+        const response = await axios.put(
+          "http://localhost:3000/api/change-password", // Votre endpoint API
+          {
+            currentPassword, // Correspond à "oldPassword" ou "currentPassword" dans votre API
+            newPassword, // Correspond à "newPassword" dans votre API
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${authStore.token}`,
+            },
+          }
+        );
+        return response.data; // Retourne la réponse de l'API
+      } catch (error) {
+        // Gérer les erreurs et les afficher dans le composant
+        console.error("Error changing password:", error);
+        throw new Error(
+          error.response?.data?.message || "Error changing password."
+        );
       }
     },
   },

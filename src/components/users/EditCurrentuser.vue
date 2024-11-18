@@ -9,11 +9,25 @@
       <form @submit.prevent="updateUser">
         <div class="mb-3">
           <label for="name" class="form-label">Nom:</label>
-          <input id="name" v-model="name" type="text" class="form-control" required />
+          <input
+            id="name"
+            v-model="name"
+            type="text"
+            class="form-control"
+            placeholder="Entrez le nom"
+            required
+          />
         </div>
         <div class="mb-3">
           <label for="email" class="form-label">Email:</label>
-          <input id="email" v-model="email" type="email" class="form-control" required />
+          <input
+            id="email"
+            v-model="email"
+            type="email"
+            class="form-control"
+            placeholder="Entrez l'email"
+            required
+          />
         </div>
         <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
       </form>
@@ -22,12 +36,12 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useUserStore } from "../../stores/userStore";
 import { useToast } from "vue-toastification";
 
-// Récupérer le store Pinia de l'utilisateur
+// Store Pinia et gestion de navigation
 const userStore = useUserStore();
 const router = useRouter();
 const toast = useToast();
@@ -36,27 +50,13 @@ const toast = useToast();
 const name = ref("");
 const email = ref("");
 
-watch(
-  () => userStore.user,
-  (newUser) => {
-    console.log("userStore.user avant modification:", newUser);
-    if (newUser && newUser.name) {
-      name.value = newUser.name || "";
-      email.value = newUser.email || "";
-    } else {
-      console.log("Aucun utilisateur chargé ou pas de nom");
-    }
-  },
-  { immediate: true }
-);
-
 // Fonction pour mettre à jour l'utilisateur
 async function updateUser() {
   try {
     await userStore.updateCurrentUser(name.value, email.value);
     toast.success("Informations mises à jour avec succès !");
   } catch (error) {
-    console.error("Erreur détaillée lors de la mise à jour:", error);
+    console.error("Erreur lors de la mise à jour:", error);
     toast.error(
       `Erreur lors de la mise à jour des informations: ${
         error.response?.data?.message || error.message
@@ -65,10 +65,25 @@ async function updateUser() {
   }
 }
 
-// Fonction pour retourner à la page précédente
+// Retourner à la page précédente
 function goBack() {
   router.back();
 }
+
+// Charger les données utilisateur au montage du composant
+async function loadUser() {
+  try {
+    // Récupérer les informations de l'utilisateur depuis le store
+    await userStore.fetchCurrentUser();
+    name.value = userStore.user.name;
+    email.value = userStore.user.email;
+  } catch (error) {
+    console.error("Erreur lors du chargement des informations utilisateur:", error);
+    toast.error("Impossible de charger les informations de l'utilisateur.");
+  }
+}
+
+onMounted(loadUser);
 </script>
 
 <style scoped>
