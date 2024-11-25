@@ -1,6 +1,9 @@
 <template>
   <div class="container mt-5">
-    <button @click="goBack" class="btn btn-link text-decoration-none back-arrow">
+    <button
+      @click="goBack"
+      class="btn btn-link text-decoration-none back-arrow"
+    >
       <i class="fas fa-arrow-left"></i> Retour
     </button>
 
@@ -11,7 +14,7 @@
           <label for="name" class="form-label">Nom:</label>
           <input
             id="name"
-            v-model="name"
+            v-model="user.name"
             type="text"
             class="form-control"
             placeholder="Entrez le nom"
@@ -22,68 +25,62 @@
           <label for="email" class="form-label">Email:</label>
           <input
             id="email"
-            v-model="email"
+            v-model="user.email"
             type="email"
             class="form-control"
             placeholder="Entrez l'email"
             required
           />
         </div>
-        <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
+        <button type="submit" class="btn btn-primary w-100">
+          Mettre à jour
+        </button>
       </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useUserStore } from "../../stores/userStore";
 import { useToast } from "vue-toastification";
 
-// Store Pinia et gestion de navigation
-const userStore = useUserStore();
+const userStore = useUserStore(); // Store Pinia
 const router = useRouter();
 const toast = useToast();
 
-// Champs de saisie pour le nom et l'email
-const name = ref("");
-const email = ref("");
+// Charger les données utilisateur
+const user = computed(() => userStore.user);
 
-// Fonction pour mettre à jour l'utilisateur
+// Fonction pour mettre à jour les informations utilisateur
 async function updateUser() {
   try {
-    await userStore.updateCurrentUser(name.value, email.value);
+    await userStore.updateCurrentUser(user.value.name, user.value.email);
     toast.success("Informations mises à jour avec succès !");
+    router.push("/dashboard/home");
   } catch (error) {
-    console.error("Erreur lors de la mise à jour:", error);
     toast.error(
-      `Erreur lors de la mise à jour des informations: ${
+      `Erreur lors de la mise à jour des informations : ${
         error.response?.data?.message || error.message
       }`
     );
   }
 }
 
-// Retourner à la page précédente
+// Retour à la page précédente
 function goBack() {
   router.back();
 }
 
-// Charger les données utilisateur au montage du composant
-async function loadUser() {
+// Charger les informations utilisateur au montage
+onMounted(async () => {
   try {
-    // Récupérer les informations de l'utilisateur depuis le store
     await userStore.fetchCurrentUser();
-    name.value = userStore.user.name;
-    email.value = userStore.user.email;
   } catch (error) {
-    console.error("Erreur lors du chargement des informations utilisateur:", error);
     toast.error("Impossible de charger les informations de l'utilisateur.");
   }
-}
-
-onMounted(loadUser);
+});
 </script>
 
 <style scoped>

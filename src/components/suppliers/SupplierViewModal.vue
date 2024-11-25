@@ -13,9 +13,7 @@
           <p><strong>Address:</strong> {{ supplier.address }}</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">
-            Close
-          </button>
+          <button type="button" class="btn btn-secondary" @click="close">Close</button>
         </div>
       </div>
     </div>

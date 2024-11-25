@@ -17,20 +17,18 @@
             <div class="col-sm-6">
               <label for="sale_Date" class="col-form-label"> Sale Date: </label>
               <div class="input-group">
-                <DatePicker
+                <input
+                  id="saleDate"
                   v-model="sale.saleDate"
-                  :format="'YYYY-MM-DD'"
                   class="form-control form-control-sm"
+                  type="date"
+                  :max="maxDate"
+                  required
                 />
-                <span class="input-group-text">
-                  <i class="fas fa-calendar-alt"></i>
-                </span>
               </div>
             </div>
             <div class="col-sm-6">
-              <label for="firstName" class="col-form-label">
-                First Name:
-              </label>
+              <label for="firstName" class="col-form-label"> First Name: </label>
               <input
                 id="firstName"
                 v-model="sale.firstName"
@@ -84,11 +82,7 @@
                       @change="updateProductPrice(product)"
                     >
                       <option value="" disabled>Select Product</option>
-                      <option
-                        v-for="prod in products"
-                        :key="prod.id"
-                        :value="prod.id"
-                      >
+                      <option v-for="prod in products" :key="prod.id" :value="prod.id">
                         {{ prod.name }}
                       </option>
                     </select>
@@ -104,8 +98,8 @@
                       min="1"
                       placeholder="Quantity"
                     />
-                    <small v-if="product.quantity <= 0" class="text-danger">
-                      Valid quantity is required
+                    <small v-if="product.error" class="text-danger">
+                      {{ product.error }}
                     </small>
                   </td>
                   <td>
@@ -132,11 +126,7 @@
             </table>
           </div>
 
-          <button
-            type="button"
-            class="btn btn-success btn-sm"
-            @click="addProduct"
-          >
+          <button type="button" class="btn btn-success btn-sm" @click="addProduct">
             Add Product
           </button>
         </div>
@@ -145,11 +135,7 @@
           <button type="button" class="btn btn-secondary btn-sm" @click="close">
             Close
           </button>
-          <button
-            type="button"
-            class="btn btn-primary btn-sm"
-            @click="submitSale"
-          >
+          <button type="button" class="btn btn-primary btn-sm" @click="submitSale">
             Add Sale
           </button>
         </div>
@@ -163,7 +149,6 @@ import { ref, computed } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
 import { useProductStore } from "../../stores/productStore";
 import { useToast } from "vue-toastification";
-import DatePicker from "vue3-datepicker";
 
 const toast = useToast();
 
@@ -174,7 +159,7 @@ const productStore = useProductStore();
 const products = computed(() => productStore.products);
 
 const sale = ref({
-  saleDate: new Date(),
+  saleDate: new Date().toISOString().split("T")[0], // Set default date to current date
   firstName: "",
   lastName: "",
   address: "",
@@ -183,12 +168,16 @@ const sale = ref({
 
 const errorMessage = ref("");
 
+// Max date that can be selected (current date)
+const maxDate = new Date().toISOString().split("T")[0];
+
 // Function to add a product to the sale
 const addProduct = () => {
   sale.value.saleDetails.push({
     productId: "",
     quantity: 1,
     price: 0.0,
+    error: null, // To store error messages for each product
   });
 };
 
@@ -199,28 +188,40 @@ const removeProduct = (index) => {
 
 // Function to update the price when a product is selected
 const updateProductPrice = (product) => {
-  const selectedProduct = products.value.find(
-    (prod) => prod.id === product.productId
-  );
+  const selectedProduct = products.value.find((prod) => prod.id === product.productId);
   product.price = selectedProduct ? selectedProduct.sale_price : 0;
+};
+
+// Function to validate stock availability for each product
+const validateStock = () => {
+  let isStockValid = true;
+
+  sale.value.saleDetails.forEach((product) => {
+    const selectedProduct = products.value.find((prod) => prod.id === product.productId);
+    if (selectedProduct && product.quantity > selectedProduct.stock) {
+      product.error = `Insufficient stock. Only ${selectedProduct.stock} available.`;
+      isStockValid = false;
+    } else {
+      product.error = null; // Clear error if stock is sufficient
+    }
+  });
+
+  return isStockValid;
 };
 
 // Function to submit the sale
 const submitSale = async () => {
   const { saleDate, firstName, lastName, address, saleDetails } = sale.value;
-  errorMessage.value = "";
 
   if (saleDetails.length === 0) {
     toast.error("At least one product is required");
     return;
   }
 
-  // Validate saleDetails to ensure all fields are properly filled
-  for (const product of saleDetails) {
-    if (!product.productId || product.quantity <= 0 || product.price <= 0) {
-      toast.error("Valid product details are required");
-      return;
-    }
+  // Validate stock before proceeding
+  if (!validateStock()) {
+    toast.error("Some products have insufficient stock.");
+    return;
   }
 
   try {

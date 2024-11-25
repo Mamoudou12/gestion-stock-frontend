@@ -14,15 +14,11 @@
         <div class="modal-body">
           <p><strong>Quantity:</strong> {{ inventory.quantity }}</p>
           <p><strong>Remarks:</strong> {{ inventory.remarks }}</p>
-          <p>
-            <strong>Product:</strong> {{ getProductName(inventory.productId) }}
-          </p>
+          <p><strong>Product:</strong> {{ getProductName(inventory.productId) }}</p>
           <!-- Display product name -->
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">
-            Close
-          </button>
+          <button type="button" class="btn btn-secondary" @click="close">Close</button>
         </div>
       </div>
     </div>
@@ -51,9 +47,7 @@ const productStore = useProductStore(); // Access productStore
 
 // Get product name by ID
 const getProductName = (productId) => {
-  const product = productStore.products.find(
-    (product) => product.id === productId
-  );
+  const product = productStore.products.find((product) => product.id === productId);
   return product ? product.name : "Unknown Product"; // Return product name or a default message
 };
 </script>

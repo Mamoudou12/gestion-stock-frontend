@@ -32,7 +32,7 @@ const messages = {
 
 // Créer une instance d'i18n
 const i18n = createI18n({
-  locale: 'fr', // langue par défaut
+  locale: 'en', // langue par défaut
   messages,
 });
 

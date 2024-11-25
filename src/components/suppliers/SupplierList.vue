@@ -25,6 +25,7 @@
       <thead>
         <tr>
           <th>{{ $t("id") }}</th>
+          <th>{{ $t("name") }}</th>
           <th>{{ $t("email") }}</th>
           <th>{{ $t("phone") }}</th>
           <th>{{ $t("address") }}</th>
@@ -34,6 +35,7 @@
       <tbody>
         <tr v-for="supplier in filteredSuppliers" :key="supplier.id">
           <td>{{ supplier.id }}</td>
+          <td>{{ supplier.name }}</td>
           <td>{{ supplier.email }}</td>
           <td>{{ supplier.phone }}</td>
           <td>{{ supplier.address }}</td>
@@ -50,6 +52,7 @@
                 @click="openEditSupplierModal(supplier)"
                 class="btn btn-outline-warning me-2"
                 :title="$t('edit')"
+                v-if="authStore.role === 'ADMIN'"
               >
                 <i class="fas fa-edit"></i>
               </button>
@@ -57,6 +60,7 @@
                 @click="deleteSupplier(supplier.id)"
                 class="btn btn-outline-danger"
                 :title="$t('delete')"
+                v-if="authStore.role === 'ADMIN'"
               >
                 <i class="fas fa-trash"></i>
               </button>
@@ -66,10 +70,7 @@
       </tbody>
     </table>
 
-    <div
-      v-if="!loading && !filteredSuppliers.length"
-      class="alert alert-warning"
-    >
+    <div v-if="!loading && !filteredSuppliers.length" class="alert alert-warning">
       {{ $t("no_suppliers") }}
     </div>
 
@@ -98,6 +99,7 @@ import SupplierForm from "./SupplierForm.vue";
 import SupplierView from "./SupplierView.vue";
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n";
+import { useAuthStore } from "../../stores/AuthStore";
 
 const { t } = useI18n();
 
@@ -107,7 +109,8 @@ const loading = ref(true);
 const showFormModal = ref(false);
 const showViewModal = ref(false);
 const editMode = ref(false);
-const currentSupplier = ref({ email: "", phone: "", address: "" });
+const authStore = useAuthStore();
+const currentSupplier = ref({ name: "", email: "", phone: "", address: "" });
 
 onMounted(async () => {
   await fetchSuppliers();

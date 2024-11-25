@@ -9,10 +9,10 @@
         <div class="modal-body">
           <ul class="list-group">
             <li class="list-group-item">
-              <strong>{{ $t("modal.fields.name") }}:</strong> {{ product.name }}
+              <strong>{{ $t("modal.fields.id") }}:</strong> {{ product.id }}
             </li>
             <li class="list-group-item">
-              <strong>{{ $t("modal.fields.id") }}:</strong> {{ product.id }}
+              <strong>{{ $t("modal.fields.name") }}:</strong> {{ product.name }}
             </li>
             <li class="list-group-item">
               <strong>{{ $t("modal.fields.stock") }}:</strong>
@@ -21,12 +21,12 @@
             <li class="list-group-item">
               <strong>{{ $t("modal.fields.purchase_price") }}:</strong>
               {{ parseFloat(product.purshase_price).toFixed(2) }}
-              {{ $t("modal.currency") }}
+              {{ $t("modal.currency", { currency: "MRU" }) }}
             </li>
             <li class="list-group-item">
               <strong>{{ $t("modal.fields.sale_price") }}:</strong>
               {{ parseFloat(product.sale_price).toFixed(2) }}
-              {{ $t("modal.currency") }}
+              {{ $t("modal.currency", { currency: "MRU" }) }}
             </li>
             <li class="list-group-item text-danger">
               <strong>{{ $t("modal.fields.safety_stock") }}:</strong>

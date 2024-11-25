@@ -8,6 +8,11 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
+            <label>Name:</label>
+            <!-- Affichage du champ email en lecture seule -->
+            <input v-model="supplier.name" class="form-control" readonly />
+          </div>
+          <div class="mb-3">
             <label>Email:</label>
             <!-- Affichage du champ email en lecture seule -->
             <input v-model="supplier.email" class="form-control" readonly />
@@ -25,9 +30,7 @@
         </div>
         <div class="modal-footer">
           <!-- Bouton de fermeture uniquement -->
-          <button type="button" class="btn btn-secondary" @click="close">
-            Close
-          </button>
+          <button type="button" class="btn btn-secondary" @click="close">Close</button>
         </div>
       </div>
     </div>

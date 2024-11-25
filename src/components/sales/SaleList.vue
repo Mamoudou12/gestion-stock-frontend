@@ -108,10 +108,8 @@ html Copier le code
                   :key="item.productId"
                 >
                   <div>
-                    <strong>{{ $t("products") }}:</strong> {{ item.productName
-                    }}<br />
-                    <strong>{{ $t("quantity") }}:</strong> {{ item.quantity
-                    }}<br />
+                    <strong>{{ $t("products") }}:</strong> {{ item.productName }}<br />
+                    <strong>{{ $t("quantity") }}:</strong> {{ item.quantity }}<br />
                     <strong>{{ $t("price") }}:</strong> {{ item.price }} MRU
                   </div>
                   <span class="badge bg-primary rounded-pill">
@@ -129,11 +127,7 @@ html Copier le code
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
               {{ $t("close") }}
             </button>
           </div>

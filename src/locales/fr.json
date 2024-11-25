@@ -56,7 +56,7 @@
             "safety_stock": "Stock de sécurité",
             "barcode": "Code-barres"
         },
-        "currency": "€",
+        "currency": "MRU",
         "close": "Fermer"
     },
     "receptionManagement": "Gestion des réceptions",
@@ -91,6 +91,7 @@
     "delete_text": "Vous ne pourrez pas récupérer ce fournisseur!",
     "deletion_success": "Le fournisseur a été supprimé.",
     "error_deletion": "Une erreur est survenue lors de la suppression.",
+    "Entername": "Entrer le nom",
     "addSupplier": "Ajouter un fournisseur",
     "editSupplier": "Modifier le fournisseur",
     "allFieldsRequired": "Tous les champs sont requis",

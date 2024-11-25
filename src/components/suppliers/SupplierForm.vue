@@ -9,6 +9,19 @@
           <button type="button" class="btn-close" @click="close"></button>
         </div>
         <div class="modal-body">
+          <div class="mb-3">
+            <label>{{ $t("name") }}:</label>
+            <input
+              v-model="supplier.name"
+              required
+              class="form-control"
+              :readonly="displayMode === 'view'"
+              @input="validateField('name')"
+              :placeholder="$t('Entername')"
+            />
+            <small class="text-danger">{{ errors.name }}</small>
+          </div>
+
           <!-- Email Field -->
           <div class="mb-3">
             <label>{{ $t("email") }}:</label>
@@ -110,6 +123,9 @@ const serverErrors = ref([]); // Pour stocker temporairement les erreurs serveur
 watch(serverErrors, (newErrors) => {
   errors.value = {}; // Réinitialiser les erreurs
   newErrors.forEach((err) => {
+    if (err.path === "name") {
+      errors.value.name = err.msg;
+    }
     if (err.path === "email") {
       errors.value.email = err.msg;
     }
@@ -125,7 +141,12 @@ watch(serverErrors, (newErrors) => {
 const submitSupplier = async () => {
   serverErrors.value = []; // Réinitialiser les erreurs serveur
 
-  if (errors.value.email || errors.value.phone || errors.value.address) {
+  if (
+    errors.value.name ||
+    errors.value.email ||
+    errors.value.phone ||
+    errors.value.address
+  ) {
     toast.error(t("fixErrors"));
     return;
   }
@@ -138,7 +159,7 @@ const submitSupplier = async () => {
       await supplierStore.createSupplier(props.supplier);
       toast.success(t("successAdd"));
       // Reset form fields
-      Object.assign(props.supplier, { email: "", phone: "", address: "" });
+      Object.assign(props.supplier, { name: "", email: "", phone: "", address: "" });
     }
     emit("refresh");
   } catch (error) {
@@ -161,7 +182,7 @@ watch(
   () => props.supplier,
   () => {
     if (!props.editMode) {
-      Object.assign(props.supplier, { email: "", phone: "", address: "" });
+      Object.assign(props.supplier, { name: "", email: "", phone: "", address: "" });
     }
   }
 );

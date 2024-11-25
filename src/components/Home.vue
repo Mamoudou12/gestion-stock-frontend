@@ -9,7 +9,7 @@
       <!-- Carte pour le nombre de produits -->
       <div class="card summary-card">
         <i class="fas fa-boxes icon"></i>
-        <h3 class="card-title">Produits en Stock</h3>
+        <h3 class="card-title">Produits</h3>
         <p class="card-value">{{ totalProduits }}</p>
       </div>
 
@@ -20,11 +20,17 @@
         <p class="card-value">{{ totalVentes }}</p>
       </div>
 
-      <!-- Carte pour les mouvements de stock -->
       <div class="card summary-card">
-        <i class="fas fa-exchange-alt icon"></i>
-        <h3 class="card-title">Mouvements</h3>
-        <p class="card-value">{{ totalMouvements }}</p>
+        <i class="fas fa-exclamation-triangle icon danger"></i>
+        <h3 class="card-title text-danger">Stock Critique</h3>
+        <p class="card-value text-danger">{{ produitsCritiques.length }}</p>
+      </div>
+
+      <!-- Carte pour le chiffre d'affaires -->
+      <div class="card summary-card">
+        <i class="fas fa-coins icon"></i>
+        <h3 class="card-title">Chiffre d'Affaires</h3>
+        <p class="card-value">{{ chiffreAffairesFormatted }}</p>
       </div>
     </div>
 
@@ -32,6 +38,29 @@
     <div class="chart-container">
       <canvas id="stockChart"></canvas>
     </div>
+  </div>
+
+  <div v-if="produitsCritiques.length" class="stock-critical mt-4">
+    <h2 class="text-danger text-center mb-4">Produits avec Stock Critique</h2>
+    <table class="table table-hover table-bordered align-middle text-center">
+      <thead class="table-danger">
+        <tr>
+          <th>Nom du Produit</th>
+          <th>Quantité en Stock</th>
+          <th>Stock de Sécurité</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="produit in produitsCritiques" :key="produit.id">
+          <td>{{ produit.name }}</td>
+          <td class="text-danger fw-bold">{{ produit.stock }}</td>
+          <td>{{ produit.safetyStock }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div v-else class="text-center mt-4 text-success">
+    <p>Aucun produit en stock critique.</p>
   </div>
 </template>
 
@@ -43,7 +72,7 @@ import { useMovementStore } from "../stores/movementStore"; // Importer le store
 import { Chart, registerables } from "chart.js";
 Chart.register(...registerables);
 
-// Store de produits, ventes et mouvements
+// Stores pour produits, ventes et mouvements
 const productStore = useProductStore();
 const saleStore = useSaleStore();
 const movementStore = useMovementStore();
@@ -52,6 +81,11 @@ const movementStore = useMovementStore();
 const chartRef = ref(null);
 let chartInstance = null;
 
+// Calculer les produits dont le stock est inférieur ou égal au stock de sécurité
+const produitsCritiques = computed(() =>
+  productStore.products.filter((produit) => produit.stock <= produit.safetyStock)
+);
+
 // Calculer le nombre total de produits
 const totalProduits = computed(() => productStore.products.length);
 
@@ -59,17 +93,41 @@ const totalProduits = computed(() => productStore.products.length);
 const totalVentes = computed(() => saleStore.sales.length);
 
 // Calculer le nombre total de mouvements de stock
-const totalMouvements = computed(() => movementStore.movements.length);
+// const totalMouvements = computed(() => movementStore.movements.length);
+
+// Calculer le chiffre d'affaires total
+const chiffreAffaires = computed(() => {
+  return saleStore.sales.reduce((total, sale) => {
+    return (
+      total +
+      sale.saleDetails.reduce((subtotal, detail) => {
+        const price = parseFloat(detail.price); // Conversion en nombre
+        const quantity = detail.quantity;
+        return subtotal + price * quantity;
+      }, 0)
+    );
+  }, 0);
+});
+
+// Formatter le chiffre d'affaires
+const chiffreAffairesFormatted = computed(() => {
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "MRU", // Remplace EUR par MRU
+  }).format(chiffreAffaires.value);
+});
+console.log(chiffreAffairesFormatted.value);
+// -> "123 456,78 MRU" (respecte les conventions françaises)
 
 // Données pour les produits et les mouvements de stock sur chaque mois
-const productMonthlyData = ref(Array(12).fill(0)); // Initialiser avec des zéros
-const movementMonthlyData = ref(Array(12).fill(0)); // Initialiser avec des zéros
+const saleMonthlyData = ref(Array(12).fill(0)); // Initialiser avec des zéros
 
 // Charger les produits, ventes et mouvements au montage du composant
 onMounted(async () => {
   try {
     await productStore.fetchProducts();
     await saleStore.fetchSales();
+    console.log("Ventes récupérées:", saleStore.sales);
     await movementStore.fetchMovements(); // Récupérer les mouvements depuis l'API
     initializeChart();
     updateMonthlyData();
@@ -101,17 +159,10 @@ function initializeChart() {
       ],
       datasets: [
         {
-          label: "Produits en Stock",
-          data: productMonthlyData.value, // Initialisation avec les données des produits
+          label: "Ventes enregistrés",
+          data: saleMonthlyData.value,
           borderColor: "#007bff",
           backgroundColor: "rgba(0, 123, 255, 0.1)",
-          fill: true,
-        },
-        {
-          label: "Mouvements de Stock",
-          data: movementMonthlyData.value, // Initialisation avec les données des mouvements
-          borderColor: "#28a745",
-          backgroundColor: "rgba(40, 167, 69, 0.1)",
           fill: true,
         },
       ],
@@ -127,14 +178,13 @@ function initializeChart() {
   });
 }
 
-// Mettre à jour les données mensuelles pour les produits et les mouvements
+// Mettre à jour les données mensuelles pour les vente
 function updateMonthlyData() {
   // Exemple simple : Calculer le nombre total de produits et mouvements pour chaque mois
   const currentMonth = new Date().getMonth(); // Mois actuel (0 = janvier, 11 = décembre)
 
-  // Ajout des nouvelles données de produits et mouvements pour ce mois
-  productMonthlyData.value[currentMonth] = totalProduits.value;
-  movementMonthlyData.value[currentMonth] = totalMouvements.value;
+  // Ajout des nouvelles données de vente pour ce mois
+  saleMonthlyData.value[currentMonth] = totalVentes.value;
 
   // Mettre à jour le graphique avec les nouvelles données
   if (chartInstance) {
@@ -142,7 +192,6 @@ function updateMonthlyData() {
   }
 }
 
-// Vous pouvez utiliser cette fonction pour mettre à jour périodiquement les données ou sur un événement spécifique
 setInterval(() => {
   updateMonthlyData(); // Mettre à jour les données chaque intervalle
 }, 30000); // 30 secondes, à ajuster selon vos besoins
@@ -238,7 +287,7 @@ setInterval(() => {
 .summary-card {
   background: linear-gradient(135deg, #ffffff, #f8f9fa);
   padding: 30px;
-  width: 280px;
+  width: 300px;
   text-align: center;
   border-radius: 20px;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.05);
@@ -296,5 +345,58 @@ setInterval(() => {
   color: #007bff;
   font-weight: bold;
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead {
+  background-color: #f8d7da;
+}
+
+.table th,
+.table td {
+  padding: 15px;
+  vertical-align: middle;
+  border: 1px solid #dee2e6;
+  text-align: center;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.table tbody tr td {
+  font-size: 15px;
+}
+
+.table tbody tr td.text-warning {
+  color: #fd7e14;
+  font-weight: bold;
+}
+
+.table thead th {
+  font-size: 16px;
+  color: #721c24;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.stock-critical {
+  padding: 20px;
+  background-color: #fdfdfe;
+  border: 2px solid #f8d7da;
+  border-radius: 10px;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.icon.danger {
+  color: red;
 }
 </style>

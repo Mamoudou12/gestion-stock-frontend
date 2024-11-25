@@ -115,6 +115,7 @@ const handleSubmit = async () => {
     oldPassword.value = "";
     newPassword.value = "";
     confirmPassword.value = "";
+    router.push("/dashboard/home");
   } catch (err) {
     toast.error("Erreur lors du changement du mot de passe. Veuillez réessayer.");
   } finally {

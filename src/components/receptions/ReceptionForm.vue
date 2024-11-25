@@ -25,7 +25,7 @@
                 :key="supplier.id"
                 :value="supplier.id"
               >
-                {{ supplier.email }}
+                {{ supplier.name }}
               </option>
             </select>
             <small v-if="errors.supplierId" class="text-danger">
@@ -33,19 +33,20 @@
             </small>
           </div>
 
-          <!-- Date de réception avec icône de date -->
+          <!-- Date de réception avec champ de date HTML -->
           <div class="mb-3">
             <label for="receptionDate">{{ $t("receptionDate") }}:</label>
-            <div class="input-group">
-              <Datepicker
-                v-model="reception.receptionDate"
-                format="yyyy-MM-dd"
-                class="form-control form-control-sm w-100 custom-datepicker"
-              />
-              <span class="input-group-text">
-                <i class="fas fa-calendar-alt"></i>
-              </span>
-            </div>
+            <input
+              type="date"
+              id="receptionDate"
+              v-model="reception.receptionDate"
+              :max="maxDate"
+              class="form-control form-control-sm w-100"
+              required
+            />
+            <small v-if="!reception.receptionDate" class="text-danger">
+              {{ $t("selectDateError") }}
+            </small>
           </div>
 
           <!-- Détails des produits -->
@@ -64,7 +65,7 @@
                   <select
                     class="form-control form-control-sm w-100"
                     v-model="product.productId"
-                    required
+                    @change="updateProductPrice(product)"
                   >
                     <option value="" disabled>{{ $t("selectProduct") }}</option>
                     <option v-for="prod in products" :key="prod.id" :value="prod.id">
@@ -159,7 +160,6 @@ import { useReceptionStore } from "../../stores/receptionStore";
 import { useSupplierStore } from "../../stores/supplierStore";
 import { useProductStore } from "../../stores/productStore";
 import { useToast } from "vue-toastification";
-import Datepicker from "vue3-datepicker";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -171,12 +171,14 @@ const props = defineProps({
     required: true,
     default: () => ({
       supplierId: "",
-      receptionDate: new Date(),
+      receptionDate: new Date().toISOString().split("T")[0],
       detailReceptions: [],
     }),
   },
   editMode: Boolean,
 });
+
+const maxDate = new Date().toISOString().split("T")[0];
 
 const emit = defineEmits(["close", "refresh"]);
 const receptionStore = useReceptionStore();
@@ -188,7 +190,7 @@ const products = computed(() => productStore.products);
 
 const reception = ref({
   supplierId: props.reception.supplierId || "",
-  receptionDate: props.reception.receptionDate || new Date(),
+  receptionDate: props.reception.receptionDate || new Date().toISOString().split("T")[0],
   detailReceptions: props.reception.detailReceptions || [],
 });
 
@@ -202,6 +204,12 @@ const addProduct = () => {
   });
 };
 
+// Function to update the price when a product is selected
+const updateProductPrice = (product) => {
+  const selectedProduct = products.value.find((prod) => prod.id === product.productId);
+  product.price = selectedProduct ? selectedProduct.purshase_price : 0;
+};
+
 const removeProduct = (index) => {
   reception.value.detailReceptions.splice(index, 1);
 };
@@ -211,12 +219,12 @@ const submitReception = async () => {
 
   if (
     !supplierId ||
+    !receptionDate ||
     detailReceptions.length === 0 ||
     detailReceptions.some((p) => p.quantity <= 0 || p.price <= 0)
   ) {
-    if (!supplierId)
-      errors.value.supplierId =
-        "Supplier ID, Reception Date, and at least one product are required";
+    if (!supplierId) errors.value.supplierId = t("supplierRequired");
+    if (!receptionDate) errors.value.receptionDate = t("dateRequired");
     toast.error(t("errorMessage"));
     return;
   }
@@ -229,7 +237,7 @@ const submitReception = async () => {
       await receptionStore.createReception(reception.value);
       toast.success(t("receptionAdded"));
       reception.value.supplierId = "";
-      reception.value.receptionDate = new Date();
+      reception.value.receptionDate = new Date().toISOString().split("T")[0];
       reception.value.detailReceptions = [];
     }
     emit("refresh");
@@ -253,6 +261,6 @@ const close = () => {
 
 .form-control,
 .btn {
-  height: 36px; /* Hauteur uniforme pour les champs de formulaire et boutons */
+  height: 36px;
 }
 </style>

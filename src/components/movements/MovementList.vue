@@ -1,7 +1,7 @@
 <template>
   <div class="text-primary mb-4 movement-list">
     <div class="text-center">
-      <h2 class="title">Liste des Mouvements de Stock</h2>
+      <h2 class="title">Stock Movements</h2>
     </div>
 
     <!-- Loader ici -->
@@ -62,10 +62,7 @@
 
     <nav v-if="totalPages > 1" aria-label="Page navigation">
       <ul class="pagination justify-content-center">
-        <li
-          :class="['page-item', { disabled: currentPage === 1 }]"
-          @click="prevPage"
-        >
+        <li :class="['page-item', { disabled: currentPage === 1 }]" @click="prevPage">
           <button class="page-link">Précédent</button>
         </li>
         <li
@@ -100,7 +97,7 @@ import { useMovementStore } from "../../stores/movementStore";
 import { useProductStore } from "../../stores/productStore";
 import { useUserStore } from "../../stores/userStore";
 import GenericModal from "./MovementModal.vue";
-import Loader from "../Loader.vue"; 
+import Loader from "../Loader.vue";
 const movementStore = useMovementStore();
 const productStore = useProductStore();
 const userStore = useUserStore();

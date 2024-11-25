@@ -14,9 +14,7 @@
       class="form-control mb-4 search-input"
     />
 
-    <div v-if="loading" class="alert alert-info">
-      Loading inventory items...
-    </div>
+    <div v-if="loading" class="alert alert-info">Loading inventory items...</div>
 
     <table
       class="table table-hover table-bordered"
@@ -40,37 +38,34 @@
           <td>
             <div class="d-flex justify-content-center">
               <button
-              @click="viewInventory(item)"
-              class="btn btn-outline-primary me-2"
-              title="View"
-            >
-              <i class="fas fa-eye"></i>
-            </button>
-            <!-- <button
+                @click="viewInventory(item)"
+                class="btn btn-outline-primary me-2"
+                title="View"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+              <!-- <button
               @click="editInventory(item)"
               class="btn btn-outline-warning me-2"
               title="Edit"
             >
               <i class="fas fa-edit"></i>
             </button> -->
-            <button
-            v-if="authStore.role === 'ADMIN'"
-              @click="deleteInventory(item.id)"
-              class="btn btn-outline-danger"
-              title="Delete"
-            >
-              <i class="fas fa-trash"></i>
-            </button>
+              <button
+                v-if="authStore.role === 'ADMIN'"
+                @click="deleteInventory(item.id)"
+                class="btn btn-outline-danger"
+                title="Delete"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
             </div>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <div
-      v-if="!loading && !filteredInventory.length"
-      class="alert alert-warning"
-    >
+    <div v-if="!loading && !filteredInventory.length" class="alert alert-warning">
       No inventory items found.
     </div>
 
@@ -100,7 +95,7 @@ import InventoryDetailModal from "./InventoryView.vue";
 import Swal from "sweetalert2";
 
 const inventoryStore = useInventoryStore();
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const productStore = useProductStore(); // Initialize product store
 const searchQuery = ref("");
 const loading = ref(true);
@@ -129,9 +124,7 @@ const filteredInventory = computed(() => {
 
 // Get product name from productStore using product ID
 const getProductName = (productId) => {
-  const product = productStore.products.find(
-    (product) => product.id === productId
-  );
+  const product = productStore.products.find((product) => product.id === productId);
   return product ? product.name : "Unknown Product"; // Return product name or a default message
 };
 

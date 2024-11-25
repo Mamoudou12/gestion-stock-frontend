@@ -59,10 +59,9 @@ const handleLogin = async () => {
   try {
     await authStore.login(email.value, password.value);
     if (authStore.isAuthenticated) {
-      // Afficher un message de succès avec le nom et le rôle de l'utilisateur
       Swal.fire({
         title: "Connexion réussie!",
-        text: `Bienvenue ${authStore.user.name}, vous êtes connecté en tant que ${authStore.role}.`,
+        text: `Bienvenue ${authStore.user.name}`,
         icon: "success",
         confirmButtonText: "OK",
       });

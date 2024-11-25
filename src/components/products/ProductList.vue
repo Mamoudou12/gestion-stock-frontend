@@ -60,17 +60,13 @@
                 class="list-group-item d-flex justify-content-between align-items-center"
               >
                 {{ $t("safety_stock") }}
-                <span class="badge bg-danger">{{
-                  product.safetyStock ?? 0
-                }}</span>
+                <span class="badge bg-danger">{{ product.safetyStock ?? 0 }}</span>
               </li>
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
               >
                 {{ $t("barcode") }}
-                <span class="barcode-color">{{
-                  product.barcode ?? "N/A"
-                }}</span>
+                <span class="barcode-color">{{ product.barcode ?? "N/A" }}</span>
               </li>
             </ul>
           </div>
@@ -102,10 +98,7 @@
       </div>
     </div>
 
-    <div
-      v-if="!loading && !filteredProducts.length"
-      class="alert alert-warning"
-    >
+    <div v-if="!loading && !filteredProducts.length" class="alert alert-warning">
       {{ $t("no_products_found") }}
     </div>
 
@@ -218,8 +211,7 @@ const deleteProduct = async (productId) => {
       });
     } catch (error) {
       const errorMessage =
-        error.response?.data?.message ||
-        "An error occurred while deleting the product.";
+        error.response?.data?.message || "An error occurred while deleting the product.";
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -241,6 +233,80 @@ const refreshProducts = async () => {
 </script>
 
 <style scoped>
+.card {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.card-footer {
+  background: #f8f9fa;
+  padding: 10px;
+  text-align: center;
+}
+
+.badge {
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.card h5 {
+  color: #0056b3;
+  text-transform: uppercase;
+}
+
+.list-group-item {
+  font-size: 0.9rem;
+  background-color: #ffffff;
+  border: none;
+}
+
+.btn-outline-primary,
+.btn-outline-warning,
+.btn-outline-danger {
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background: #0056b3;
+  color: white;
+}
+
+.btn-outline-warning:hover {
+  background: #ffc107;
+  color: white;
+}
+
+.btn-outline-danger:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.barcode-color {
+  font-weight: bold;
+  font-family: "Courier New", Courier, monospace;
+  color: #28a745;
+}
+
 .search-input {
   width: 100%;
 }

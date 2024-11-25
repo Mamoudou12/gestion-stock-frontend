@@ -145,22 +145,16 @@ export const useUserStore = defineStore("user", {
     async updateCurrentUser(name, email) {
       const authStore = useAuthStore();
       try {
-        console.log("Données envoyées:", { name, email });
-
         const response = await axios.put(
           `http://localhost:3000/api/user/update`,
           { name, email },
           {
-            headers: {
-              Authorization: `Bearer ${authStore.token}`,
-            },
+            headers: { Authorization: `Bearer ${authStore.token}` },
           }
         );
 
-        console.log("Réponse du serveur:", response.data);
         if (response.data && response.data.user) {
-          this.user = response.data.user; // Vérifiez si cette ligne met à jour correctement `this.user`
-          this.userName = this.user.name;
+          this.user = response.data.user; // Mettre à jour immédiatement les données dans le store
         } else {
           throw new Error("Réponse du serveur invalide");
         }
@@ -169,12 +163,11 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
-
     async changePassword(currentPassword, newPassword) {
       const authStore = useAuthStore();
       try {
         const response = await axios.put(
-          "http://localhost:3000/api/change-password", // Votre endpoint API
+          "http://localhost:3000/api/change-password",
           {
             currentPassword, // Correspond à "oldPassword" ou "currentPassword" dans votre API
             newPassword, // Correspond à "newPassword" dans votre API
