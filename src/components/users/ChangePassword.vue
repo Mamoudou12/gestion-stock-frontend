@@ -18,8 +18,13 @@
             required
             placeholder="Entrez votre ancien mot de passe"
           />
-          <span class="password-toggle" @click="togglePasswordVisibility('oldPassword')">
-            <i :class="oldPasswordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          <span
+            class="password-toggle"
+            @click="togglePasswordVisibility('oldPassword')"
+          >
+            <i
+              :class="oldPasswordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"
+            ></i>
           </span>
         </div>
       </div>
@@ -34,8 +39,13 @@
             required
             placeholder="Entrez votre nouveau mot de passe"
           />
-          <span class="password-toggle" @click="togglePasswordVisibility('newPassword')">
-            <i :class="newPasswordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+          <span
+            class="password-toggle"
+            @click="togglePasswordVisibility('newPassword')"
+          >
+            <i
+              :class="newPasswordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"
+            ></i>
           </span>
         </div>
       </div>
@@ -54,12 +64,16 @@
             class="password-toggle"
             @click="togglePasswordVisibility('confirmPassword')"
           >
-            <i :class="confirmPasswordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+            <i
+              :class="confirmPasswordVisible ? 'fa fa-eye-slash' : 'fa fa-eye'"
+            ></i>
           </span>
         </div>
       </div>
 
-      <button type="submit" :disabled="isSubmitting">Changer le mot de passe</button>
+      <button type="submit" :disabled="isSubmitting">
+        Changer le mot de passe
+      </button>
     </form>
   </div>
 </template>
@@ -117,7 +131,9 @@ const handleSubmit = async () => {
     confirmPassword.value = "";
     router.push("/dashboard/home");
   } catch (err) {
-    toast.error("Erreur lors du changement du mot de passe. Veuillez réessayer.");
+    toast.error(
+      "Erreur lors du changement du mot de passe. Veuillez réessayer."
+    );
   } finally {
     isSubmitting.value = false;
   }

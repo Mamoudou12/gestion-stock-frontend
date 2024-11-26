@@ -119,7 +119,7 @@ const chiffreAffairesFormatted = computed(() => {
 console.log(chiffreAffairesFormatted.value);
 // -> "123 456,78 MRU" (respecte les conventions françaises)
 
-// Données pour les produits et les mouvements de stock sur chaque mois
+// Données pour les produits de stock sur chaque mois
 const saleMonthlyData = ref(Array(12).fill(0)); // Initialiser avec des zéros
 
 // Charger les produits, ventes et mouvements au montage du composant
@@ -186,7 +186,6 @@ function updateMonthlyData() {
   // Ajout des nouvelles données de vente pour ce mois
   saleMonthlyData.value[currentMonth] = totalVentes.value;
 
-  // Mettre à jour le graphique avec les nouvelles données
   if (chartInstance) {
     chartInstance.update();
   }

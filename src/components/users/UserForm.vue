@@ -2,12 +2,15 @@
   <div class="modal" style="display: block">
     <div class="modal-dialog">
       <div class="modal-content">
+        <!-- En-tête de la modale -->
         <div class="modal-header">
           <h5 class="modal-title">{{ editMode ? "Edit" : "Add" }} User</h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
 
+        <!-- Corps de la modale -->
         <div class="modal-body">
+          <!-- Champ Name -->
           <div class="mb-3">
             <label>Name:</label>
             <input
@@ -15,10 +18,12 @@
               :disabled="previewMode"
               required
               class="form-control"
+              placeholder="Enter the user's name"
             />
             <small class="text-danger">{{ errors.name }}</small>
           </div>
 
+          <!-- Champ Email -->
           <div class="mb-3">
             <label>Email:</label>
             <input
@@ -27,10 +32,12 @@
               required
               type="email"
               class="form-control"
+              placeholder="Enter the user's email"
             />
             <small class="text-danger">{{ errors.email }}</small>
           </div>
 
+          <!-- Champ Password -->
           <div class="mb-3">
             <label>Password:</label>
             <div class="input-group">
@@ -40,6 +47,7 @@
                 :disabled="previewMode || editMode"
                 required
                 class="form-control"
+                placeholder="Enter a password"
               />
               <button
                 type="button"
@@ -53,6 +61,7 @@
             <small class="text-danger">{{ errors.password }}</small>
           </div>
 
+          <!-- Champ Role -->
           <div class="mb-3">
             <label>Role:</label>
             <select
@@ -60,6 +69,7 @@
               :disabled="previewMode"
               required
               class="form-select"
+              placeholder="Select a role"
             >
               <option value="">Select Role</option>
               <option value="ADMIN">Admin</option>
@@ -69,8 +79,11 @@
           </div>
         </div>
 
+        <!-- Pied de page de la modale -->
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">Close</button>
+          <button type="button" class="btn btn-secondary" @click="close">
+            Close
+          </button>
           <button
             type="button"
             class="btn btn-primary"

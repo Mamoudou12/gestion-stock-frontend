@@ -231,4 +231,8 @@ const getUserName = (userId) => {
   transform: translateY(-3px) scale(1.03);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+}
 </style>

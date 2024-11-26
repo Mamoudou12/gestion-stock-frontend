@@ -75,32 +75,43 @@ html Copier le code
       aria-labelledby="detailLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog modal-md">
-        <div class="modal-content">
-          <div class="modal-header">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content custom-modal">
+          <div class="modal-header bg-primary text-white">
             <h5 class="modal-title" id="detailLabel">
+              <i class="fas fa-info-circle me-2"></i>
               {{ modalContext }} {{ $t("saleDetails") }}
             </h5>
             <button
               type="button"
-              class="btn-close"
+              class="btn-close btn-close-white"
               data-bs-dismiss="modal"
               aria-label="Close"
             ></button>
           </div>
           <div class="modal-body">
             <div v-if="selectedDetail">
-              <h6>
-                {{ $t("customerName") }}: {{ selectedDetail.firstName }}
-                {{ selectedDetail.lastName }}
-              </h6>
-              <p>{{ $t("address") }}: {{ selectedDetail.address }}</p>
-              <p>
-                {{ $t("date") }}:
-                {{ new Date(selectedDetail.saleDate).toLocaleDateString() }}
-              </p>
+              <div class="customer-info mb-4 p-3 rounded">
+                <h6 class="mb-2">
+                  <i class="fas fa-user me-2 text-primary"></i>
+                  {{ $t("customerName") }}: {{ selectedDetail.firstName }}
+                  {{ selectedDetail.lastName }}
+                </h6>
+                <p>
+                  <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+                  {{ $t("address") }}: {{ selectedDetail.address }}
+                </p>
+                <p>
+                  <i class="fas fa-calendar-alt me-2 text-success"></i>
+                  {{ $t("date") }}:
+                  {{ new Date(selectedDetail.saleDate).toLocaleDateString() }}
+                </p>
+              </div>
 
-              <h6>{{ $t("saleDetails") }}:</h6>
+              <h6 class="mb-3 text-primary border-bottom pb-2">
+                <i class="fas fa-box-open me-2"></i>
+                {{ $t("saleDetails") }}
+              </h6>
               <ul class="list-group">
                 <li
                   class="list-group-item d-flex justify-content-between align-items-center"
@@ -108,17 +119,19 @@ html Copier le code
                   :key="item.productId"
                 >
                   <div>
-                    <strong>{{ $t("products") }}:</strong> {{ item.productName }}<br />
-                    <strong>{{ $t("quantity") }}:</strong> {{ item.quantity }}<br />
+                    <strong>{{ $t("products") }}:</strong> {{ item.productName
+                    }}<br />
+                    <strong>{{ $t("quantity") }}:</strong> {{ item.quantity
+                    }}<br />
                     <strong>{{ $t("price") }}:</strong> {{ item.price }} MRU
                   </div>
-                  <span class="badge bg-primary rounded-pill">
+                  <span class="badge bg-primary rounded-pill fs-5">
                     {{ (item.quantity * item.price).toFixed(2) }} MRU
                   </span>
                 </li>
               </ul>
-              <p class="mt-3 text-end">
-                <strong>
+              <p class="mt-4 text-end fs-5">
+                <strong class="text-success">
                   {{ $t("totalAmount") }}:
                   {{ calculateTotalAmount(selectedDetail.details).toFixed(2) }}
                   MRU
@@ -127,8 +140,12 @@ html Copier le code
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-              {{ $t("close") }}
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+             {{ $t("close") }}
             </button>
           </div>
         </div>
@@ -300,5 +317,53 @@ const deleteSale = async (id) => {
 .title:hover {
   transform: translateY(-3px) scale(1.03);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.custom-modal {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  padding: 1rem 1.5rem;
+}
+
+.customer-info {
+  background-color: #f9f9f9;
+  border-left: 4px solid #007bff;
+}
+
+.list-group-item {
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+  padding: 1rem;
+  background: #ffffff;
+  transition: background 0.3s ease;
+}
+
+.list-group-item:hover {
+  background: #f7f9fc;
+}
+
+.badge {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f7f9fc;
+  border-top: 1px solid #e9ecef;
+}
+
+.modal-footer button {
+  transition: transform 0.2s ease;
+}
+
+.modal-footer button:hover {
+  transform: scale(1.05);
 }
 </style>

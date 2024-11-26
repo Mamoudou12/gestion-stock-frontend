@@ -2,11 +2,15 @@
   <div class="modal" style="display: block">
     <div class="modal-dialog">
       <div class="modal-content">
+        <!-- En-tête de la modale -->
         <div class="modal-header">
           <h5 class="modal-title">{{ editMode ? "Edit" : "Add" }} Inventory</h5>
           <button type="button" class="btn-close" @click="close"></button>
         </div>
+
+        <!-- Corps de la modale -->
         <div class="modal-body">
+          <!-- Champ Quantity -->
           <div class="mb-3">
             <label>Quantity:</label>
             <input
@@ -15,28 +19,60 @@
               type="number"
               min="1"
               class="form-control"
+              placeholder="Enter the quantity"
             />
-            <small v-if="quantityError" class="text-danger">{{ quantityError }}</small>
+            <small v-if="quantityError" class="text-danger">{{
+              quantityError
+            }}</small>
           </div>
+
+          <!-- Champ Remarks -->
           <div class="mb-3">
             <label>Remarks:</label>
-            <input v-model="inventory.remarks" class="form-control" />
-            <small v-if="remarksError" class="text-danger">{{ remarksError }}</small>
+            <input
+              v-model="inventory.remarks"
+              class="form-control"
+              placeholder="Enter any remarks (optional)"
+            />
+            <small v-if="remarksError" class="text-danger">{{
+              remarksError
+            }}</small>
           </div>
+
+          <!-- Champ Product -->
           <div class="mb-3">
             <label>Product:</label>
-            <select v-model="inventory.productId" required class="form-control">
+            <select
+              v-model="inventory.productId"
+              required
+              class="form-control"
+              placeholder="Select a product"
+            >
               <option disabled value="">Select a product</option>
-              <option v-for="product in products" :key="product.id" :value="product.id">
+              <option
+                v-for="product in products"
+                :key="product.id"
+                :value="product.id"
+              >
                 {{ product.name }}
               </option>
             </select>
-            <small v-if="productError" class="text-danger">{{ productError }}</small>
+            <small v-if="productError" class="text-danger">{{
+              productError
+            }}</small>
           </div>
         </div>
+
+        <!-- Pied de page de la modale -->
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">Close</button>
-          <button type="button" class="btn btn-primary" @click="submitInventory">
+          <button type="button" class="btn btn-secondary" @click="close">
+            Close
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="submitInventory"
+          >
             {{ editMode ? "Update" : "Add" }}
           </button>
         </div>
@@ -103,7 +139,11 @@ const submitInventory = async () => {
     emit("refresh");
   } catch (error) {
     console.error("Error during add/update:", error);
-    Swal.fire("Error", error.response?.data?.message || "An error occurred", "error");
+    Swal.fire(
+      "Error",
+      error.response?.data?.message || "An error occurred",
+      "error"
+    );
   } finally {
     close();
   }

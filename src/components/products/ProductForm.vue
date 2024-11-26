@@ -8,6 +8,7 @@
         </div>
 
         <div class="modal-body">
+          <!-- Ligne 1 : Nom et Stock -->
           <div class="row">
             <div class="col-md-6 mb-3">
               <label>Name:</label>
@@ -16,6 +17,7 @@
                 :disabled="previewMode"
                 required
                 class="form-control"
+                placeholder="Enter product name"
               />
               <small class="text-danger">{{ errors.name }}</small>
             </div>
@@ -27,11 +29,13 @@
                 :disabled="previewMode"
                 required
                 class="form-control"
+                placeholder="Enter stock quantity"
               />
               <small class="text-danger">{{ errors.stock }}</small>
             </div>
           </div>
 
+          <!-- Ligne 2 : Prix d'achat et de vente -->
           <div class="row">
             <div class="col-md-6 mb-3">
               <label>Purchase Price:</label>
@@ -42,6 +46,7 @@
                 required
                 class="form-control"
                 step="0.01"
+                placeholder="Enter purchase price"
               />
               <small class="text-danger">{{ errors.purshase_price }}</small>
             </div>
@@ -54,11 +59,13 @@
                 required
                 class="form-control"
                 step="0.01"
+                placeholder="Enter sale price"
               />
               <small class="text-danger">{{ errors.sale_price }}</small>
             </div>
           </div>
 
+          <!-- Ligne 3 : Stock de sécurité et Code-barres -->
           <div class="row">
             <div class="col-md-6 mb-3">
               <label>Safety Stock:</label>
@@ -68,6 +75,7 @@
                 :disabled="previewMode"
                 required
                 class="form-control"
+                placeholder="Enter safety stock quantity"
               />
               <small class="text-danger">{{ errors.safetyStock }}</small>
             </div>
@@ -78,6 +86,7 @@
                 v-model="product.barcode"
                 :disabled="previewMode"
                 class="form-control"
+                placeholder="Enter product barcode"
               />
               <small class="text-danger">{{ errors.barcode }}</small>
             </div>
@@ -85,7 +94,9 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="close">Close</button>
+          <button type="button" class="btn btn-secondary" @click="close">
+            Close
+          </button>
           <button
             type="button"
             class="btn btn-primary"
@@ -151,7 +162,10 @@ const submitProduct = async () => {
 
   try {
     if (props.editMode) {
-      await productStore.updateProduct(currentProduct.value.id, currentProduct.value);
+      await productStore.updateProduct(
+        currentProduct.value.id,
+        currentProduct.value
+      );
       Swal.fire("Success", "Product updated successfully", "success");
     } else {
       await productStore.createProduct(currentProduct.value);
