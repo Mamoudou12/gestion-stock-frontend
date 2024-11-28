@@ -8,14 +8,9 @@
         </div>
 
         <div class="modal-body">
-          <div v-if="errorMessage" class="alert alert-danger">
-            {{ errorMessage }}
-          </div>
-
           <div class="mb-3 row">
-            <!-- Date and First Name on the same line -->
             <div class="col-sm-6">
-              <label for="sale_Date" class="col-form-label"> Sale Date: </label>
+              <label for="saleDate" class="col-form-label">Sale Date:</label>
               <div class="input-group">
                 <input
                   id="saleDate"
@@ -26,40 +21,56 @@
                   required
                 />
               </div>
+              <small v-if="validationErrors.saleDate" class="text-danger">
+                {{ validationErrors.saleDate }}
+              </small>
             </div>
+
             <div class="col-sm-6">
-              <label for="firstName" class="col-form-label"> First Name: </label>
+              <label for="firstName" class="col-form-label">First Name:</label>
               <input
                 id="firstName"
                 v-model="sale.firstName"
                 class="form-control"
                 type="text"
+                maxlength="100"
                 placeholder="Enter First Name"
               />
+              <small v-if="validationErrors.firstName" class="text-danger">
+                {{ validationErrors.firstName }}
+              </small>
             </div>
           </div>
 
           <div class="mb-3 row">
-            <!-- Address and Last Name on the same line -->
             <div class="col-sm-6">
-              <label for="address" class="col-form-label"> Address: </label>
+              <label for="address" class="col-form-label">Address:</label>
               <input
                 id="address"
                 v-model="sale.address"
                 class="form-control"
                 type="text"
+                maxlength="50"
                 placeholder="Enter Address"
               />
+              <small v-if="validationErrors.address" class="text-danger">
+                {{ validationErrors.address }}
+              </small>
             </div>
+
             <div class="col-sm-6">
-              <label for="lastName" class="col-form-label"> Last Name: </label>
+              <label for="lastName" class="col-form-label">Last Name:</label>
               <input
                 id="lastName"
                 v-model="sale.lastName"
                 class="form-control"
                 type="text"
+                maxlength="100"
                 placeholder="Enter Last Name"
               />
+              <small v-if="validationErrors.lastName" class="text-danger">
+                {{ validationErrors.lastName }}
+              </small>
             </div>
           </div>
 
@@ -87,7 +98,7 @@
                       </option>
                     </select>
                     <small v-if="!product.productId" class="text-danger">
-                      Please select a product
+                      Please select a product.
                     </small>
                   </td>
                   <td>
@@ -118,7 +129,7 @@
                       class="btn btn-danger btn-sm w-100"
                       @click="removeProduct(index)"
                     >
-                      Remove Product
+                      Remove
                     </button>
                   </td>
                 </tr>
@@ -129,6 +140,9 @@
           <button type="button" class="btn btn-success btn-sm" @click="addProduct">
             Add Product
           </button>
+          <small v-if="validationErrors.saleDetails" class="text-danger">
+            {{ validationErrors.saleDetails }}
+          </small>
         </div>
 
         <div class="modal-footer">
@@ -151,76 +165,100 @@ import { useProductStore } from "../../stores/productStore";
 import { useToast } from "vue-toastification";
 
 const toast = useToast();
-
 const emit = defineEmits(["close", "refresh"]);
+
 const saleStore = useSaleStore();
 const productStore = useProductStore();
-
 const products = computed(() => productStore.products);
 
 const sale = ref({
-  saleDate: new Date().toISOString().split("T")[0], // Set default date to current date
+  saleDate: new Date().toISOString().split("T")[0],
   firstName: "",
   lastName: "",
   address: "",
   saleDetails: [],
 });
 
-const errorMessage = ref("");
+const validationErrors = ref({
+  saleDate: "",
+  firstName: "",
+  lastName: "",
+  address: "",
+  saleDetails: "",
+});
 
-// Max date that can be selected (current date)
 const maxDate = new Date().toISOString().split("T")[0];
 
-// Function to add a product to the sale
+const validateInputs = () => {
+  let isValid = true;
+
+  if (!sale.value.saleDate) {
+    validationErrors.value.saleDate = "Sale date is required.";
+    isValid = false;
+  } else {
+    validationErrors.value.saleDate = "";
+  }
+
+  if (sale.value.firstName.length > 100) {
+    validationErrors.value.firstName = "First name cannot exceed 100 characters.";
+    isValid = false;
+  } else {
+    validationErrors.value.firstName = "";
+  }
+
+  if (sale.value.lastName.length > 100) {
+    validationErrors.value.lastName = "Last name cannot exceed 100 characters.";
+    isValid = false;
+  } else {
+    validationErrors.value.lastName = "";
+  }
+
+  if (sale.value.address.length > 50) {
+    validationErrors.value.address = "Address cannot exceed 50 characters.";
+    isValid = false;
+  } else {
+    validationErrors.value.address = "";
+  }
+
+  if (sale.value.saleDetails.length === 0) {
+    validationErrors.value.saleDetails = "At least one product is required.";
+    isValid = false;
+  } else {
+    validationErrors.value.saleDetails = "";
+    sale.value.saleDetails.forEach((product) => {
+      if (!product.productId || product.quantity <= 0) {
+        product.error = "Invalid product selection or quantity.";
+        isValid = false;
+      } else {
+        product.error = null;
+      }
+    });
+  }
+
+  return isValid;
+};
+
 const addProduct = () => {
   sale.value.saleDetails.push({
     productId: "",
     quantity: 1,
     price: 0.0,
-    error: null, // To store error messages for each product
+    error: null,
   });
 };
 
-// Function to remove a product from the sale
 const removeProduct = (index) => {
   sale.value.saleDetails.splice(index, 1);
 };
 
-// Function to update the price when a product is selected
 const updateProductPrice = (product) => {
   const selectedProduct = products.value.find((prod) => prod.id === product.productId);
   product.price = selectedProduct ? selectedProduct.sale_price : 0;
 };
 
-// Function to validate stock availability for each product
-const validateStock = () => {
-  let isStockValid = true;
-
-  sale.value.saleDetails.forEach((product) => {
-    const selectedProduct = products.value.find((prod) => prod.id === product.productId);
-    if (selectedProduct && product.quantity > selectedProduct.stock) {
-      product.error = `Insufficient stock. Only ${selectedProduct.stock} available.`;
-      isStockValid = false;
-    } else {
-      product.error = null; // Clear error if stock is sufficient
-    }
-  });
-
-  return isStockValid;
-};
-
-// Function to submit the sale
 const submitSale = async () => {
-  const { saleDate, firstName, lastName, address, saleDetails } = sale.value;
-
-  if (saleDetails.length === 0) {
-    toast.error("At least one product is required");
-    return;
-  }
-
-  // Validate stock before proceeding
-  if (!validateStock()) {
-    toast.error("Some products have insufficient stock.");
+  if (!validateInputs()) {
+    toast.error("Please fix the errors before submitting.");
     return;
   }
 
@@ -235,7 +273,6 @@ const submitSale = async () => {
   }
 };
 
-// Close the modal
 const close = () => {
   emit("close");
 };
@@ -244,26 +281,5 @@ const close = () => {
 <style scoped>
 .modal-dialog {
   max-width: 70%;
-}
-
-.form-control,
-.btn {
-  height: 36px;
-}
-
-.table td input {
-  width: 100%;
-  height: 36px;
-}
-
-.input-group .input-group-text {
-  background-color: #fff;
-  border-left: 0;
-  padding: 0.375rem 0.75rem;
-  font-size: 1.1rem;
-}
-
-.input-group .form-control {
-  border-right: 0;
 }
 </style>

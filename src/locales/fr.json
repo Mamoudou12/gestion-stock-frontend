@@ -185,5 +185,6 @@
     "enterAddress": "Enter address",
     "priceGreaterThanZero": "Le prix doit être supérieur à zéro",
     "quantityGreaterThanZero": "La quantité doit être supérieure à zéro",
-    "selectProductError": "Veuillez sélectionner un produit"
+    "selectProductError": "Veuillez sélectionner un produit",
+    "loading_users": "Chargement des Utilisateurs..."
 }

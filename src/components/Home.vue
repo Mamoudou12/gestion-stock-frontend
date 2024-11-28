@@ -24,6 +24,7 @@
         <i class="fas fa-exclamation-triangle icon danger"></i>
         <h3 class="card-title text-danger">Stock Critique</h3>
         <p class="card-value text-danger">{{ produitsCritiques.length }}</p>
+        <a href="#safty">En savoir plus</a>
       </div>
 
       <!-- Carte pour le chiffre d'affaires -->
@@ -40,7 +41,7 @@
     </div>
   </div>
 
-  <div v-if="produitsCritiques.length" class="stock-critical mt-4">
+  <div v-if="produitsCritiques.length" class="stock-critical mt-4" id="safty">
     <h2 class="text-danger text-center mb-4">Produits avec Stock Critique</h2>
     <table class="table table-hover table-bordered align-middle text-center">
       <thead class="table-danger">
@@ -83,7 +84,9 @@ let chartInstance = null;
 
 // Calculer les produits dont le stock est inférieur ou égal au stock de sécurité
 const produitsCritiques = computed(() =>
-  productStore.products.filter((produit) => produit.stock <= produit.safetyStock)
+  productStore.products.filter(
+    (produit) => produit.stock <= produit.safetyStock
+  )
 );
 
 // Calculer le nombre total de produits

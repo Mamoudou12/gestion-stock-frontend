@@ -18,8 +18,12 @@ Bienvenue dans l'application de gestion de stock frontend. Ce fichier README fou
 
 Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre machine :
 
-- **Node.js** (version 14.x ou ultérieure)
+- **Node.js** (version 14.x ou ultérieure)e
 - **npm** (installé avec Node.js)
+- **Vue.js** (framework frontend)
+- **Axios** (bibliothèque pour les requêtes HTTP)
+- **Pinia** (gestionnaire d'état pour Vue.js)
+- **Bootstrap** (framework CSS pour le design)
 
 ---
 
@@ -29,6 +33,9 @@ Clonez ce dépôt sur votre machine locale :
 
 ```bash
 git clone https://github.com/Mamoudou12/gestion-stock-frontend.git
+```
+
+```bash
 cd gestion-stock-frontend
 ```
 

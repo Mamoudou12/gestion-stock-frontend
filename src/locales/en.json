@@ -167,5 +167,6 @@
     "quantityGreaterThanZero": "Quantity must be greater than zero",
     "priceGreaterThanZero": "Price must be greater than zero",
     "selectProduct": "Select a product",
-    "selectProductError": "Please select a product"
+    "selectProductError": "Please select a product",
+    "loading_users": "Loading users..."
 }
