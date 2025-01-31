@@ -40,7 +40,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../stores/AuthStore";
 import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
 

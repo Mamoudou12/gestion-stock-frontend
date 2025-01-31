@@ -167,7 +167,7 @@ html Copier le code
 import { ref, computed, onMounted } from "vue";
 import { useSaleStore } from "../../stores/saleStore";
 import { useProductStore } from "../../stores/productStore";
-import { useAuthStore } from "../../stores/authStore";
+import { useAuthStore } from "../../stores/AuthStore";
 import Swal from "sweetalert2";
 import SaleForm from "./SaleForm.vue";
 import * as bootstrap from "bootstrap";

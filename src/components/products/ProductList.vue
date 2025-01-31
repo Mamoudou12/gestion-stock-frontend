@@ -123,7 +123,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useProductStore } from "../../stores/productStore";
-import { useAuthStore } from "../../stores/authStore";
+import { useAuthStore } from "../../stores/AuthStore";
 import Swal from "sweetalert2";
 import ProductForm from "./ProductForm.vue";
 import ProductView from "./ProductView.vue";

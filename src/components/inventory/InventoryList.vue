@@ -89,7 +89,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useInventoryStore } from "../../stores/inventoryStore";
 import { useProductStore } from "../../stores/productStore"; // Import productStore
-import { useAuthStore } from "../../stores/authStore";
+import { useAuthStore } from "../../stores/AuthStore";
 import InventoryForm from "./InventoryForm.vue";
 import InventoryDetailModal from "./InventoryView.vue";
 import Swal from "sweetalert2";

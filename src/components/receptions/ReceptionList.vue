@@ -135,7 +135,7 @@ import { useSupplierStore } from "../../stores/supplierStore";
 import ReceptionForm from "./ReceptionForm.vue";
 import Swal from "sweetalert2";
 import { useI18n } from "vue-i18n"; // Importer useI18n pour les traductions
-import { useAuthStore } from "../../stores/authStore";
+import { useAuthStore } from "../../stores/AuthStore";
 
 const { t } = useI18n();
 
